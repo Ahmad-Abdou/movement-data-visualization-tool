@@ -31,9 +31,9 @@ let xAxisBottomG = svg.append('g')
 xAxisBottom(xAxisBottomG)
 
 const lines = [
-  {x: 40, y:(SVGHEIGHT / 2)}, //left
-  {x: 150, y:(SVGHEIGHT / 2)}, //middle top
-  {x:350, y: 50}, // middle line
+  {x: 40, y:(SVGHEIGHT / 2)},
+  {x: 150, y:(SVGHEIGHT / 2)},
+  {x:350, y: 50},
   {x: 150, y:(SVGHEIGHT / 2)}, 
   {x:300, y:(SVGHEIGHT / 2)},
   {x:300, y:(SVGHEIGHT/2) + 150},
@@ -77,9 +77,6 @@ svg.append('text')
 .style('font-size', 35)
 .attr('fill', 'green')
 .attr('transform', 'translate(340, 530)')
-
-
-
 
 
 const colorScale = d3.scaleOrdinal(d3.schemeCategory10)

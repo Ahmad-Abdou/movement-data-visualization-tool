@@ -41,8 +41,10 @@ overflow: scroll;
 
 .map{
    grid-area: map;
-
+   height: 90%;
+   width: 100%;
 }
+
 .box{
    grid-area: box;
 
