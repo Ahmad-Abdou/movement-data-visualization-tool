@@ -30,6 +30,58 @@ let xAxisBottomG = svg.append('g')
 .attr('transform',`translate(${-xPadding}, ${SVGHEIGHT - yPadding})`)
 xAxisBottom(xAxisBottomG)
 
+const lines = [
+  {x: 40, y:(SVGHEIGHT / 2)}, //left
+  {x: 150, y:(SVGHEIGHT / 2)}, //middle top
+  {x:350, y: 50}, // middle line
+  {x: 150, y:(SVGHEIGHT / 2)}, 
+  {x:300, y:(SVGHEIGHT / 2)},
+  {x:300, y:(SVGHEIGHT/2) + 150},
+  {x:550, y: 150},
+  {x:300, y:(SVGHEIGHT/2 ) + 150},
+  {x: 300, y:SVGHEIGHT - yPadding},
+  
+];
+
+const lineGenerator = d3.line().x(d=>d.x).y(d=>d.y)
+svg.append('path')
+.attr('id','rect-path')
+.attr('d', lineGenerator(lines))
+.attr('stroke-width', 1)
+.attr('fill', 'none')
+.style('stroke', 'black')
+
+
+svg.append('text')
+.text('Z1')
+.style('font-size', 35)
+.attr('fill', 'green')
+.attr('transform', 'translate(100, 270)')
+
+svg.append('text')
+.text('Z2')
+.style('font-size', 35)
+.attr('fill', 'green')
+.attr('transform', 'translate(140, 470)')
+
+
+svg.append('text')
+.text('Z3')
+.style('font-size', 35)
+.attr('fill', 'green')
+.attr('transform', 'translate(300, 270)')
+
+
+svg.append('text')
+.text('Z4')
+.style('font-size', 35)
+.attr('fill', 'green')
+.attr('transform', 'translate(340, 530)')
+
+
+
+
+
 const colorScale = d3.scaleOrdinal(d3.schemeCategory10)
 let colorsList = []
 
@@ -97,7 +149,7 @@ const rectGroup = svg.append('g')
   const rectWidth = 75;
   const margin = 15
   
-  const allRects = rectGroup.selectAll('rect')
+const allRects = rectGroup.selectAll('rect')
     .data(data)
     .join('rect')
     .attr('height', 20)
@@ -148,5 +200,3 @@ const rectGroup = svg.append('g')
           svg.select('#tooltip3').remove();
         });
   });
-
-
