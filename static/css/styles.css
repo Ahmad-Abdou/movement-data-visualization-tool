@@ -19,21 +19,32 @@ body{
 
 /* Set core body defaults */
 .container {
-padding: 10px;
+
 width: 100%;
 height: 100vh;
 overflow: scroll;
  display: grid;
  grid-template-areas: 
- "tree map"
- "box axes"
- "heat heat"
+ " top-left map"
+ "heat  axes "
  ;
- grid-template-columns: 900px 900px;
- grid-template-rows: 800px 700px 800px;
+ grid-template-columns: repeat(2, 1fr);
+ grid-template-rows: repeat(2, 700px);
  justify-content: center;
+ position: relative;
+ top: 50px;
+ gap: 0px;
 }
 
+.top-left{
+   grid-area: top-left;
+   display: grid;
+   grid-template-areas:
+   "tree box"
+   ;
+   grid-template-columns: 1fr 1fr;
+   grid-template-rows: 1fr;
+}
 .tree{
    grid-area: tree;
 
@@ -51,9 +62,10 @@ overflow: scroll;
 }
 .axes{
    grid-area: axes;
+   width: 100%;
 }
 .heat-map{
    grid-area: heat;
-
+   width: 100%;
 }
 

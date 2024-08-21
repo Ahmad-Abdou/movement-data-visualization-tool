@@ -1,111 +1,89 @@
-let svg = d3.select('.axes').append('svg')
-
-svg.attr('width', 700).attr('height', 650)
-
-const SVGWIDTH = document.querySelector('svg').clientWidth;
-const SVGHEIGHT = document.querySelector('svg').clientHeight;
-const xPadding = 35
-const yPadding = 70
+let AxesSvg = d3.select('.axes')
+.append('svg')
+.attr('width', SVGWIDTH)
+.attr('height', SVGHEIGHT)
 
 const data = [23,65,12,96,47,75,60]
 
-
-let yScale = d3.scaleLinear()
-  .domain([0, d3.max(data)])
-  .range([SVGHEIGHT - 10, 100]);
-
-let yAxisLeft =  d3.axisLeft(yScale)
-let yAxisLeftG = svg.append('g')
-.attr('id', 'yAxisLeftG')
-.attr('transform', 'translate(40,-60)')
-yAxisLeft(yAxisLeftG)
+let axes_width = SVGWIDTH - margin.left - margin.right
+let axes_height = SVGHEIGHT - margin.top - margin.bottom
 
 let xScale = d3.scaleLinear()
-  .domain([0, data.length - 1])
-  .range([75, SVGWIDTH - 50]);
+.domain([0,1])
+.range([0, axes_width])
 
-let xAxisBottom = d3.axisBottom(xScale); 
-let xAxisBottomG = svg.append('g')
-.attr('id', 'xAxisBottom')
-.attr('transform',`translate(${-xPadding}, ${SVGHEIGHT - yPadding})`)
-xAxisBottom(xAxisBottomG)
+let yScale = d3.scaleLinear().domain([0,1]).range([axes_height, 0])
 
-const lines = [
-  {x: 40, y:(SVGHEIGHT / 2)},
-  {x: 150, y:(SVGHEIGHT / 2)},
-  {x:350, y: 50},
-  {x: 150, y:(SVGHEIGHT / 2)}, 
-  {x:300, y:(SVGHEIGHT / 2)},
-  {x:300, y:(SVGHEIGHT/2) + 150},
-  {x:550, y: 150},
-  {x:300, y:(SVGHEIGHT/2 ) + 150},
-  {x: 300, y:SVGHEIGHT - yPadding},
-  
-];
+let xAxis = d3.axisBottom(xScale)
+let gx = AxesSvg.append('g').attr('transform', `translate(${margin.left},${axes_height + margin.top})`)
+xAxis(gx)
 
-const lineGenerator = d3.line().x(d=>d.x).y(d=>d.y)
-svg.append('path')
-.attr('id','rect-path')
-.attr('d', lineGenerator(lines))
-.attr('stroke-width', 1)
-.attr('fill', 'none')
-.style('stroke', 'black')
+let yAxis = d3.axisLeft(yScale)
+const gy = AxesSvg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
+yAxis(gy)
 
+const axesLines = [
+  {points: [[0,0.5], [0.5, 1]]},
+  {points: [[0,0.5], [0.5,0.5], [0.5,0]]},
+  {points: [[0.5,0] , [1,0.5]]},
+  {points:[[0,0], [1,1]]}
+]
 
-svg.append('text')
-.text('Z1')
-.style('font-size', 35)
-.attr('fill', 'green')
-.attr('transform', 'translate(100, 270)')
+const axesLabels = [
+  {text: '0', position:[0.22, 0.22]},
+  {text:'1', position:[0.15, 0.85]},
+  {text:"2", position:[0.85, 0.15 ]},
+  {text:"3" , position:[0.7, 0.7]}
+]
 
-svg.append('text')
-.text('Z2')
-.style('font-size', 35)
-.attr('fill', 'green')
-.attr('transform', 'translate(140, 470)')
+let axesLineGenerator = d3.line().x(d=>xScale(d[0] )).y(d=>yScale(d[1]))
 
+axesLines.forEach((shape, index)=>{
+    AxesSvg.append('path')
+    .attr('d', axesLineGenerator(shape.points))
+    .attr('transform', `translate(${margin.left}, ${margin.top})`)
+    .attr('fill', 'none')
+    .attr('stroke', index === axesLines.length -1 ? 'grey': 'black')
+    .attr('stroke-width', 2)
+    .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none')
+})
 
-svg.append('text')
-.text('Z3')
-.style('font-size', 35)
-.attr('fill', 'green')
-.attr('transform', 'translate(300, 270)')
-
-
-svg.append('text')
-.text('Z4')
-.style('font-size', 35)
-.attr('fill', 'green')
-.attr('transform', 'translate(340, 530)')
-
+axesLabels.forEach((label)=>{
+  AxesSvg.append('text')
+  .attr('x', xScale(label.position[0]))
+  .attr('y', yScale(label.position[1]))
+  .attr('transform', `translate(${margin.left} , ${margin.top})`)
+  .attr('font-size', 40)
+  .text(label.text)
+})
 
 const colorScale = d3.scaleOrdinal(d3.schemeCategory10)
 let colorsList = []
 
-const allPlots = svg.append('g')
+const allPlots = AxesSvg.append('g')
 .attr('id', 'plots')
 .selectAll('circle')
 .data(data)
 .join('circle')
-.attr('r', 7)
-.attr('cx', (d,i)=> (d * 3) + 40)
+.attr('r', 10)
+.attr('cx', (d,i)=> (d * 6) + 100  )
 .attr('fill' , (d,i) =>colorScale(i))
 
 allPlots.on('mouseover', function (event, d) {
   const [x, y] = d3.pointer(event);
 
-  svg.append('rect')
+  AxesSvg.append('rect')
     .attr('id', 'tooltip2')
     .style('pointer-events', 'none');
 
-  svg.append('text')
+  AxesSvg.append('text')
     .attr('id', 'tooltip1')
     .style('pointer-events', 'none');
   
 }).on('mousemove', function (event,d) {
   const [x, y] = d3.pointer(event);
 
-  svg.select('#tooltip2')
+  AxesSvg.select('#tooltip2')
     .attr('width', 50)
     .attr('height', 40)
     .attr('x', x - 20)
@@ -116,7 +94,7 @@ allPlots.on('mouseover', function (event, d) {
     .attr('rx', 10)
     .attr('ry', 10)
 
-  svg.select('#tooltip1')
+  AxesSvg.select('#tooltip1')
   .attr('x', x + 5)
   .attr('y', y - 25)
   .attr('text-anchor', 'middle')
@@ -125,8 +103,8 @@ allPlots.on('mouseover', function (event, d) {
   .text(d)
   
 }).on('mouseout', function () {
-  svg.select('#tooltip1').remove();
-  svg.select('#tooltip2').remove();
+  AxesSvg.select('#tooltip1').remove();
+  AxesSvg.select('#tooltip2').remove();
 });
 
 
@@ -139,19 +117,19 @@ allPlots.each((d,i,n)=>{
   colorsList.push(d3.select(n[i]).attr('fill'))
 })
 
-const rectGroup = svg.append('g')
+const rectGroup = AxesSvg.append('g')
   .attr('id', 'rectangles');
 
   const padding = 20;
   const rectWidth = 75;
-  const margin = 15
+
   
 const allRects = rectGroup.selectAll('rect')
     .data(data)
     .join('rect')
     .attr('height', 20)
     .attr('y', SVGHEIGHT - 20)
-    .attr('x', (d, i) => i * (rectWidth + padding) + margin)
+    .attr('x', (d, i) => i * (rectWidth + padding) + margin.left - 25)
     .transition()
     .duration(2000)
     .attr('width', rectWidth)
@@ -170,9 +148,8 @@ const allRects = rectGroup.selectAll('rect')
           d3.select(n[i])
             .transition()
             .delay(i * 500)
-            // .ease(d3.easeBounce)
             .duration(1500)
-            .attr('x', (d, j) => (i * (rectWidth + padding) + rectWidth / 2) + margin) 
+            .attr('x', (d, j) => (i * (rectWidth + padding) + rectWidth / 2) + margin.left - 25) 
             .text(d => d.Username);
         });
   
@@ -180,7 +157,7 @@ const allRects = rectGroup.selectAll('rect')
         .data(data)
         .on('mouseover', (event, d) => {
           const [x, y] = d3.pointer(event);
-          svg.append('text')
+          AxesSvg.append('text')
             .attr('id', 'tooltip3')
             .attr('x', x)
             .attr('y', y - 15)
@@ -189,11 +166,11 @@ const allRects = rectGroup.selectAll('rect')
         })
         .on('mousemove', (event) => {
           const [x, y] = d3.pointer(event);
-          svg.select('#tooltip3')
+          AxesSvg.select('#tooltip3')
             .attr('x', x)
             .attr('y', y - 15);
         })
         .on('mouseout', () => {
-          svg.select('#tooltip3').remove();
+          AxesSvg.select('#tooltip3').remove();
         });
   });
