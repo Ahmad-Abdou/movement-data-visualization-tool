@@ -32,6 +32,7 @@ tree_group.append('text')
 .text(d => d)
 .attr('font-size', 12)
 
+
 const offset = 110
 let treeLineGenerator = d3.line().x(d=>d[0]).y(d=>d[1]).curve(d3.curveBasis)
 
@@ -63,6 +64,23 @@ tree_sub_lines.forEach((shape,index)=>{
     .attr('stroke-width', '1')
     .attr('fill', 'none')
     .attr('transform',`translate(0, 45)`)
+
+    // Switching word colors to orange when hovering.
+    .on('mouseover', function(d) {
+        d3.select(this)
+        .attr('fill','orange')
+        .transition()
+        .duration(100).attr('r',16)
+        .style("cursor", "pointer"); 
+    })
+    // Switching back to black color.
+    .on('mouseout', function(d) {
+        d3.select(this)
+        .attr('fill','black')
+        .transition()
+        .duration(100)
+        .style("cursor", "pointer"); 
+    })
 })
 
 let tree_lables = [
@@ -86,7 +104,23 @@ tree_lables.forEach((lable)=>{
     .text(lable.text)
     .attr('font-size', '12')
     .attr('text-anchor', 'middle')
-    
+
+    // Switching word colors to orange when hovering.
+    .on('mouseover', function(d) {
+        d3.select(this)
+        .attr('fill','orange')
+        .transition()
+        .duration(100).attr('r',16)
+        .style("cursor", "pointer"); 
+    })
+    // Switching back to black color.
+    .on('mouseout', function(d) {
+        d3.select(this)
+        .attr('fill','black')
+        .transition()
+        .duration(100)
+        .style("cursor", "pointer"); 
+    })
 })
 
 let tree_sub_labels =[
@@ -113,4 +147,23 @@ tree_sub_labels.forEach((lable)=>{
     .text(lable.text)
     .attr('font-size', '12')
     .attr('text-anchor', 'middle')
+
+
+    // Switching word colors to orange when hovering.
+    .on('mouseover', function(d) {
+        d3.select(this)
+        .attr('fill','orange')
+        .transition()
+        .duration(100).attr('r',16)
+        .style("cursor", "pointer"); 
+    })
+    // Switching back to black color.
+    .on('mouseout', function(d) {
+        d3.select(this)
+        .attr('fill','black')
+        .transition()
+        .duration(100)
+        .style("cursor", "pointer"); 
+    })
 })
+
