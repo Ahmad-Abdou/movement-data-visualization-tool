@@ -121,6 +121,30 @@ tree_lables.forEach((lable)=>{
         .duration(100)
         .style("cursor", "pointer"); 
     })
+    
+    // Switching word colors to orange when hovering.
+    .on('mouseover', function() {
+        d3.select(this)
+        .attr('fill','orange')
+        .transition()
+        .duration(100).attr('r',16)
+        .style("cursor", "pointer"); 
+    })
+    // Switching back to black color.
+    .on('mouseout', function() {
+        d3.select(this)
+        .attr('fill','black')
+        .transition()
+        .duration(100)
+        .style("cursor", "pointer"); 
+    })
+    
+    .on('click', function(){
+        // var currentColor = "black";
+        currentColor = this.style.fill  == "orange" ? "black" : "orange";
+        d3.select(this)
+        .style("fill", currentColor)
+    })
 })
 
 let tree_sub_labels =[
@@ -150,7 +174,7 @@ tree_sub_labels.forEach((lable)=>{
 
 
     // Switching word colors to orange when hovering.
-    .on('mouseover', function(d) {
+    .on('mouseover', function() {
         d3.select(this)
         .attr('fill','orange')
         .transition()
@@ -158,12 +182,19 @@ tree_sub_labels.forEach((lable)=>{
         .style("cursor", "pointer"); 
     })
     // Switching back to black color.
-    .on('mouseout', function(d) {
+    .on('mouseout', function() {
         d3.select(this)
         .attr('fill','black')
         .transition()
         .duration(100)
         .style("cursor", "pointer"); 
+    })
+    
+    .on('click', function(){
+        // var currentColor = "black";
+        currentColor = this.style.fill  == "orange" ? "black" : "orange";
+        d3.select(this)
+        .style("fill", currentColor)
     })
 })
 

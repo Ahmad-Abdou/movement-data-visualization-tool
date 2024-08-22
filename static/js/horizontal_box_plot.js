@@ -4,7 +4,7 @@ var hor_box_margin = {top: 150, right: 0, bottom: 250, left: 70},
     horBoxplotheight = 1400 - hor_box_margin.top - hor_box_margin.bottom;
 
 // Append the svg object to the body of the page
-var svg = d3.select(".horizontal-box-plot")
+var horBoxSvg = d3.select(".horizontal-box-plot")
   .append("svg")
     .attr("width", horBoxplotWidth + hor_box_margin.left + hor_box_margin.right)
     .attr("height", horBoxplotheight + hor_box_margin.top + hor_box_margin.bottom)
@@ -36,7 +36,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
     .range([horBoxplotheight, 0])
     .domain(["setosa", "versicolor", "virginica"])
     .padding(.4);
-  svg.append("g")
+  horBoxSvg.append("g")
     .call(d3.axisLeft(y).tickSize(0))
     .select(".domain").remove();
 
@@ -44,7 +44,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
   var x = d3.scaleLinear()
     .domain([4, 8])
     .range([0, horBoxplotWidth]);
-  svg.append("g")
+  horBoxSvg.append("g")
     .attr("transform", "translate(0," + horBoxplotheight + ")")
     .call(d3.axisBottom(x).ticks(5))
     .select(".domain").remove();
@@ -55,14 +55,14 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
     .domain([2, 7]); // original was 4 and 8
 
   // Add X axis label
-  svg.append("text")
+  horBoxSvg.append("text")
     .attr("text-anchor", "end")
     .attr("x", horBoxplotWidth)
     .attr("y", horBoxplotheight + hor_box_margin.top + 30)
     .text("Sepal Length");
 
   // Show the main vertical line
-  svg
+  horBoxSvg
     .selectAll("vertLines")
     .data(sumstat)
     .enter()
@@ -75,7 +75,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
       .style("width", 40);
 
   // Rectangle for the main box
-  svg
+  horBoxSvg
     .selectAll("boxes")
     .data(sumstat)
     .enter()
@@ -89,7 +89,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
       .style("opacity", 0.8);
 
   // Show the median
-  svg
+  horBoxSvg
     .selectAll("medianLines")
     .data(sumstat)
     .enter()
@@ -125,7 +125,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
 
   // Add individual points with jitter
   var jitterWidth = 150;
-  svg
+  horBoxSvg
     .selectAll("indPoints")
     .data(data)
     .enter()
