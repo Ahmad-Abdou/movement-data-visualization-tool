@@ -106,7 +106,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
-    .style("font-size", "28px");
+    .style("font-size", "36px");
 
   // Functions to change the tooltip when user hovers/moves/leaves a cell
   var mouseover = function(d) {

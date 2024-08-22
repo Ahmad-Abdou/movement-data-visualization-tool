@@ -1,10 +1,10 @@
 // Set the dimensions and margins of the graph
-const trajectoryMargin = {top: 300, right: 30, bottom: 30, left: 230};
+const trajectoryMargin = {top: 0, right: 0, bottom: 30, left: 80};
 
 
 // SVG dimensions
-var trajectoryWidth = 1400,
-trajectoryHeight = 1400;
+var trajectoryWidth = 1800,
+trajectoryHeight = 1800;
 
 // Create an SVG container
 var trajectorySvg = d3.select(".trajectory-plot").append("svg")

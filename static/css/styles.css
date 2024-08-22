@@ -53,7 +53,7 @@ overflow: scroll;
 .map{
    grid-area: map;
    height: 90%;
-   width: 100%;
+   width: 85%;
 }
 
 .box{
@@ -69,12 +69,14 @@ overflow: scroll;
    width: 100%;
 }
 
-.tooltip {
-  background-color: black;
+
+.horizontal-box-plot {
+  background-color: none;
   border: none;
-  border-radius: 50px;
+  border-radius: 5px;
   padding: 15px;
-  min-width: 400px;
+  min-width: 100px;
   text-align: left;
-  color: white;
+  color: red;
 }
+
