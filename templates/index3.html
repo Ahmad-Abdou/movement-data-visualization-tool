@@ -29,8 +29,7 @@
     </div>
 
 
-    <div class="heat-map">
-    </div>
+    <div class="heat-map"></div>
 
     <div class="correlogram"></div>
 
@@ -39,14 +38,21 @@
     <div class="trajectory-plot"></div>
 
     <div class=interactive-heatmap></div>
+    
 
   </div>
-
+  <!-- Necessary libraries/packages -->
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-  <!-- color scale plugin  -->
-  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+  <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>   <!-- color scale plugin  -->
+
+
+  <script> const heatmapData = "{{ url_for('get_heatmap_data') }}"; </script>
+  <script> const horizontalBoxData = "{{ url_for('get_horizontal_box_data') }}"; </script>
+
+  
+  <!-- JS scripts for plots -->
   <script src="../static/js/global.js"></script>
   <script src="../static/js/index.js"></script>
   <script src="../static/js/axes.js"></script>
@@ -57,8 +63,13 @@
   <script src="../static/js/tree.js"></script>
   <script src="../static/js/box_plot.js"></script>
   <script src="../static/js/horizontal_box_plot.js"></script>
-  <!-- <script src="../static/js/trajectory.js"></script> -->
+  <script src="../static/js/trajectory.js"></script>
   <script src="../static/js/interactive_heatmap.js"></script>
+
+
+
+  <!-- <script src="{{ url_for('static', filename='js/heat_map.js') }}"></script> -->
+
 </body>
 
 </html>

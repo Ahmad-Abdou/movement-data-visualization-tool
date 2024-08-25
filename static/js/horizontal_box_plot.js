@@ -1,3 +1,19 @@
+// Fetching data from the
+fetch(horizontalBoxData)
+  .then(function(response) {
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+  })
+  .then(function(data) {
+      // console.log(data);
+      runHorizontalBoxFunction(data);
+  })
+  .catch(function(error) {
+      console.error('There was a problem with the fetch operation:', error);
+  });
+
 // Set the dimensions and margins of the graph
 var hor_box_margin = {top: 150, right: 0, bottom: 250, left: 70},
     horBoxplotWidth = 1200 - hor_box_margin.left - hor_box_margin.right,
@@ -11,12 +27,13 @@ var horBoxSvg = d3.select(".horizontal-box-plot")
   .append("g")
     .attr("transform", "translate(" + hor_box_margin.left + "," + hor_box_margin.top + ")")
     .attr("class", "tooltip");
-// Read the data and compute summary statistics for each species
-d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv").then(function(data) {
 
+// Read the data and compute summary statistics for each species
+// d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv").then(function(data) {
+function runHorizontalBoxFunction(csvData) {
   // Compute quartiles, median, inter quantile range, min, and max
   var sumstat = Array.from(
-    d3.group(data, d => d.Species),
+    d3.group(csvData, d => d.Species),
     ([key, values]) => {
       var q1 = d3.quantile(values.map(g => +g.Sepal_Length).sort(d3.ascending), 0.25);
       var median = d3.quantile(values.map(g => +g.Sepal_Length).sort(d3.ascending), 0.5);
@@ -127,7 +144,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
   var jitterWidth = 150;
   horBoxSvg
     .selectAll("indPoints")
-    .data(data)
+    .data(csvData)
     .enter()
     .append("circle")
       .attr("cx", d => x(d.Sepal_Length))
@@ -139,6 +156,6 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/ir
       .on("mousemove", mousemove)
       .on("mouseleave", mouseleave);
 
-}).catch(function(error) {
-  console.error("Error loading or processing data:", error);
-});
+// }).catch(function(error) {
+//   console.error("Error loading or processing data:", error);
+}

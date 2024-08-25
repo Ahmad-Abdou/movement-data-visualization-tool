@@ -12,7 +12,28 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-   return render_template('index2.html')
+   return render_template('index3.html')
+
+# Heatmap data
+@app.route('/get_heatmap_data')
+def get_heatmap_data():
+   df = pd.read_csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv")
+   data = df.to_dict(orient="records")
+   return jsonify(data)
+
+# Horizontal box plot data
+@app.route('/get_horizontal_box_data')
+def get_horizontal_box_data():
+   df = pd.read_csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv")
+   data = df.to_dict(orient="records")
+   return jsonify(data)
+
+# # Correlogram data
+# @app.route('/get_correlogram_data')
+# def get_correlogram_data():
+#    df = pd.read_csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/data_correlogram.csv")
+#    data = df.to_dict(orient="records")
+#    return jsonify(data)
 
 # def calculate_percentage(val, total):
 #    """Calculates the percentage of a value over a total"""
@@ -66,7 +87,6 @@ def index():
 #    with open('static/data/treedata.json', 'r') as file:
 #       data = json.load(file)
 #    return jsonify(data)
-
 
 # @app.route('/get_tidy_tree')
 # def get_tidy_tree():

@@ -1,6 +1,22 @@
+// Fetching data from the
+fetch(heatmapData)
+  .then(function(response) {
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+  })
+  .then(function(data) {
+      // console.log(data);
+      runHeatmapFunction(data);
+  })
+  .catch(function(error) {
+      console.error('There was a problem with the fetch operation:', error);
+  });
+
+
 // set the dimensions and heatMapMargins of the graph
 const heatMapMargin = {top: 30, right: 30, bottom: 30, left: 230}
-
 
 // append the svg object to the body of the page
 const heatMapSvg = d3.select(".heat-map")
@@ -37,15 +53,15 @@ const myColor = d3.scaleLinear()
   .domain([1,100])
 
 //Read the data
-d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv").then( function(data) {
-
-  heatMapSvg.selectAll()
-      .data(data, function(d) {return d.group+':'+d.variable;})
-      .join("rect")
-      .attr("x", function(d) { return x(d.group) })
-      .attr("y", function(d) { return y(d.variable) })
-      .attr("width", x.bandwidth() )
-      .attr("height", y.bandwidth() )
-      .style("fill", function(d) { return myColor(d.value)} )
-
-})
+// d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv").then( function(data) {
+function runHeatmapFunction(csvData) {
+  heatMapSvg.selectAll("rect")
+    .data(csvData, function(d) { return d.group + ':' + d.variable; })
+    .join("rect")
+    .attr("x", function(d) { return x(d.group); })
+    .attr("y", function(d) { return y(d.variable); })
+    .attr("width", x.bandwidth())
+    .attr("height", y.bandwidth())
+    .style("fill", function(d) { return myColor(d.value); });
+}
+  
