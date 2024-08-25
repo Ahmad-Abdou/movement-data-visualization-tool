@@ -28,6 +28,13 @@ def get_horizontal_box_data():
    data = df.to_dict(orient="records")
    return jsonify(data)
 
+# Interactive heatmap plot data
+@app.route('/get_interactive_heatmap_data')
+def get_interactive_heatmap_data():
+   df = pd.read_csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv")
+   data = df.to_dict(orient="records")
+   return jsonify(data)
+
 # # Correlogram data
 # @app.route('/get_correlogram_data')
 # def get_correlogram_data():

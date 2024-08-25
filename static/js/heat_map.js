@@ -1,4 +1,4 @@
-// Fetching data from the
+// Fetching data loaded through flask backend
 fetch(heatmapData)
   .then(function(response) {
       if (!response.ok) {

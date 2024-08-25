@@ -1,3 +1,19 @@
+// Fetching data loaded through flask backend
+fetch(interactiveHeatmapData)
+  .then(function(response) {
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+  })
+  .then(function(data) {
+      // console.log(data);
+      runInteractiveHeatmapFunction(data);
+  })
+  .catch(function(error) {
+      console.error('There was a problem with the fetch operation:', error);
+  });
+
 // // set the dimensions and margins of the graph
 // var interactiveHeatMargin = {top: 20, right: 25, bottom: 30, left: 40},
 //   width = 450 - interactiveHeatMargin.left - interactiveHeatMargin.right,
@@ -18,11 +34,11 @@ var interactiveHeatSvg = d3.select(".interactive-heatmap")
     .attr("transform", `translate(${margin.left}, ${margin.top})`);
 
 //Read the data
-d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv").then(function(data) {
-
+// d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv").then(function(data) {
+function runInteractiveHeatmapFunction(csvData) {
   // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
-  const myGroups = Array.from(new Set(data.map(d => d.group)))
-  const myVars = Array.from(new Set(data.map(d => d.variable)))
+  const myGroups = Array.from(new Set(csvData.map(d => d.group)))
+  const myVars = Array.from(new Set(csvData.map(d => d.variable)))
 
   // Build X scales and axis:
   const x = d3.scaleBand()
@@ -85,7 +101,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/he
 
   // add the squares
   interactiveHeatSvg.selectAll()
-    .data(data, function(d) {return d.group+':'+d.variable;})
+    .data(csvData, function(d) {return d.group+':'+d.variable;})
     .join("rect")
       .attr("x", function(d) { return x(d.group) })
       .attr("y", function(d) { return y(d.variable) })
@@ -100,7 +116,7 @@ d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/he
     .on("mouseover", mouseover)
     .on("mousemove", mousemove)
     .on("mouseleave", mouseleave)
-})
+}
 
 // Add title to graph
 interactiveHeatSvg.append("text")
