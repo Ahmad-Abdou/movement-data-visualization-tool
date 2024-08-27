@@ -49,6 +49,9 @@ overflow: scroll;
    grid-area: tree;
 
 }
+.anime{
+   fill: green;
+}
 
 .map{
    grid-area: map;
