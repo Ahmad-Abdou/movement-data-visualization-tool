@@ -30,10 +30,10 @@ var horBoxSvg = d3.select(".horizontal-box-plot")
 
 // Read the data and compute summary statistics for each species
 // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv").then(function(data) {
-function runHorizontalBoxFunction(csvData) {
+function runHorizontalBoxFunction(fetchedData) {
   // Compute quartiles, median, inter quantile range, min, and max
   var sumstat = Array.from(
-    d3.group(csvData, d => d.Species),
+    d3.group(fetchedData, d => d.Species),
     ([key, values]) => {
       var q1 = d3.quantile(values.map(g => +g.Sepal_Length).sort(d3.ascending), 0.25);
       var median = d3.quantile(values.map(g => +g.Sepal_Length).sort(d3.ascending), 0.5);
@@ -52,7 +52,7 @@ function runHorizontalBoxFunction(csvData) {
   var y = d3.scaleBand()
     .range([horBoxplotheight, 0])
     .domain(["setosa", "versicolor", "virginica"])
-    .padding(.4);
+    .padding(.2);
   horBoxSvg.append("g")
     .call(d3.axisLeft(y).tickSize(0))
     .select(".domain").remove();
@@ -123,7 +123,7 @@ function runHorizontalBoxFunction(csvData) {
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
-    .style("font-size", "36px");
+    .style("font-size", "40px");
 
   // Functions to change the tooltip when user hovers/moves/leaves a cell
   var mouseover = function(d) {
@@ -144,7 +144,7 @@ function runHorizontalBoxFunction(csvData) {
   var jitterWidth = 150;
   horBoxSvg
     .selectAll("indPoints")
-    .data(csvData)
+    .data(fetchedData)
     .enter()
     .append("circle")
       .attr("cx", d => x(d.Sepal_Length))

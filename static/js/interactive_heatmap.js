@@ -35,10 +35,10 @@ var interactiveHeatSvg = d3.select(".interactive-heatmap")
 
 //Read the data
 // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv").then(function(data) {
-function runInteractiveHeatmapFunction(csvData) {
+function runInteractiveHeatmapFunction(fetchedData) {
   // Labels of row and columns -> unique identifier of the column called 'group' and 'variable'
-  const myGroups = Array.from(new Set(csvData.map(d => d.group)))
-  const myVars = Array.from(new Set(csvData.map(d => d.variable)))
+  const myGroups = Array.from(new Set(fetchedData.map(d => d.group)))
+  const myVars = Array.from(new Set(fetchedData.map(d => d.variable)))
 
   // Build X scales and axis:
   const x = d3.scaleBand()
@@ -101,7 +101,7 @@ function runInteractiveHeatmapFunction(csvData) {
 
   // add the squares
   interactiveHeatSvg.selectAll()
-    .data(csvData, function(d) {return d.group+':'+d.variable;})
+    .data(fetchedData, function(d) {return d.group+':'+d.variable;})
     .join("rect")
       .attr("x", function(d) { return x(d.group) })
       .attr("y", function(d) { return y(d.variable) })

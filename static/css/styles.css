@@ -47,6 +47,7 @@ overflow: scroll;
 }
 .tree{
    grid-area: tree;
+   text-align: center;
 
 }
 
@@ -73,11 +74,12 @@ overflow: scroll;
 .horizontal-box-plot {
   background-color: none;
   border: none;
-  border-radius: 5px;
-  padding: 15px;
+  /* border-radius: 5px; */
+  /* padding: 150px; */
   min-width: 100px;
   text-align: left;
   color: red;
+  font-size: 36px;
 }
 
 
@@ -87,7 +89,7 @@ overflow: scroll;
    border-radius: 10px;
    padding: 15px;
    min-width: 100px;
-   text-align: center;
+   text-align: left;
    color: green;
  }
 

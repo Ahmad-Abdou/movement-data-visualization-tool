@@ -51,10 +51,10 @@
   <script> const heatmapData = "{{ url_for('get_heatmap_data') }}"; </script>
   <script> const horizontalBoxData = "{{ url_for('get_horizontal_box_data') }}"; </script>
   <script> const interactiveHeatmapData = "{{ url_for('get_interactive_heatmap_data') }}"; </script>
+  <script> const foxTrajectoriesData = "{{ url_for('get_trajectories_data') }}"; </script>
   
 
   
-
   <!-- JS scripts for plots -->
   <script src="../static/js/global.js"></script>
   <script src="../static/js/index.js"></script>
@@ -69,9 +69,6 @@
   <script src="../static/js/trajectory.js"></script>
   <script src="../static/js/interactive_heatmap.js"></script>
 
-
-
-  <!-- <script src="{{ url_for('static', filename='js/heat_map.js') }}"></script> -->
 
 </body>
 
