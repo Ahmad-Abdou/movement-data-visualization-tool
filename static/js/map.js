@@ -1,5 +1,5 @@
 // Fetching data from the
-fetch(foxTrajectoriesData)
+fetch(taxiData)
   .then(function(response) {
       if (!response.ok) {
           throw new Error('Network response was not ok ' + response.statusText);
@@ -18,8 +18,8 @@ fetch(foxTrajectoriesData)
 
 function addPolygon(fetchedData) {
     // Settings lar and long with fetched data
-    const latitudes = Array.from(new Set(fetchedData.map(data => data.x)))
-    const longitudes = Array.from(new Set(fetchedData.map(data => data.y)))
+    const latitudes = Array.from(new Set(fetchedData.map(data => data.latitude)))
+    const longitudes = Array.from(new Set(fetchedData.map(data => data.longitude)))
     // Mapping lists of Xs with Ys.
     let selectedPoints = latitudes.map((lat, index) => {
         return [lat, longitudes[index]];
@@ -66,4 +66,9 @@ function addPolygon(fetchedData) {
     //     [1696.98327056273, -4913.38702864198]
     // ]).addTo(map);
     // polygon3.setStyle({fillColor: '#FF0000'})
+
+    // Polygon using 300 samples fetched from Flask (beijing taxi).
+    console.log(selectedPoints);
+    var polygon_beijing_taxi = L.polygon(selectedPoints).addTo(map);
+    polygon_beijing_taxi.setStyle({fillColor: '#FF0000'})
 }

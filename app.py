@@ -55,7 +55,14 @@ def get_trajectories_data():
    return jsonify(data)
 
 
-
+# (FOX TRAJECTORIES LOAD 100 SAMPLES) Trajectories Plot 
+@app.route('/get_beijin_taxi_data')
+def get_beijin_taxi_data():
+   df = pd.read_csv("taxi.csv")
+   first_300 = [i for i in range(300)]
+   df = df.iloc[first_300]
+   data = df.to_dict(orient="records")
+   return jsonify(data)
 
 
 
