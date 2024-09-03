@@ -15,7 +15,7 @@ fetch(horizontalBoxData)
   });
 
 // Set the dimensions and margins of the graph
-var hor_box_margin = {top: 150, right: 0, bottom: 250, left: 70},
+var hor_box_margin = {top: 150, right: 0, bottom: 250, left: 130},
     horBoxplotWidth = 1200 - hor_box_margin.left - hor_box_margin.right,
     horBoxplotheight = 1400 - hor_box_margin.top - hor_box_margin.bottom;
 
@@ -30,10 +30,10 @@ var horBoxSvg = d3.select(".horizontal-box-plot")
 
 // Read the data and compute summary statistics for each species
 // d3.csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/iris.csv").then(function(data) {
-function runHorizontalBoxFunction(csvData) {
+function runHorizontalBoxFunction(fetchedData) {
   // Compute quartiles, median, inter quantile range, min, and max
   var sumstat = Array.from(
-    d3.group(csvData, d => d.Species),
+    d3.group(fetchedData, d => d.Species),
     ([key, values]) => {
       var q1 = d3.quantile(values.map(g => +g.Sepal_Length).sort(d3.ascending), 0.25);
       var median = d3.quantile(values.map(g => +g.Sepal_Length).sort(d3.ascending), 0.5);
@@ -52,10 +52,12 @@ function runHorizontalBoxFunction(csvData) {
   var y = d3.scaleBand()
     .range([horBoxplotheight, 0])
     .domain(["setosa", "versicolor", "virginica"])
-    .padding(.4);
+    .padding(.2);
   horBoxSvg.append("g")
     .call(d3.axisLeft(y).tickSize(0))
+    .style("font-size", "28px")
     .select(".domain").remove();
+
 
   // Show the X scale
   var x = d3.scaleLinear()
@@ -63,13 +65,14 @@ function runHorizontalBoxFunction(csvData) {
     .range([0, horBoxplotWidth]);
   horBoxSvg.append("g")
     .attr("transform", "translate(0," + horBoxplotheight + ")")
-    .call(d3.axisBottom(x).ticks(5))
+    .style("font-size", "30px")
+    .call(d3.axisBottom(x).ticks(10))
     .select(".domain").remove();
 
   // Color scale
   var myColor = d3.scaleSequential()
     .interpolator(d3.interpolateInferno)
-    .domain([2, 7]); // original was 4 and 8
+    .domain([4, 8]); // original was 4 and 8
 
   // Add X axis label
   horBoxSvg.append("text")
@@ -123,7 +126,7 @@ function runHorizontalBoxFunction(csvData) {
     .append("div")
     .style("opacity", 0)
     .attr("class", "tooltip")
-    .style("font-size", "36px");
+    .style("font-size", "40px");
 
   // Functions to change the tooltip when user hovers/moves/leaves a cell
   var mouseover = function(d) {
@@ -144,7 +147,7 @@ function runHorizontalBoxFunction(csvData) {
   var jitterWidth = 150;
   horBoxSvg
     .selectAll("indPoints")
-    .data(csvData)
+    .data(fetchedData)
     .enter()
     .append("circle")
       .attr("cx", d => x(d.Sepal_Length))

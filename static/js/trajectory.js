@@ -1,6 +1,21 @@
+// Fetching data loaded through flask backend
+fetch(foxTrajectoriesData)
+  .then(function(response) {
+      if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+      }
+      return response.json();
+  })
+  .then(function(data) {
+      // console.log(data);
+      runTrajectoriesFunction(data);
+  })
+  .catch(function(error) {
+      console.error('There was a problem with the fetch operation:', error);
+  });
+
 // Set the dimensions and margins of the graph
 const trajectoryMargin = {top: 0, right: 0, bottom: 30, left: 80};
-
 
 // SVG dimensions
 var trajectoryWidth = 1800,
@@ -20,91 +35,110 @@ var line = d3.line()
 // Define a straight line generator without interpolation
 var lineStraight = d3.line();
 
-// Use the example datasets
-// var crazyPoints = [ [86, 20], [100, 100], [400, 100], [400, 500] ];  // original 
-var crazyPoints = [[22,45], [68,30], [30,25], [90,60], [86, 20], [100, 100], [400, 100], [400, 500],  [200,150], [80,100], [50,90], [300,600],
-                   [425,665], [680,750], [900,750], [1200,1000], [1200, 832], [1200, 556], [1200, 550], [1200, 400], 
-                   [1400,150], [1400,100], [1400,90], [1400,46],[1100,150], [850,100], [600,90], [680,46],[500,150], [600,100], [200,90], [50,46]]; 
 
-// To change the path shape, change the datum below.
-trajectorySvg.append("path")
-   .datum(crazyPoints)
-   .style("fill", "none")
-   .style("stroke-width", 2)
-   .attr("id", "basisPath")
-   .attr("d", line)
-   .attr("stroke", "gray")
-   .attr("stroke-dasharray", "10,10");
+function runTrajectoriesFunction(fetchedData) {
+    
+    // Settings lar and long with fetched data
+    // const latitudes = Array.from(new Set(fetchedData.map(data => data.x)))
+    // const longitudes = Array.from(new Set(fetchedData.map(data => data.y)))
 
-// Select the path element and calculate total length for animations
-var linePath = d3.select("#basisPath").node(),
-    totalLength = linePath.getTotalLength(),
-    totalDistance = 1500;
+    // Removing negatives and dividng by 10 to map into pixels
+    // const absLatitudes = Array.from(new Set(latitudes.map(lat => Math.abs(lat)/10)))
+    // const absLongitudes = Array.from(new Set(longitudes.map(lon => Math.abs(lon)/10)))
 
-// Function to return the point at a specific distance along the path
-var pointAtDistance = function(distance, path) {
-  // Get the point at the given distance
-  var length = distance / totalDistance * totalLength,
-      point = path.getPointAtLength(length);
-  
-  // Find the perpendicular vector at that point
-  var plusLength = length + 4 < totalLength ? length + 4 : totalLength,
-      minusLength = length > 4 ? length - 4 : 0,
-      pPlus = path.getPointAtLength(plusLength),
-      pMinus = path.getPointAtLength(minusLength),
-      dX = pPlus.x - pMinus.x,
-      dY = pPlus.y - pMinus.y,
-      D = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+    // Mapping lists of Xs with Ys.
+    // let crazyPoints = absLatitudes.map((lat, index) => {
+    //     return [lat, absLongitudes[index]];
+    //   });
 
-  point.perpVector = { x: dY / D , y: -dX / D };
-  return point;
-}
+    var crazyPoints = [[22,45], [68,30], [30,25], [90,60], [86, 20], [100, 100], [400, 100], [400, 500],  [200,150], [80,100], [50,90], [300,600],
+                       [425,665], [680,750], [900,750], [1200,1000], [1200, 832], [1200, 556], [1200, 550], [1200, 400], 
+                       [1400,150], [1400,100], [1400,90], [1400,46],[1100,150], [850,100], [600,90], [680,46],[500,150], [600,100], [200,90], [50,46]]; 
+    
+    // Use the example datasets
+    // var crazyPoints = [ [86, 20], [100, 100], [400, 100], [400, 500] ];  // original 
+   
+    // To change the path shape, change the datum below.
+    trajectorySvg.append("path")
+    .datum(crazyPoints)
+    .style("fill", "none")
+    .style("stroke-width", 2)
+    .attr("id", "basisPath")
+    .attr("d", line)
+    .attr("stroke", "gray")
+    .attr("stroke-dasharray", "10,10");
 
-// Function to return the coordinates of a point to plot along the path
-var plotCoords = function(plotPoint, path) {
-  var point = pointAtDistance(plotPoint[0], path);
-  return [point.x + point.perpVector.x * plotPoint[1] ,
-          point.y + point.perpVector.y * plotPoint[1]];
-}
+    // Select the path element and calculate total length for animations
+    var linePath = d3.select("#basisPath").node(),
+        totalLength = linePath.getTotalLength(),
+        totalDistance = 1500;
 
-// Example datasets
-var plotPoints = d3.range(1500).map(function(d){ 
-    return [d, 10 * (~~(d / 100) % 5)]; 
-});
+    // Function to return the point at a specific distance along the path
+    var pointAtDistance = function(distance, path) {
+    // Get the point at the given distance
+    var length = distance / totalDistance * totalLength,
+        point = path.getPointAtLength(length);
+    
+    // Find the perpendicular vector at that point
+    var plusLength = length + 4 < totalLength ? length + 4 : totalLength,
+        minusLength = length > 4 ? length - 4 : 0,
+        pPlus = path.getPointAtLength(plusLength),
+        pMinus = path.getPointAtLength(minusLength),
+        dX = pPlus.x - pMinus.x,
+        dY = pPlus.y - pMinus.y,
+        D = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
 
-var axisLines = d3.range(0, 50, 10).map(function(h){ 
-    return d3.range(100).map(function(d){ 
-        return [d * 15, h]; 
-    }); 
-});
+    point.perpVector = { x: dY / D , y: -dX / D };
+    return point;
+    }
 
-// Apply the transformation to the dataset (and the axis lines)
-var axisLinesData = axisLines.map(function(v) { 
-    return v.map(function(d) {
+    // Function to return the coordinates of a point to plot along the path
+    var plotCoords = function(plotPoint, path) {
+    var point = pointAtDistance(plotPoint[0], path);
+    return [point.x + point.perpVector.x * plotPoint[1] ,
+            point.y + point.perpVector.y * plotPoint[1]];
+    }
+
+    // Example datasets
+    var plotPoints = d3.range(1500).map(function(d){ 
+        return [d, 10 * (~~(d / 100) % 5)]; 
+    });
+
+    var axisLines = d3.range(0, 50, 10).map(function(h){ 
+        return d3.range(100).map(function(d){ 
+            return [d * 15, h]; 
+        }); 
+    });
+
+    // Apply the transformation to the dataset (and the axis lines)
+    var axisLinesData = axisLines.map(function(v) { 
+        return v.map(function(d) {
+            return plotCoords(d, linePath); 
+        }); 
+    });
+
+    var trajectoryData = plotPoints.map(function(d) {
         return plotCoords(d, linePath); 
-    }); 
-});
+    });
 
-var trajectoryData = plotPoints.map(function(d) {
-    return plotCoords(d, linePath); 
-});
+    // Draw the parallel lines with axisLinesData
+    trajectorySvg.selectAll(".axis-line")
+    .data(axisLinesData)
+    .enter().append("path")
+    .style("fill", "none")
+    .style("stroke-width", 1)
+    .attr("class", "line")
+    .attr("stroke", "#ccc")
+    .attr("d", lineStraight);
 
-// Draw the parallel lines with axisLinesData
-trajectorySvg.selectAll(".axis-line")
-   .data(axisLinesData)
-   .enter().append("path")
-   .style("fill", "none")
-   .style("stroke-width", 1)
-   .attr("class", "line")
-   .attr("stroke", "#ccc")
-   .attr("d", lineStraight);
+    // Draw the orange curve defined in plotPoints
+    trajectorySvg.append("path")
+    .datum(trajectoryData)
+    .style("fill", "none")
+    .style("stroke-width", 3)
+    .attr("class", "line")
+    .attr("stroke", "orange")
+    .attr("opacity", 0.8)
+    .attr("d", lineStraight);
+}
 
-// Draw the orange curve defined in plotPoints
-trajectorySvg.append("path")
-   .datum(trajectoryData)
-   .style("fill", "none")
-   .style("stroke-width", 3)
-   .attr("class", "line")
-   .attr("stroke", "orange")
-   .attr("opacity", 0.8)
-   .attr("d", lineStraight);

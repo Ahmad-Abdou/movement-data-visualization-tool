@@ -1,5 +1,7 @@
 # Load the RData file
-load("c:\\Users\\ahmad\\OneDrive\\Desktop\\thesis\\fox_trajectories.RData")
+# load("c:\\Users\\ahmad\\OneDrive\\Desktop\\thesis\\fox_trajectories.RData")
+load("df_cyclones.Rdata")
+str(obj)
 
 # Check if 'trajectories' is a list
 object_name <- "trajectories"
@@ -30,8 +32,8 @@ if (exists(object_name)) {
     combined_df <- do.call(rbind, data_frames)
     
     # Write the combined data frame to a single CSV file
-    write.csv(combined_df, file = "combined_trajectories.csv", row.names = FALSE)
-    cat("All data frames successfully combined and written to combined_trajectories.csv.\n")
+    write.csv(combined_df, file = "df_cyclones.csv", row.names = FALSE)
+    cat("All data frames successfully combined and written to df_cyclones.csv.\n")
   } else {
     cat("The object is not a list.\n")
   }

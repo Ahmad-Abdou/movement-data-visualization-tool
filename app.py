@@ -21,6 +21,14 @@ def get_heatmap_data():
    data = df.to_dict(orient="records")
    return jsonify(data)
 
+# Heatmap data
+# @app.route('/get_heatmap_data')
+# def get_heatmap_data():
+#    df = pd.read_csv("cyclone_trajectories.csv")
+#    data = df.to_dict(orient="records")
+#    return jsonify(data)
+
+
 # Horizontal box plot data
 @app.route('/get_horizontal_box_data')
 def get_horizontal_box_data():
@@ -28,12 +36,50 @@ def get_horizontal_box_data():
    data = df.to_dict(orient="records")
    return jsonify(data)
 
-# Interactive heatmap plot data
+# (FOX TRAJECTORIES LOAD 1000 SAMPLES) Interactive heatmap 
+# @app.route('/get_interactive_heatmap_data')
+# def get_interactive_heatmap_data():
+#    df = pd.read_csv("fox_trajectories.csv")
+#    random_indeces = np.random.choice(df.shape[0], size=1000, replace=False)
+#    df = df.iloc[random_indeces]
+#    data = df.to_dict(orient="records")
+#    return jsonify(data)
+
+# # Interactive heatmap plot data
 @app.route('/get_interactive_heatmap_data')
 def get_interactive_heatmap_data():
    df = pd.read_csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv")
    data = df.to_dict(orient="records")
    return jsonify(data)
+
+# (FOX TRAJECTORIES LOAD 100 SAMPLES) Trajectories Plot 
+@app.route('/get_trajectories_data')
+def get_trajectories_data():
+   df = pd.read_csv("static/data/fox_trajectories.csv")
+   # random_indeces = np.random.choice(df.shape[0], size=1000, replace=False)
+   random_indeces = [i for i in range(1000)]
+   df = df.iloc[random_indeces]
+   data = df.to_dict(orient="records")
+   return jsonify(data)
+
+
+# (FOX TRAJECTORIES LOAD 100 SAMPLES) Trajectories Plot 
+@app.route('/get_beijin_taxi_data')
+def get_beijin_taxi_data():
+   df = pd.read_csv("static/test_data/taxi.csv")
+   first_300 = [i for i in range(300)]
+   df = df.iloc[first_300]
+   data = df.to_dict(orient="records")
+   return jsonify(data)
+
+
+# Trajectories Plot 
+@app.route('/get_df_foxes_data')
+def get_df_foxes_data():
+   df = pd.read_csv("static/data/df_foxes.csv")
+   data = df.to_dict(orient="records")
+   return jsonify(data)
+
 
 # # Correlogram data
 # @app.route('/get_correlogram_data')

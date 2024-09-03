@@ -137,7 +137,7 @@ const allRects = rectGroup.selectAll('rect')
     .attr('rx', 10)
     .attr('ry', 10);
   
-    const file = d3.csv('../static/data/username.csv').then(data => {
+    const file = d3.csv('../static/test_data/username.csv').then(data => {
       rectGroup.selectAll('text')
         .data(data)
         .join('text')
