@@ -46,6 +46,16 @@ def get_horizontal_box_data():
 #    return jsonify(data)
 
 # # Interactive heatmap plot data
+# (FOX TRAJECTORIES LOAD 1000 SAMPLES) Interactive heatmap 
+# @app.route('/get_interactive_heatmap_data')
+# def get_interactive_heatmap_data():
+#    df = pd.read_csv("fox_trajectories.csv")
+#    random_indeces = np.random.choice(df.shape[0], size=1000, replace=False)
+#    df = df.iloc[random_indeces]
+#    data = df.to_dict(orient="records")
+#    return jsonify(data)
+
+# # Interactive heatmap plot data
 @app.route('/get_interactive_heatmap_data')
 def get_interactive_heatmap_data():
    df = pd.read_csv("https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv")

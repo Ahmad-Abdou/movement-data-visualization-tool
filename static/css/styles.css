@@ -48,6 +48,7 @@ overflow: scroll;
 .tree{
    grid-area: tree;
    text-align: center;
+   text-align: center;
 
 }
 
@@ -76,6 +77,8 @@ overflow: scroll;
   border: none;
   /* border-radius: 5px; */
   /* padding: 150px; */
+  /* border-radius: 5px; */
+  /* padding: 150px; */
   min-width: 100px;
   text-align: left;
   color: black;
@@ -89,6 +92,7 @@ overflow: scroll;
    border-radius: 10px;
    padding: 15px;
    min-width: 100px;
+   text-align: left;
    text-align: left;
    color: green;
  }
