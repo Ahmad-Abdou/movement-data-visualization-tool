@@ -66,50 +66,55 @@ tree_sub_lines.forEach((shape,index)=>{
 })
 
 let tree_lables = [
-    {text: "Geometric", postion:[centered_circle +offset, tree_height - offset]},
-    {text: "Kinematic", postion:[centered_circle - offset, tree_height- offset]},
+    {text: "Geometric", position:[centered_circle +offset, tree_height - offset]},
+    {text: "Kinematic", position:[centered_circle - offset, tree_height- offset]},
 ]
 
-tree_lables.forEach((lable)=>{
+tree_lables.forEach((label, i) => {
     tree_group.append('rect')
-    .attr('width',' 70')
-    .attr('height',' 45')
-    .attr('x', lable.postion[0])
-    .attr('y' , lable.postion[1])
-    .attr('transform',`translate(-35, 0)`)
-    .attr('fill', 'none')
-    .attr('stroke', 'black')
+        .attr('id', i)
+        .attr('width', '70')
+        .attr('height', '45')
+        .attr('x', label.position[0])
+        .attr('y', label.position[1])
+        .attr('transform', `translate(-35, 0)`)
+        .attr('fill', 'transparent')
+        .attr('stroke', 'black')
+        .on("click", function () {
+            const currentColor = d3.select(this).attr('fill')
+            d3.select(this)
+            .attr('fill',  currentColor === 'white'? ' #00A86B':'white')
+        });
 
     tree_group.append('text')
-    .attr('x', lable.postion[0] )
-    .attr('y', lable.postion[1] + 25 )
-    .text(lable.text)
-    .attr('font-size', '12')
-    .attr('text-anchor', 'middle')
-    
-})
+        .attr('x', label.position[0])
+        .attr('y', label.position[1] + 25)
+        .text(label.text)
+        .attr('font-size', '12')
+        .attr('text-anchor', 'middle')
+});
 
 let tree_sub_labels =[
-    {text: "Speed", postion:[centered_circle - offset - margin.right ,tree_height]},
-    {text: "Accelration", postion:[centered_circle - offset + margin.right,tree_height]},
+    {text: "Speed", position:[centered_circle - offset - margin.right ,tree_height]},
+    {text: "Accelration", position:[centered_circle - offset + margin.right,tree_height]},
 
-    {text: "Curvature", postion:[centered_circle + offset - margin.right,tree_height]},
-    {text: "Indentation", postion:[centered_circle + offset + margin.right,tree_height]},
+    {text: "Curvature", position:[centered_circle + offset - margin.right,tree_height]},
+    {text: "Indentation", position:[centered_circle + offset + margin.right,tree_height]},
 ]
 
 tree_sub_labels.forEach((lable)=>{
     tree_group.append('rect')
     .attr('width',' 70')
     .attr('height',' 45')
-    .attr('x', lable.postion[0])
-    .attr('y' , lable.postion[1])
+    .attr('x', lable.position[0])
+    .attr('y' , lable.position[1])
     .attr('transform',`translate(-35, 30)`)
     .attr('fill', 'none')
     .attr('stroke', 'black')
 
     tree_group.append('text')
-    .attr('x', lable.postion[0])
-    .attr('y', lable.postion[1] + 55)
+    .attr('x', lable.position[0])
+    .attr('y', lable.position[1] + 55)
     .text(lable.text)
     .attr('font-size', '12')
     .attr('text-anchor', 'middle')
