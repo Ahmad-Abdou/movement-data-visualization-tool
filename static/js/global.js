@@ -1,6 +1,6 @@
-const SVGWIDTH = 750;
-const SVGHEIGHT = 750;
+const SVGWIDTH = 800;
+const SVGHEIGHT = 800;
 const xPadding = 40
 const yPadding = 55
 
-const margin = {left: 40, right: 40, top:40, bottom:40};
+const margin = {left: 50, right: 50, top:50, bottom:50};
