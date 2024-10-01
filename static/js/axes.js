@@ -30,7 +30,7 @@ const axesLines = [
 
 
 const axesLabels = [
-  {text: '0', position:[0.22, 0.22]},
+  {text:'0', position:[0.22, 0.22]},
   {text:'1', position:[0.15, 0.85]},
   {text:"2", position:[0.85, 0.15 ]},
   {text:"3" , position:[0.7, 0.7]}
@@ -47,6 +47,8 @@ axesLines.forEach((shape, index)=>{
     .attr('stroke-width', 2)
     .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none')
 })
+
+
 
 axesLabels.forEach((label)=>{
   AxesSvg.append('text')
@@ -159,7 +161,7 @@ const rectGroup = AxesSvg.append('g')
         .attr('font-size', '12px')
         .selectAll('tspan')
         .data([
-          // `Fox ID: ${d.fox_id.toString().slice(0, 4)}`,
+          `Fox ID: ${d.ID.toString()}`,
           // `Sex: ${d.sex}`,
           `X: ${d.x.toString()}`,
           `Y: ${d.y.toString()}`,
