@@ -29,7 +29,7 @@ overflow: scroll;
  "heat  axes "
  ;
  grid-template-columns: repeat(2, 1fr);
- grid-template-rows: repeat(2, 700px);
+ grid-template-rows: repeat(2, 900px);
  justify-content: center;
  position: relative;
  top: 50px;
@@ -55,7 +55,7 @@ overflow: scroll;
 
 .map{
    grid-area: map;
-   height: 90%;
+   height: 60%;
    width: 100%;
 }
 

@@ -1,19 +1,51 @@
-var map = L.map('map').setView([51.505, -0.09], 13);
+let mapSVG = d3.select('.map')
+    .append('svg')
+    .attr('width', SVGWIDTH)
+    .attr('height', SVGHEIGHT +200)
 
-L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-}).addTo(map);
+// Append a rect to fill the entire SVG and color the background
+mapSVG.append('rect')
+    .attr('width', SVGWIDTH)
+    .attr('height', SVGHEIGHT)
+    .attr('fill', 'white');  // Light grey background
+    
+// Load and process CSV data
+d3.csv('../static/data/football_sampe_300.csv').then((data) => {
+    // Parse x and y values
+    data.forEach(d => {
+        d.x = +d.x;
+        d.y = +d.y;
+    });
 
+    // Create scales
+    const xScale = d3.scaleLinear()
+        .domain(d3.extent(data, d => d.x))
+        .range([margin.left, SVGWIDTH - margin.right]);
 
-var popup = L.popup();
+    const yScale = d3.scaleLinear()
+        .domain(d3.extent(data, d => d.y))
+        .range([SVGHEIGHT - margin.bottom, margin.top]);
 
-function onMapClick(e) {
-    popup
-        .setLatLng(e.latlng)
-        // .setContent("You clicked the map at " + e.latlng.toString())                                 
-        // .openOn(map);
-        L.marker(e.latlng).bindPopup(`${e.latlng}`).addTo(map)
-}
+    // Create line generator
+    const lineGenerator = d3.line()
+        .x(d => xScale(d.x))
+        .y(d => yScale(d.y));
 
-map.on('click', onMapClick);                                               
+    // Append the path
+    mapSVG.append('path')
+        .datum(data)
+        .attr('d', lineGenerator)
+        .attr('fill', 'none')
+        .attr('stroke', 'black')
+        .attr('stroke-width', 2);
+
+    // Add points
+    mapSVG.selectAll('circle')
+        .data(data)
+        .enter()
+        .append('circle')
+        .attr('cx', d => xScale(d.x))
+        .attr('cy', d => yScale(d.y))
+        .attr('r', 3)
+        .attr('fill', 'red');
+});
