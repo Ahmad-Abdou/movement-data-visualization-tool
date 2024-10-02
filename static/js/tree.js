@@ -1,6 +1,6 @@
 const treeSVG = d3.select('.tree')
 .append('svg')
-.attr('width', SVGWIDTH /2)
+.attr('width', SVGWIDTH )
 .attr('height', SVGHEIGHT /2)
 
 
@@ -10,9 +10,11 @@ let tree_height = treeSVG.attr('height') -margin.top - margin.bottom
 const centered_circle = (tree_width /2) + margin.right
 let tree_group = treeSVG.append('g')
 
+const tree_box_width = 70
+const tree_box_height = 45
 tree_group.append('rect')
-.attr('width',' 70')
-.attr('height',' 45')
+.attr('width',tree_box_width)
+.attr('height',tree_box_height)
 .attr('x', centered_circle - 35)
 .attr('y' , 50)
 .attr('fill', 'none')
@@ -73,17 +75,24 @@ let tree_lables = [
 tree_lables.forEach((label, i) => {
     tree_group.append('rect')
         .attr('id', i)
-        .attr('width', '70')
-        .attr('height', '45')
+        .attr('width', tree_box_width)
+        .attr('height', tree_box_height)
         .attr('x', label.position[0])
         .attr('y', label.position[1])
         .attr('transform', `translate(-35, 0)`)
         .attr('fill', 'transparent')
         .attr('stroke', 'black')
         .on("click", function () {
-            const currentColor = d3.select(this).attr('fill')
-            d3.select(this)
-            .attr('fill',  currentColor === 'white'? ' #00A86B':'white')
+            const selecteD_box = d3.select(this)
+            const currentColor = selecteD_box.attr('fill')
+            if(currentColor === "white"){
+                selecteD_box
+                .attr('fill', '#00A86B')
+            } else {
+                selecteD_box
+                .attr('fill', 'white')
+            }
+
         });
 
     tree_group.append('text')
@@ -104,8 +113,8 @@ let tree_sub_labels =[
 
 tree_sub_labels.forEach((lable)=>{
     tree_group.append('rect')
-    .attr('width',' 70')
-    .attr('height',' 45')
+    .attr('width',tree_box_width)
+    .attr('height',tree_box_height)
     .attr('x', lable.position[0])
     .attr('y' , lable.position[1])
     .attr('transform',`translate(-35, 30)`)
