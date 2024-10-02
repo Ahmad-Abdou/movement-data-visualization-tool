@@ -12,6 +12,7 @@ let xScale = d3.scaleLinear()
 
 let yScale = d3.scaleLinear().domain([0,1]).range([axes_height, 0])
 
+
 let xAxis = d3.axisBottom(xScale)
 let gx = AxesSvg.append('g').attr('transform', `translate(${margin.left},${axes_height + margin.top})`)
 xAxis(gx)
@@ -79,8 +80,8 @@ const colorScale = d3.scaleOrdinal()
 .range(['#1f77b4', '#ff7f0e']);
 let colorsList = []
 
-const file = d3.csv('../static/data/modified_fox.csv').then(data => {
-
+const file = d3.csv('../static/data/fox_decision_score.csv').then(data => {
+  
   data.forEach((d)=>{
     d.x = +d.x;
     d.y = +d.y
@@ -116,23 +117,25 @@ allPlots.each((d,i,n)=>{
 const rectGroup = AxesSvg.append('g')
   .attr('id', 'rectangles');
 
-  // const padding = 20;
-  // const rectWidth = 75;
-
-    // const allRects = rectGroup.selectAll('rect')
-    // .data(data)
-    // .join('rect')
-    // .attr('height', 20)
-    // .attr('y', SVGHEIGHT - 20)
-    // .attr('x', (d, i) => i * (rectWidth + padding) + margin.left - 25)
-    // .transition()
-    // .duration(2000)
-    // .attr('width', rectWidth)
-    // .attr('fill', (d, i) => colorsList[i])
-
-
+      allPlots.on('click', function(event) {
+        const selected_circle = d3.select(this);
+        const currentColor = selected_circle.attr('fill');
+        
+        if (currentColor === 'blue') {
+            selected_circle.attr('fill', 'red')
+                           .attr('r', 3);
+        } else {
+            selected_circle.attr('fill', 'blue')
+                           .attr('r', 8);
+        }
+        id = event.target.__data__.ID;
+        get_id(id);
+    });
 
       allPlots.on('mouseover', function () {
+        d3.select(this)
+        .attr('r' , 10)
+        
         AxesSvg.append('rect')
           .attr('id', 'tooltip2')
           .style('pointer-events', 'none');
@@ -141,34 +144,30 @@ const rectGroup = AxesSvg.append('g')
           .attr('id', 'tooltip1')
           .style('pointer-events', 'none');
         
-      }).on('mousemove', function (event,d) {
+      })
+      .on('mousemove', function (event,d) {
         const [x, y] = d3.pointer(event);
       
         AxesSvg.select('#tooltip2')
           .attr('width', 120)
-          .attr('height', 120)
-          .attr('x', x - 20)
-          .attr('y', y - 50)
+          .attr('height', 90)
+          .attr('x', x - 20 )
+          .attr('y', y - 100)
           .attr('fill', 'rgba(230, 224, 124, 0.7)')
           .attr('rx', 10)
           .attr('ry', 10)
       
         AxesSvg.select('#tooltip1')
-        .attr('x', x + 5)
-        .attr('y', y - 25)
+        .attr('x', x )
+        .attr('y', y - 65)
         .attr('text-anchor', 'middle')
         .attr('fill', 'black')
         .attr('font-size', '12px')
         .selectAll('tspan')
         .data([
           `Fox ID: ${d.ID.toString()}`,
-          // `Sex: ${d.sex}`,
           `X: ${d.x.toString()}`,
           `Y: ${d.y.toString()}`,
-          // `Time: ${d.time.toString().slice(0, 4)}`,
-          // `Displacement Time: ${d.displacementTime.toString().slice(0, 4)}`,
-          // `Polar: ${d.polar.toString().slice(0, 4)}`,
-          // `Displacement: ${d.displacement.toString().slice(0, 4)}`
         ])
         .join('tspan')
         .attr('x', x + 5)
@@ -178,6 +177,7 @@ const rectGroup = AxesSvg.append('g')
         .style("display", "block");  // Ensure the tooltip is visible
         
       }).on('mouseout', function () {
+        d3.select(this).attr('r', 4 )
         AxesSvg.select('#tooltip1').remove();
         AxesSvg.select('#tooltip2').remove();
       });

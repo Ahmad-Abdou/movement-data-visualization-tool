@@ -29,7 +29,7 @@ overflow: scroll;
  "heat  axes "
  ;
  grid-template-columns: repeat(2, 1fr);
- grid-template-rows: repeat(2, 900px);
+ grid-template-rows: repeat(2, 800px);
  justify-content: center;
  position: relative;
  top: 50px;
