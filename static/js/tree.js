@@ -1,7 +1,7 @@
 const treeSVG = d3.select('.tree')
 .append('svg')
 .attr('width', SVGWIDTH )
-.attr('height', SVGHEIGHT /2)
+.attr('height', (SVGHEIGHT /2 + 100) )
 
 
 let tree_width = treeSVG.attr('width') - margin.left - margin.right
