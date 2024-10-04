@@ -1,5 +1,5 @@
 # Load the RData file
-load("static/data/df_football.Rdata")
+load("static/data/fox_trajectories.RData")
 
 # List all objects in the environment after loading
 objects <- ls()

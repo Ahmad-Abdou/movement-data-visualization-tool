@@ -57,6 +57,7 @@ print("\nOn Test Data:")
 evaluate_print(clf_name, y_test, y_test_scores)
 
 # visualize the results
+print(X_train)
 visualize(clf_name, X_train, y_train, X_test, y_test, y_train_pred,
             y_test_pred, show_figure=True, save_figure=False)
 

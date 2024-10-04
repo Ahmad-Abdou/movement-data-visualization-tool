@@ -65,10 +65,15 @@ def get_interactive_heatmap_data():
 # (FOX TRAJECTORIES LOAD 100 SAMPLES) Trajectories Plot 
 @app.route('/get_trajectories_data')
 def get_trajectories_data():
-   df = pd.read_csv("static/data/fox_trajectories.csv")
+   # df = pd.read_csv("static/data/fox_trajectories.csv")
+
+   df = pd.read_csv("static/data/modified_fox.csv")
+   
    # random_indeces = np.random.choice(df.shape[0], size=1000, replace=False)
-   random_indeces = [i for i in range(1000)]
-   df = df.iloc[random_indeces]
+   # random_indeces = [i for i in range(1000)]
+   # df = df.iloc[random_indeces]
+   df = df[["x","y"]]
+   print(df)
    data = df.to_dict(orient="records")
    return jsonify(data)
 

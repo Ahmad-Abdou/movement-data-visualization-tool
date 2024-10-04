@@ -39,21 +39,21 @@ var lineStraight = d3.line();
 function runTrajectoriesFunction(fetchedData) {
     
     // Settings lar and long with fetched data
-    // const latitudes = Array.from(new Set(fetchedData.map(data => data.x)))
-    // const longitudes = Array.from(new Set(fetchedData.map(data => data.y)))
+    const latitudes = Array.from(new Set(fetchedData.map(data => data.x)))
+    const longitudes = Array.from(new Set(fetchedData.map(data => data.y)))
 
     // Removing negatives and dividng by 10 to map into pixels
     // const absLatitudes = Array.from(new Set(latitudes.map(lat => Math.abs(lat)/10)))
     // const absLongitudes = Array.from(new Set(longitudes.map(lon => Math.abs(lon)/10)))
 
     // Mapping lists of Xs with Ys.
-    // let crazyPoints = absLatitudes.map((lat, index) => {
-    //     return [lat, absLongitudes[index]];
-    //   });
+    let crazyPoints = latitudes.map((lat, index) => {
+        return [lat, longitudes[index]];
+      });
 
-    var crazyPoints = [[22,45], [68,30], [30,25], [90,60], [86, 20], [100, 100], [400, 100], [400, 500],  [200,150], [80,100], [50,90], [300,600],
-                       [425,665], [680,750], [900,750], [1200,1000], [1200, 832], [1200, 556], [1200, 550], [1200, 400], 
-                       [1400,150], [1400,100], [1400,90], [1400,46],[1100,150], [850,100], [600,90], [680,46],[500,150], [600,100], [200,90], [50,46]]; 
+    // var crazyPoints = [[22,45], [68,30], [30,25], [90,60], [86, 20], [100, 100], [400, 100], [400, 500],  [200,150], [80,100], [50,90], [300,600],
+    //                    [425,665], [680,750], [900,750], [1200,1000], [1200, 832], [1200, 556], [1200, 550], [1200, 400], 
+    //                    [1400,150], [1400,100], [1400,90], [1400,46],[1100,150], [850,100], [600,90], [680,46],[500,150], [600,100], [200,90], [50,46]]; 
     
     // Use the example datasets
     // var crazyPoints = [ [86, 20], [100, 100], [400, 100], [400, 500] ];  // original 
