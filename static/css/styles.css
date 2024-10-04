@@ -25,50 +25,73 @@ height: 100vh;
 overflow: scroll;
  display: grid;
  grid-template-areas: 
- " top-left map"
- "heat  axes "
+ " top-left map1 map2"
+ "heat  axes bar-chart"
  ;
- grid-template-columns: repeat(2, 1fr);
- grid-template-rows: repeat(2, 800px);
+ grid-template-columns: 1fr 500px 500px;
+ grid-template-rows: 400px 450px;
  justify-content: center;
  position: relative;
- top: 50px;
- gap: 0px;
+ 
 }
 
+.controller{
+   width: 95%;
+   height: 50px;
+   background-color: rgb(194, 177, 177);
+   position: relative;
+   margin-right: 20px;
+}
 .top-left{
    grid-area: top-left;
    display: grid;
    grid-template-areas:
-   "tree box"
+   "tree"
    ;
-   grid-template-columns: 1fr 1fr;
+   grid-template-columns: 1fr;
    grid-template-rows: 1fr;
 }
 .tree{
    grid-area: tree;
 
 }
+.bar-chart{
+   grid-area: bar-chart;
+   
+
+}
 .anime{
    fill: green;
 }
 
-.map{
-   grid-area: map;
+#map1{
+   grid-area: map1;
    height: 60%;
    width: 100%;
+   position: relative;
+   bottom: 60px;
 }
 
+#map2{
+   grid-area: map2;
+   height: 60%;
+   width: 100%;
+   position: relative;
+   right: 10px;
+   bottom: 60px;
+}
 .box{
    grid-area: box;
 
 }
 .axes{
    grid-area: axes;
-   width: 100%;
+   width: 95%;
+   margin-right: 20px;
 }
 .heat-map{
    grid-area: heat;
    width: 100%;
+   
 }
 

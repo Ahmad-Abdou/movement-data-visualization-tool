@@ -117,21 +117,63 @@ allPlots.each((d,i,n)=>{
 const rectGroup = AxesSvg.append('g')
   .attr('id', 'rectangles');
 
-      allPlots.on('click', function(event) {
-        const selected_circle = d3.select(this);
-        const currentColor = selected_circle.attr('fill');
-        
-        if (currentColor === 'blue') {
-            selected_circle.attr('fill', 'red')
-                           .attr('r', 3);
-        } else {
-            selected_circle.attr('fill', 'blue')
-                           .attr('r', 8);
-        }
-        id = event.target.__data__.ID;
-        get_id(id);
-    });
-
+  let previouslySelectedBlue = null;
+  let previouslySelectedGreen = null;
+  
+  allPlots.on('click', function(event) {
+      const selected_circle = d3.select(this);
+      
+      if (!isChecked) {
+          // Reset previous blue selection if clicking a different circle
+          if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
+              previouslySelectedBlue
+                  .attr('fill', 'red')
+                  .attr('r', 3);
+          }
+          
+          // If clicking the same blue circle, reset it
+          if (previouslySelectedBlue === selected_circle) {
+              selected_circle
+                  .attr('fill', 'red')
+                  .attr('r', 3);
+              previouslySelectedBlue = null;
+          } else {
+              // Select the new circle as blue
+              selected_circle
+                  .attr('fill', 'blue')
+                  .attr('r', 8);
+              previouslySelectedBlue = selected_circle;
+          }
+      } else {
+          // Reset previous green selection if clicking a different circle
+          if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
+              previouslySelectedGreen
+                  .attr('fill', 'red')
+                  .attr('r', 3);
+          }
+          
+          // If clicking the same green circle, reset it
+          if (previouslySelectedGreen === selected_circle) {
+              selected_circle
+                  .attr('fill', 'red')
+                  .attr('r', 3);
+              previouslySelectedGreen = null;
+          } else {
+              // Select the new circle as green
+              selected_circle
+                  .attr('fill', 'green')
+                  .attr('r', 8);
+              previouslySelectedGreen = selected_circle;
+          }
+      }
+  
+      const id = event.target.__data__.ID;
+      if (!isChecked) {
+          get_id(id);
+      } else {
+          get_id2(id);
+      }
+  });
       allPlots.on('mouseover', function () {
         d3.select(this)
         .attr('r' , 10)
