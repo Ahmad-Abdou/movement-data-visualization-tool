@@ -11,27 +11,35 @@
 </head>
 <body>
     <div class="container">
-      <div class="top-left">
         <div class="tree"></div>
-        <!-- <div class="box"></div> -->
+
+      <div class="map-container">
+        <div id="trajectory">
+          <div class="map" id="map1"></div>
+          <div class="map" id="map2"></div>
+        </div>
+
+        <div class="bar-chart" id="#bar-chart"></div>
       </div>
-      <div class="map" id="map1"></div>
-      <div class="map" id="map2"></div>
-      
+
+      <div class="heat-map"></div>
+
       <div class="axes">
         <div class="controller">
           <input id="checkbox_1" class="right_check" type="checkbox">
           <label for="checkbox_1">Right</label>
+          <button id="toggle-btn" class="toggle-btn">Show Trajectories</button>
         </div> 
       </div>
-      <div class="bar-chart"></div>
-      <div class="heat-map">
+      
+      
       </div>
     </div>
   
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="../static/js/global.js"></script>
+  <script src="../static/js/controller.js"></script>
   <script src="../static/js/index.js"></script>
   <script src="../static/js/axes.js"></script>
   <script src="../static/js/line.js"></script>
@@ -39,6 +47,7 @@
   <script src="../static/js/heat_map.js"></script>
   <script src="../static/js/tree.js"></script>
   <script src="../static/js/bar-chart.js"></script>
+  
   <!-- <script src="../static/js/box_plot.js"></script> -->
 </body>
 </html>

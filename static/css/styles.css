@@ -19,46 +19,47 @@ body{
 
 /* Set core body defaults */
 .container {
-
 width: 100%;
 height: 100vh;
 overflow: scroll;
  display: grid;
- grid-template-areas: 
- " top-left map1 map2"
- "heat  axes bar-chart"
- ;
- grid-template-columns: 1fr 500px 500px;
- grid-template-rows: 400px 450px;
+ grid-template-areas: "tree map-container"
+                        "heat axes";
+ grid-template-columns: 750px 1fr;
+ grid-template-rows: 520px 600px;
  justify-content: center;
  position: relative;
  
 }
+.map-container{
+   grid-area: map-container;
+   display: grid;
+   border: 1px solid black;
+}
 
+#trajectory{
+   grid-area: trajectory;
+   display: grid;
+   grid-template-areas: "map1 map2";
+}
 .controller{
-   width: 95%;
+   width: 70%;
    height: 50px;
-   background-color: rgb(194, 177, 177);
+   background-color: rgb(195, 233, 248);
    position: relative;
    margin-right: 20px;
+   color: rgb(26, 25, 25);
+   font-size: 20px;
 }
-.top-left{
-   grid-area: top-left;
-   display: grid;
-   grid-template-areas:
-   "tree"
-   ;
-   grid-template-columns: 1fr;
-   grid-template-rows: 1fr;
-}
+
 .tree{
    grid-area: tree;
-
+   border: 1px solid black;
 }
 .bar-chart{
    grid-area: bar-chart;
+   display: none;
    
-
 }
 .anime{
    fill: green;
@@ -70,6 +71,7 @@ overflow: scroll;
    width: 100%;
    position: relative;
    bottom: 60px;
+   top: 10px;
 }
 
 #map2{
@@ -79,19 +81,32 @@ overflow: scroll;
    position: relative;
    right: 10px;
    bottom: 60px;
-}
-.box{
-   grid-area: box;
-
+   top: 10px;
 }
 .axes{
    grid-area: axes;
-   width: 95%;
-   margin-right: 20px;
+   width: 100%;
+   margin-right: 50px;
+   z-index: 999;
+   border: 1px solid black;
 }
 .heat-map{
    grid-area: heat;
    width: 100%;
+   border: 1px solid black;
    
 }
 
+.toggle-btn{
+   width: 100px;
+   padding: 10px;
+   border: none;
+   background-color: cornflowerblue;
+   color: white;
+   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.534);
+
+}
+.toggle-btn:hover{
+   cursor: pointer;
+   transform: scale(1.2);
+}

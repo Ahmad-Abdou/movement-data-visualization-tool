@@ -1,11 +1,3 @@
-let isChecked = false
-
-d3.select("#checkbox_1").on("change", function() {
-    isChecked = d3.select(this).property("checked");
-    console.log("Checkbox is checked:", isChecked);
-})
-
-
 mapSVG = d3.select('#map1')
     .append('svg')
     .attr('width', SVGWIDTH)
@@ -60,7 +52,7 @@ let idFilter1 = 0;
             });
         } 
 
-        generate_bar()
+        // generate_bar()
 }
 
 
@@ -98,7 +90,7 @@ const get_id2 = (id) => {
                 .attr('stroke-width', 1);
         });
     }
-
+    // generate_bar()
 }
 
 
