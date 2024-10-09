@@ -39,6 +39,7 @@ const axesLabels = [
 
 let axesLineGenerator = d3.line().x(d=>xScale(d[0] )).y(d=>yScale(d[1]))
 
+
 axesLines.forEach((shape, index)=>{
     AxesSvg.append('path')
     .attr('d', axesLineGenerator(shape.points))
@@ -80,8 +81,11 @@ const colorScale = d3.scaleOrdinal()
 .range(['#1f77b4', '#ff7f0e']);
 let colorsList = []
 
-const file = d3.csv('../static/data/fox_decision_score.csv').then(data => {
-  
+function showAxes(data) {
+
+  AxesSvg.selectAll("#plots").remove();
+  AxesSvg.selectAll("#rectangles").remove();
+
   data.forEach((d)=>{
     d.x = +d.x;
     d.y = +d.y
@@ -105,17 +109,17 @@ const file = d3.csv('../static/data/fox_decision_score.csv').then(data => {
   .attr('cy', (d,i)=> yScale(d.normalizedY) + margin.top )
   .attr('fill' , 'red')
 
-allPlots.each((d,i,n)=>{
-  d3.select(n[i])
-  .transition()
-  .ease(d3.easeBounce)
-  .duration(2000)
-  .attr('cy', (d,i) => yScale(d.normalizedY) + margin.top )
-  colorsList.push(d3.select(n[i]).attr('fill'))
-})
+  allPlots.each((d,i,n)=>{
+    d3.select(n[i])
+    .transition()
+    .ease(d3.easeBounce)
+    .duration(2000)
+    .attr('cy', (d,i) => yScale(d.normalizedY) + margin.top )
+    colorsList.push(d3.select(n[i]).attr('fill'))
+  })
 
-const rectGroup = AxesSvg.append('g')
-  .attr('id', 'rectangles');
+  const rectGroup = AxesSvg.append('g')
+    .attr('id', 'rectangles');
 
   let previouslySelectedBlue = null;
   let previouslySelectedGreen = null;
@@ -124,42 +128,36 @@ const rectGroup = AxesSvg.append('g')
       const selected_circle = d3.select(this);
       
       if (!isChecked) {
-          // Reset previous blue selection if clicking a different circle
           if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
               previouslySelectedBlue
                   .attr('fill', 'red')
                   .attr('r', 3);
           }
-          
-          // If clicking the same blue circle, reset it
+        
           if (previouslySelectedBlue === selected_circle) {
               selected_circle
                   .attr('fill', 'red')
                   .attr('r', 3);
               previouslySelectedBlue = null;
           } else {
-              // Select the new circle as blue
               selected_circle
                   .attr('fill', 'blue')
                   .attr('r', 8);
               previouslySelectedBlue = selected_circle;
           }
       } else {
-          // Reset previous green selection if clicking a different circle
           if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
               previouslySelectedGreen
                   .attr('fill', 'red')
                   .attr('r', 3);
           }
-          
-          // If clicking the same green circle, reset it
+      
           if (previouslySelectedGreen === selected_circle) {
               selected_circle
                   .attr('fill', 'red')
                   .attr('r', 3);
               previouslySelectedGreen = null;
           } else {
-              // Select the new circle as green
               selected_circle
                   .attr('fill', 'green')
                   .attr('r', 8);
@@ -215,9 +213,9 @@ const rectGroup = AxesSvg.append('g')
         .join('tspan')
         .attr('x', x + 5)
         .attr('text-anchor', 'start')
-        .attr('dy', (d, i) => i === 0 ? 0 : '1.2em')  // First line stays at initial y, subsequent lines move down
+        .attr('dy', (d, i) => i === 0 ? 0 : '1.2em') 
         .text(d => d)
-        .style("display", "block");  // Ensure the tooltip is visible
+        .style("display", "block");  
         
       }).on('mouseout', function () {
         d3.select(this).attr('r', 4 )
@@ -245,4 +243,5 @@ const rectGroup = AxesSvg.append('g')
         .on('mouseout', () => {
           AxesSvg.select('#tooltip3').remove();
         });
-  });
+}
+
