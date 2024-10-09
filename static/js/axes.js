@@ -173,6 +173,7 @@ const rectGroup = AxesSvg.append('g')
       } else {
           get_id2(id);
       }
+      generate_bars()
   });
       allPlots.on('mouseover', function () {
         d3.select(this)

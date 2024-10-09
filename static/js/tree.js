@@ -1,7 +1,7 @@
 const treeSVG = d3.select('.tree')
 .append('svg')
-.attr('width', SVGWIDTH )
-.attr('height', (SVGHEIGHT /2 + 100) )
+.attr('width', SVGWIDTH  + 200)
+.attr('height', (SVGHEIGHT /2 + 200) )
 
 
 let tree_width = treeSVG.attr('width') - margin.left - margin.right
@@ -10,8 +10,8 @@ let tree_height = treeSVG.attr('height') -margin.top - margin.bottom
 const centered_circle = (tree_width /2) + margin.right
 let tree_group = treeSVG.append('g')
 
-const tree_box_width = 70
-const tree_box_height = 45
+const tree_box_width = 90
+const tree_box_height = 70
 tree_group.append('rect')
 .attr('width',tree_box_width)
 .attr('height',tree_box_height)
@@ -21,25 +21,23 @@ tree_group.append('rect')
 .attr('stroke', 'black')
 
 tree_group.append('text')
-.attr('x', centered_circle - 25)
-.attr('y', 80)
 .attr('text-anchor', 'middle')
 .selectAll('tspan')
 .data(['Movment', 'variables'])
 .enter()
 .append('tspan')
-.attr('x', centered_circle)
-.attr('y', 65)
+.attr('x', centered_circle + 10)
+.attr('y', 70)
 .attr('dy', (d, i) => i * 20) 
 .text(d => d)
-.attr('font-size', 12)
+.attr('font-size', 16)
 
 const offset = 110
 let treeLineGenerator = d3.line().x(d=>d[0]).y(d=>d[1]).curve(d3.curveBasis)
 
 let tree_lines = [
-    {points: [[centered_circle, 95], [centered_circle,tree_height/2], [centered_circle - offset, tree_height - offset]]},
-    {points: [[centered_circle, 95], [centered_circle,tree_height/2], [centered_circle + offset, tree_height - offset]]},
+    {points: [[centered_circle + 10, 120], [centered_circle + 10,tree_height/2 + 30], [centered_circle - offset + 10, tree_height - offset]]},
+    {points: [[centered_circle + 10, 120], [centered_circle + 10,tree_height/2 + 30], [centered_circle + offset + 10, tree_height - offset ]]},
 ] 
 
 
@@ -52,10 +50,10 @@ tree_lines.forEach((shape,index)=>{
 })
 
 let tree_sub_lines = [
-    {points: [[centered_circle - offset, tree_height - offset],[centered_circle - offset - margin.right,tree_height-15]]},
-    {points: [[centered_circle - offset, tree_height - offset],[centered_circle - offset + margin.right,tree_height-15]]},
-    {points: [[centered_circle + offset, tree_height - offset],[centered_circle + offset - margin.right,tree_height-15]]},
-    {points: [[centered_circle + offset, tree_height - offset],[centered_circle + offset + margin.right,tree_height -15]]}
+    {points: [[centered_circle - offset, tree_height - offset],[centered_circle - offset - margin.right,tree_height-40]]},
+    {points: [[centered_circle - offset, tree_height - offset],[centered_circle - offset + margin.right,tree_height-40]]},
+    {points: [[centered_circle + offset, tree_height - offset],[centered_circle + offset - margin.right,tree_height-40]]},
+    {points: [[centered_circle + offset, tree_height - offset],[centered_circle + offset + margin.right,tree_height-40]]}
 ]
 
 tree_sub_lines.forEach((shape,index)=>{
@@ -64,11 +62,11 @@ tree_sub_lines.forEach((shape,index)=>{
     .attr('stroke', 'black')
     .attr('stroke-width', '1')
     .attr('fill', 'none')
-    .attr('transform',`translate(0, 45)`)
+    .attr('transform',`translate(10, 70)`)
 })
 
 let tree_lables = [
-    {text: "Geometric", position:[centered_circle +offset, tree_height - offset]},
+    {text: "Geometric", position:[centered_circle +offset , tree_height - offset]},
     {text: "Kinematic", position:[centered_circle - offset, tree_height- offset]},
 ]
 
@@ -96,10 +94,10 @@ tree_lables.forEach((label, i) => {
         });
 
     tree_group.append('text')
-        .attr('x', label.position[0])
-        .attr('y', label.position[1] + 25)
+        .attr('x', label.position[0] + 10)
+        .attr('y', label.position[1] + 35)
         .text(label.text)
-        .attr('font-size', '12')
+        .attr('font-size', '16')
         .attr('text-anchor', 'middle')
 });
 
@@ -122,9 +120,9 @@ tree_sub_labels.forEach((lable)=>{
     .attr('stroke', 'black')
 
     tree_group.append('text')
-    .attr('x', lable.position[0])
-    .attr('y', lable.position[1] + 55)
+    .attr('x', lable.position[0] + 10)
+    .attr('y', lable.position[1] + 70)
     .text(lable.text)
-    .attr('font-size', '12')
+    .attr('font-size', '16')
     .attr('text-anchor', 'middle')
 })
