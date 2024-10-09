@@ -72,25 +72,17 @@ let tree_lables = [
 
 tree_lables.forEach((label, i) => {
     tree_group.append('rect')
-        .attr('id', i)
+        .attr('id', `box-${i}`)
         .attr('width', tree_box_width)
         .attr('height', tree_box_height)
         .attr('x', label.position[0])
         .attr('y', label.position[1])
         .attr('transform', `translate(-35, 0)`)
-        .attr('fill', 'transparent')
+        .attr('fill', 'white')
         .attr('stroke', 'black')
         .on("click", function () {
-            const selecteD_box = d3.select(this)
-            const currentColor = selecteD_box.attr('fill')
-            if(currentColor === "white"){
-                selecteD_box
-                .attr('fill', '#00A86B')
-            } else {
-                selecteD_box
-                .attr('fill', 'white')
-            }
-
+            toggleColor(d3.select(this));
+            showData(label.text)
         });
 
     tree_group.append('text')
@@ -99,7 +91,13 @@ tree_lables.forEach((label, i) => {
         .text(label.text)
         .attr('font-size', '16')
         .attr('text-anchor', 'middle')
+        .on("click", function () {
+            toggleColor(d3.select(`#box-${i}`));
+            showData(label.text)
+        });
 });
+
+
 
 let tree_sub_labels =[
     {text: "Speed", position:[centered_circle - offset - margin.right ,tree_height]},
@@ -109,20 +107,134 @@ let tree_sub_labels =[
     {text: "Indentation", position:[centered_circle + offset + margin.right,tree_height]},
 ]
 
-tree_sub_labels.forEach((lable)=>{
+tree_sub_labels.forEach((label, i)=>{
     tree_group.append('rect')
+    .attr('id', `box-lvl-${i}`)
     .attr('width',tree_box_width)
     .attr('height',tree_box_height)
-    .attr('x', lable.position[0])
-    .attr('y' , lable.position[1])
+    .attr('x', label.position[0])
+    .attr('y' , label.position[1])
     .attr('transform',`translate(-35, 30)`)
-    .attr('fill', 'none')
+    .attr('fill', 'white')
     .attr('stroke', 'black')
+    .on("click", function () {
+        toggleColor(d3.select(this));
+        showData(label.text)
+    });
 
     tree_group.append('text')
-    .attr('x', lable.position[0] + 10)
-    .attr('y', lable.position[1] + 70)
-    .text(lable.text)
+    .attr('x', label.position[0] + 10)
+    .attr('y', label.position[1] + 70)
+    .text(label.text)
     .attr('font-size', '16')
     .attr('text-anchor', 'middle')
+    .on("click", function () {
+        toggleColor(d3.select(`#box-lvl-${i}`));
+        showData(label.text)
+    });
 })
+
+
+let selectedRects = [];
+
+function toggleColor(element, text) {
+    const currentColor = element.attr('fill');
+
+    if (selectedRects.length < 2) {
+        if (currentColor === "white") {
+            element.attr('fill', '#00A86B');
+            selectedRects.push({ element: element, text: text });
+        }
+    } else if (currentColor === "white" && selectedRects.length === 2) {
+        selectedRects[0].element.attr('fill', 'white');
+        selectedRects.shift();
+        element.attr('fill', '#00A86B');
+        selectedRects.push({ element: element, text: text });
+    }
+
+    if (selectedRects.length === 2) {
+        const xText = selectedRects[0].text;
+        const yText = selectedRects[1].text;
+        showData(xText, yText);
+    }
+}
+
+text_combined = [];
+
+function showData(xAxis, yAxis) {
+    let combinedString = `${xAxis} ${yAxis}`;
+
+    let file_mapping = {
+        "Kinematic Geometric": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
+        "Kinematic Curvature": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
+        "Kinematic Indentation": '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv',
+        "Geometric Speed": '../static/data_combination_foxes/foxes_Xgeometry_Yspeed_decision_scores.csv',
+        "Geometric Accelration": '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv',
+        "Speed Accelration": '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv',
+        "Speed Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv',
+        "Speed Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv',
+        "Accelration Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv',
+        "Accelration Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv',
+        "Curvature Indentation": '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv',
+    };
+
+    if (file_mapping.hasOwnProperty(combinedString)) {
+        let selectedFile = file_mapping[combinedString];
+
+        d3.csv(selectedFile).then(data => {
+            showAxes(data)
+           
+        }).catch(error => {
+            console.error("Error loading file: ", error);
+        });
+    }
+}
+tree_lables.forEach((label, i) => {
+    tree_group.append('rect')
+        .attr('id', `box-${i}`)
+        .attr('width', tree_box_width)
+        .attr('height', tree_box_height)
+        .attr('x', label.position[0])
+        .attr('y', label.position[1])
+        .attr('transform', `translate(-35, 0)`)
+        .attr('fill', 'white')
+        .attr('stroke', 'black')
+        .on("click", function () {
+            toggleColor(d3.select(this), label.text);
+        });
+
+    tree_group.append('text')
+        .attr('x', label.position[0] + 10)
+        .attr('y', label.position[1] + 35)
+        .text(label.text)
+        .attr('font-size', '16')
+        .attr('text-anchor', 'middle')
+        .on("click", function () {
+            toggleColor(d3.select(`#box-${i}`), label.text);
+        });
+});
+
+tree_sub_labels.forEach((label, i) => {
+    tree_group.append('rect')
+        .attr('id', `box-lvl-${i}`)
+        .attr('width', tree_box_width)
+        .attr('height', tree_box_height)
+        .attr('x', label.position[0])
+        .attr('y', label.position[1])
+        .attr('transform', `translate(-35, 30)`)
+        .attr('fill', 'white')
+        .attr('stroke', 'black')
+        .on("click", function () {
+            toggleColor(d3.select(this), label.text);
+        });
+
+    tree_group.append('text')
+        .attr('x', label.position[0] + 10)
+        .attr('y', label.position[1] + 70)
+        .text(label.text)
+        .attr('font-size', '16')
+        .attr('text-anchor', 'middle')
+        .on("click", function () {
+            toggleColor(d3.select(`#box-lvl-${i}`), label.text);
+        });
+});
