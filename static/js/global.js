@@ -1,5 +1,5 @@
-const SVGWIDTH = 500;
-const SVGHEIGHT = 500;
+const SVGWIDTH = 450;
+const SVGHEIGHT = 450;
 const xPadding = 20
 const yPadding = 15
 

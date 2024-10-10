@@ -1,6 +1,6 @@
 const treeSVG = d3.select('.tree')
 .append('svg')
-.attr('width', SVGWIDTH  + 200)
+.attr('width', SVGWIDTH  )
 .attr('height', (SVGHEIGHT /2 + 200) )
 
 
@@ -159,11 +159,11 @@ function toggleColor(element, text) {
     }
 }
 
+
 text_combined = [];
 
 function showData(xAxis, yAxis) {
     let combinedString = `${xAxis} ${yAxis}`;
-
     let file_mapping = {
         "Kinematic Geometric": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
         "Kinematic Curvature": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
@@ -190,7 +190,7 @@ function showData(xAxis, yAxis) {
     }
 }
 tree_lables.forEach((label, i) => {
-    tree_group.append('rect')
+    let rect = tree_group.append('rect')
         .attr('id', `box-${i}`)
         .attr('width', tree_box_width)
         .attr('height', tree_box_height)
@@ -203,19 +203,19 @@ tree_lables.forEach((label, i) => {
             toggleColor(d3.select(this), label.text);
         });
 
-    tree_group.append('text')
+    let text = tree_group.append('text')
         .attr('x', label.position[0] + 10)
         .attr('y', label.position[1] + 35)
         .text(label.text)
         .attr('font-size', '16')
         .attr('text-anchor', 'middle')
         .on("click", function () {
-            toggleColor(d3.select(`#box-${i}`), label.text);
+            toggleColor(rect, label.text);
         });
 });
 
 tree_sub_labels.forEach((label, i) => {
-    tree_group.append('rect')
+    let rect = tree_group.append('rect')
         .attr('id', `box-lvl-${i}`)
         .attr('width', tree_box_width)
         .attr('height', tree_box_height)
@@ -228,13 +228,13 @@ tree_sub_labels.forEach((label, i) => {
             toggleColor(d3.select(this), label.text);
         });
 
-    tree_group.append('text')
+    let text = tree_group.append('text')
         .attr('x', label.position[0] + 10)
         .attr('y', label.position[1] + 70)
         .text(label.text)
         .attr('font-size', '16')
         .attr('text-anchor', 'middle')
         .on("click", function () {
-            toggleColor(d3.select(`#box-lvl-${i}`), label.text);
+            toggleColor(rect, label.text);
         });
 });

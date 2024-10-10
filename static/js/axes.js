@@ -50,7 +50,7 @@ axesLines.forEach((shape, index)=>{
     .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none')
 })
 
-
+x_axes = getLabels()
 
 axesLabels.forEach((label)=>{
   AxesSvg.append('text')

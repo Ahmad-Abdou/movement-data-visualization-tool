@@ -1,7 +1,8 @@
 mapSVG = d3.select('#map1')
     .append('svg')
     .attr('width', SVGWIDTH)
-    .attr('height', SVGHEIGHT);
+    .attr('height', SVGHEIGHT)
+  
 
 mapSVG.append('rect')
     .attr('width', SVGWIDTH)
@@ -9,10 +10,11 @@ mapSVG.append('rect')
     .attr('fill', 'white');
 
 
+
 mapSVG2 = d3.select('#map2')
     .append('svg')
     .attr('width', SVGWIDTH)
-    .attr('height', SVGHEIGHT);
+    .attr('height', SVGHEIGHT)
 
 mapSVG2.append('rect')
     .attr('width', SVGWIDTH)
@@ -51,8 +53,6 @@ let idFilter1 = 0;
                     .attr('stroke-width', 1);
             });
         } 
-
-        // generate_bar()
 }
 
 
@@ -90,7 +90,6 @@ const get_id2 = (id) => {
                 .attr('stroke-width', 1);
         });
     }
-    // generate_bar()
 }
 
 
