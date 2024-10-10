@@ -1,7 +1,7 @@
 barChartSVG = d3.select('.bar-chart')
 .append('svg')
 .attr('width', SVGWIDTH + 350)
-.attr('height', SVGHEIGHT + 350);
+.attr('height', SVGHEIGHT );
 
 barChartSVG.append('rect')
 .attr('fill', 'white')

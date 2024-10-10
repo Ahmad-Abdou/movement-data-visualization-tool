@@ -1,5 +1,3 @@
-
-
 /* Box sizing rules */
 *,
 *::before,
@@ -13,53 +11,78 @@
  margin: 0;
 }
 
-body{
-   padding: 10px;
-}
+
 
 /* Set core body defaults */
 .container {
-width: 100%;
-height: 100vh;
-overflow: scroll;
  display: grid;
- grid-template-areas: "tree map-container"
-                        "heat axes";
- grid-template-columns: 750px 1fr;
- grid-template-rows: 520px 600px;
- justify-content: center;
- position: relative;
- 
+ grid-template-areas: "tree map-container map-container"
+                        "heat axes controller";
+ grid-template-columns: 1fr 1fr 1fr;
+ grid-template-rows: 1fr 1fr 1fr;
+ width: 100%;
+ height: 100vh;
+ border: 1px solid black;
+ padding-left: 5px;
 }
 .map-container{
    grid-area: map-container;
    display: grid;
-   border: 1px solid black;
+   width: 100%;
+   position: relative;
+   right: 20px;
+
 }
 
 #trajectory{
    grid-area: trajectory;
    display: grid;
    grid-template-areas: "map1 map2";
+   width: 100%;
+   border-right: 1px solid black;
 }
 .controller{
-   width: 70%;
-   height: 50px;
+   grid-area: controller;
+
+   height: 100%;
    background-color: rgb(195, 233, 248);
    position: relative;
    margin-right: 20px;
    color: rgb(26, 25, 25);
-   font-size: 20px;
+   border-top: 1px solid black;
+   border-right: 1px solid black;
+   border-bottom: 1px solid black;
+   display: grid;
+   grid-template-columns: 1fr 1fr 1fr;
+   grid-template-rows: 1fr 1fr 50px;
+   grid-template-areas: 
+   ". h2-controller ."
+   ". . ."
+   "right-label .  toggle-btn"
 }
+.h2_controller{
+   grid-area: h2-controller;
+   position: relative;
+   left: 40px;
+   font-size: 35px;
 
+}
+.right-label{
+   grid-area: right-label;
+   font-size: 25px;
+   position: relative;
+   left: 20px;
+}
 .tree{
    grid-area: tree;
-   border: 1px solid black;
+   border-right: 1px solid black;
+   border-bottom: 1px solid black;
 }
 .bar-chart{
    grid-area: bar-chart;
    display: none;
-   
+   width: 100%;
+
 }
 .anime{
    fill: green;
@@ -86,27 +109,39 @@ overflow: scroll;
 .axes{
    grid-area: axes;
    width: 100%;
-   margin-right: 50px;
+   padding-left: 20px;
    z-index: 999;
-   border: 1px solid black;
+   border-top: 1px solid black;
+   border-right: 1px solid black;
+   border-bottom: 1px solid black;
 }
 .heat-map{
    grid-area: heat;
    width: 100%;
-   border: 1px solid black;
+   border-right: 1px solid black;
+   border-bottom: 1px solid black;
    
+}
+#checkbox_1{
+   grid-area: right-label;
+   position: relative;
+   left: 10px;
 }
 
 .toggle-btn{
-   width: 100px;
-   padding: 10px;
+   width: 100%;
+   padding: 5px;
    border: none;
    background-color: cornflowerblue;
    color: white;
    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.534);
+   grid-area: toggle-btn;
+   position: relative;
+   font-size: 20px;
 
 }
 .toggle-btn:hover{
    cursor: pointer;
-   transform: scale(1.2);
+   background-color: white;
+   color: cornflowerblue;
 }
