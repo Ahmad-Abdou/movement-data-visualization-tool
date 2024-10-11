@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-   return render_template('index.html')
+   return render_template('index2.html')
 
 # def calculate_percentage(val, total):
 #    """Calculates the percentage of a value over a total"""
@@ -61,11 +61,11 @@ def index():
 #    data_creation(barchart_data,two_percent, tenure_labels, "Two year")
 #    return jsonify(barchart_data)
 
-@app.route('/get_tree_data')
-def get_tree_data():
-   with open('static/data/treedata.json', 'r') as file:
-      data = json.load(file)
-   return jsonify(data)
+# @app.route('/get_tree_data')
+# def get_tree_data():
+#    with open('static/data/treedata.json', 'r') as file:
+#       data = json.load(file)
+#    return jsonify(data)
 
 
 # @app.route('/get_tidy_tree')

@@ -1,209 +1,240 @@
-fetch(treeUrl)
-    .then(function(response) {
-        if (!response.ok) {
-            throw new Error('Network response was not ok ' + response.statusText);
+const treeSVG = d3.select('.tree')
+.append('svg')
+.attr('width', SVGWIDTH  )
+.attr('height', (SVGHEIGHT /2 + 200) )
+
+
+let tree_width = treeSVG.attr('width') - margin.left - margin.right
+let tree_height = treeSVG.attr('height') -margin.top - margin.bottom
+
+const centered_circle = (tree_width /2) + margin.right
+let tree_group = treeSVG.append('g')
+
+const tree_box_width = 90
+const tree_box_height = 70
+tree_group.append('rect')
+.attr('width',tree_box_width)
+.attr('height',tree_box_height)
+.attr('x', centered_circle - 35)
+.attr('y' , 50)
+.attr('fill', 'none')
+.attr('stroke', 'black')
+
+tree_group.append('text')
+.attr('text-anchor', 'middle')
+.selectAll('tspan')
+.data(['Movment', 'variables'])
+.enter()
+.append('tspan')
+.attr('x', centered_circle + 10)
+.attr('y', 70)
+.attr('dy', (d, i) => i * 20) 
+.text(d => d)
+.attr('font-size', 16)
+
+const offset = 110
+let treeLineGenerator = d3.line().x(d=>d[0]).y(d=>d[1]).curve(d3.curveBasis)
+
+let tree_lines = [
+    {points: [[centered_circle + 10, 120], [centered_circle + 10,tree_height/2 + 30], [centered_circle - offset + 10, tree_height - offset]]},
+    {points: [[centered_circle + 10, 120], [centered_circle + 10,tree_height/2 + 30], [centered_circle + offset + 10, tree_height - offset ]]},
+] 
+
+
+tree_lines.forEach((shape,index)=>{
+    tree_group.append('path')
+    .attr('d', treeLineGenerator(shape.points))
+    .attr('stroke', 'black')
+    .attr('stroke-width', '1')
+    .attr('fill', 'none')
+})
+
+let tree_sub_lines = [
+    {points: [[centered_circle - offset, tree_height - offset],[centered_circle - offset - margin.right,tree_height-40]]},
+    {points: [[centered_circle - offset, tree_height - offset],[centered_circle - offset + margin.right,tree_height-40]]},
+    {points: [[centered_circle + offset, tree_height - offset],[centered_circle + offset - margin.right,tree_height-40]]},
+    {points: [[centered_circle + offset, tree_height - offset],[centered_circle + offset + margin.right,tree_height-40]]}
+]
+
+tree_sub_lines.forEach((shape,index)=>{
+    tree_group.append('path')
+    .attr('d', treeLineGenerator(shape.points))
+    .attr('stroke', 'black')
+    .attr('stroke-width', '1')
+    .attr('fill', 'none')
+    .attr('transform',`translate(10, 70)`)
+})
+
+let tree_lables = [
+    {text: "Geometric", position:[centered_circle +offset , tree_height - offset]},
+    {text: "Kinematic", position:[centered_circle - offset, tree_height- offset]},
+]
+
+tree_lables.forEach((label, i) => {
+    tree_group.append('rect')
+        .attr('id', `box-${i}`)
+        .attr('width', tree_box_width)
+        .attr('height', tree_box_height)
+        .attr('x', label.position[0])
+        .attr('y', label.position[1])
+        .attr('transform', `translate(-35, 0)`)
+        .attr('fill', 'white')
+        .attr('stroke', 'black')
+        .on("click", function () {
+            toggleColor(d3.select(this));
+            showData(label.text)
+        });
+
+    tree_group.append('text')
+        .attr('x', label.position[0] + 10)
+        .attr('y', label.position[1] + 35)
+        .text(label.text)
+        .attr('font-size', '16')
+        .attr('text-anchor', 'middle')
+        .on("click", function () {
+            toggleColor(d3.select(`#box-${i}`));
+            showData(label.text)
+        });
+});
+
+
+
+let tree_sub_labels =[
+    {text: "Speed", position:[centered_circle - offset - margin.right ,tree_height]},
+    {text: "Accelration", position:[centered_circle - offset + margin.right,tree_height]},
+
+    {text: "Curvature", position:[centered_circle + offset - margin.right,tree_height]},
+    {text: "Indentation", position:[centered_circle + offset + margin.right,tree_height]},
+]
+
+tree_sub_labels.forEach((label, i)=>{
+    tree_group.append('rect')
+    .attr('id', `box-lvl-${i}`)
+    .attr('width',tree_box_width)
+    .attr('height',tree_box_height)
+    .attr('x', label.position[0])
+    .attr('y' , label.position[1])
+    .attr('transform',`translate(-35, 30)`)
+    .attr('fill', 'white')
+    .attr('stroke', 'black')
+    .on("click", function () {
+        toggleColor(d3.select(this));
+        showData(label.text)
+    });
+
+    tree_group.append('text')
+    .attr('x', label.position[0] + 10)
+    .attr('y', label.position[1] + 70)
+    .text(label.text)
+    .attr('font-size', '16')
+    .attr('text-anchor', 'middle')
+    .on("click", function () {
+        toggleColor(d3.select(`#box-lvl-${i}`));
+        showData(label.text)
+    });
+})
+
+
+let selectedRects = [];
+
+function toggleColor(element, text) {
+    const currentColor = element.attr('fill');
+
+    if (selectedRects.length < 2) {
+        if (currentColor === "white") {
+            element.attr('fill', '#00A86B');
+            selectedRects.push({ element: element, text: text });
         }
-        return response.json();
-    })
-    .then(function(data) {
-        console.log(data);
-        runFunction(data);
-    })
-    .catch(function(error) {
-        console.error('There has been a problem with your fetch operation:', error);
-    });
-
-function runFunction(jsondata) {
-    const athletes = [];
-    let rootNode = d3.hierarchy(jsondata, d => d.children);
-
-    var pathLinks = rootNode.links();
-    var circleLinks = rootNode.descendants();
-    var textLinks = rootNode.descendants();
-
-    let dim = {
-        'width': window.screen.width * 2,
-        'height': window.screen.height * 4,
-        margin: 50
-    };
-
-    let svg = d3.select('#tree').append('svg')
-        .style('background', 'white')
-        .attr('width', dim.width)
-        .attr('height', dim.height);
-
-    document.querySelector('#tree').classList.add('center');
-
-    let g = svg.append('g')
-        .attr('transform', 'translate(1150,50)');
-
-    let layout = d3.tree().size([dim.height - 2700, dim.width - 2700]);
-
-    layout(rootNode);
-
-    function update(data) {
-        let group = g.selectAll('path')
-            .data(data, (d, i) => d.target.data.sepalLength)
-            .join(
-                function(enter) {
-                    return enter.append('path')
-                        .attr('d', d3.linkVertical()
-                            .x(d => d.x)
-                            .y(d => d.y))
-                        .attr('fill', 'none')
-                        .attr('stroke', 'red');
-                        
-                },
-                function(update) {
-                    return update;
-                },
-                function(exit) {
-                    return exit.call(path => path.transition().duration(300).remove()
-                                    .attr('d', d3.linkVertical()
-                                    .x(d => d.x)
-                                    .y(d => d.y)))
-                }
-            )
-            .call(path => path.transition().duration(1000).attr('d', d3.linkVertical()
-                                    .x(d => d.x)
-                                    .y(d => d.y))
-                                    .attr("id", function(d,i) {
-                                        return "path"+i}));
+    } else if (currentColor === "white" && selectedRects.length === 2) {
+        selectedRects[0].element.attr('fill', 'white');
+        selectedRects.shift();
+        element.attr('fill', '#00A86B');
+        selectedRects.push({ element: element, text: text });
     }
 
-    update(pathLinks);
-
-    // Initializing the mouse as mouseX to store its coordinates, starting at zero
-    let mouseX = 0;
-    // Attaching svg event listener
-    svg.on('mousemove', function() {
-        const [x] = d3.mouse(this); // Gets the mouse X position relative to the SVG
-        mouseX = x;
-    });
-
-    let buttonTracker = [];
-    var valueArray
-
-    function updateCircles(data) {
-        g.selectAll('circle')
-            .data(data, (d) => d.data.name)
-            .join(
-                enter => enter.append('circle')
-                    // Setting the actual nodes vertically. 
-                    .attr('cx',(d) => d.x)
-                    .attr('cy',(d) => d.y)
-                    .attr('r',12)
-                    .attr('fill','red')
-                    .attr('id',(d,i) => d.data.name)
-                    .attr('class','sel')
-                    // Switching node colors to orange when hovering.
-                    .on('mouseover', function(d) {
-                        d3.select(this)
-                        .attr('fill','orange')
-                        .transition()
-                        .duration(100).attr('r',16)
-                    })
-                    // Switching back to red + size 12 when removing mouse.
-                    .on('mouseout', function(d) {
-                        d3.select(this)
-                        .attr('fill','red')
-                        .transition()
-                        .duration(100).attr('r',12)
-                    })
-
-                    .on('click', async function(d) {
-
-                        let buttonId = d3.select(this)["_groups"][0][0]["attributes"].id.value;
-                        mouseX = d3.select(this)["_groups"][0][0]["attributes"].cx.value;
-
-                        let checkButtonExist = buttonTracker.filter(button => button.buttonId != buttonId);
-
-                        if (checkButtonExist[0] != undefined) {
-                            buttonTracker = buttonTracker.filter(button => button.buttonId != buttonId);
-                            pathLinks = checkButtonExist[0].buttonPathData.concat(pathLinks);
-                            update(pathLinks);
-
-                            // Handling circle update
-                            circleLinks = checkButtonExist[0].buttonCircleData.concat(circleLinks);
-                            updateCircles(circleLinks);
-
-                            // Handling text update
-                            // textLinks = checkButtonExist[0].buttonTextData.concat(textLinks);
-                            // updateTextLinks(textLinks);
-                        }
-
-                        var valueArray = await processedlinks(d.links());
-                        // console.log(valueArray)
-
-                        updatePathLinks = pathLinks.filter(function(item) {
-                            return !valueArray.includes(item.target.data.name);
-                        });
-
-
-                        var clickedPathData = pathLinks.filter(function(item) {
-                            return valueArray.includes(item.target.data.name);
-                        });
-
-                        updateCircleLinks = circleLinks.filter(function(item) {
-                            return !valueArray.includes(item.data.name);
-                        });
-
-
-                        var clickedCircleData = circleLinks.filter(function(item) {
-                            return valueArray.includes(item.data.name);
-                        });
-
-                        // updateTextLinks = textLinks.filter(function(item) {
-                        //     return !valueArray.includes(item.data.name);
-                        // });
-
-
-                        // var clickedTextData = textLinks.filter(function(item) {
-                        //     return valueArray.includes(item.data.name);
-                        // });
-
-
-
-                        buttonTracker.push({
-                            buttonId:buttonId,
-                            buttonPathData:clickedPathData,
-                            buttonCircleData:clickedCircleData,
-                            // buttonTextData:clickedTextData
-                        })
-                        
-                        update(updatePathLinks);
-                        updateCircles(updateCircleLinks);
-                        // updateText(updateTextLinks);
-
-                        async function processedlinks(dlinks) {
-                            var valueArray = [];
-
-                            return new Promise((resolve, reject) => {
-                                dlinks.forEach(async(element) => {
-                                    valueArray.push(element.target.data.name);
-                                });
-                                resolve(valueArray);
-                            });
-                        }
-
-                    }),
-                
-                update => update,
-                
-                exit => exit.transition()
-                            .duration(300)
-                            .remove()
-                            .attr('cx',mouseX)
-                            .attr('r',0)
-                                
-            )
-            .transition()
-            .duration(1000)
-            .attr('cx', d => d.x);
-            
+    if (selectedRects.length === 2) {
+        const xText = selectedRects[0].text;
+        const yText = selectedRects[1].text;
+        showData(xText, yText);
     }
-
-    updateCircles(circleLinks);
 }
 
 
+text_combined = [];
+
+function showData(xAxis, yAxis) {
+    let combinedString = `${xAxis} ${yAxis}`;
+    let file_mapping = {
+        "Kinematic Geometric": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
+        "Kinematic Curvature": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
+        "Kinematic Indentation": '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv',
+        "Geometric Speed": '../static/data_combination_foxes/foxes_Xgeometry_Yspeed_decision_scores.csv',
+        "Geometric Accelration": '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv',
+        "Speed Accelration": '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv',
+        "Speed Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv',
+        "Speed Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv',
+        "Accelration Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv',
+        "Accelration Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv',
+        "Curvature Indentation": '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv',
+    };
+
+    if (file_mapping.hasOwnProperty(combinedString)) {
+        let selectedFile = file_mapping[combinedString];
+
+        d3.csv(selectedFile).then(data => {
+            showAxes(data)
+           
+        }).catch(error => {
+            console.error("Error loading file: ", error);
+        });
+    }
+}
+tree_lables.forEach((label, i) => {
+    let rect = tree_group.append('rect')
+        .attr('id', `box-${i}`)
+        .attr('width', tree_box_width)
+        .attr('height', tree_box_height)
+        .attr('x', label.position[0])
+        .attr('y', label.position[1])
+        .attr('transform', `translate(-35, 0)`)
+        .attr('fill', 'white')
+        .attr('stroke', 'black')
+        .on("click", function () {
+            toggleColor(d3.select(this), label.text);
+        });
+
+    let text = tree_group.append('text')
+        .attr('x', label.position[0] + 10)
+        .attr('y', label.position[1] + 35)
+        .text(label.text)
+        .attr('font-size', '16')
+        .attr('text-anchor', 'middle')
+        .on("click", function () {
+            toggleColor(rect, label.text);
+        });
+});
+
+tree_sub_labels.forEach((label, i) => {
+    let rect = tree_group.append('rect')
+        .attr('id', `box-lvl-${i}`)
+        .attr('width', tree_box_width)
+        .attr('height', tree_box_height)
+        .attr('x', label.position[0])
+        .attr('y', label.position[1])
+        .attr('transform', `translate(-35, 30)`)
+        .attr('fill', 'white')
+        .attr('stroke', 'black')
+        .on("click", function () {
+            toggleColor(d3.select(this), label.text);
+        });
+
+    let text = tree_group.append('text')
+        .attr('x', label.position[0] + 10)
+        .attr('y', label.position[1] + 70)
+        .text(label.text)
+        .attr('font-size', '16')
+        .attr('text-anchor', 'middle')
+        .on("click", function () {
+            toggleColor(rect, label.text);
+        });
+});
