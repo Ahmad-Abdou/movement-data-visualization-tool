@@ -142,13 +142,13 @@ function toggleColor(element, text) {
 
     if (selectedRects.length < 2) {
         if (currentColor === "white") {
-            element.attr('fill', '#00A86B');
+            element.attr('fill', '#B9E7F5');
             selectedRects.push({ element: element, text: text });
         }
     } else if (currentColor === "white" && selectedRects.length === 2) {
         selectedRects[0].element.attr('fill', 'white');
         selectedRects.shift();
-        element.attr('fill', '#00A86B');
+        element.attr('fill', '#B9E7F5');
         selectedRects.push({ element: element, text: text });
     }
 
@@ -167,8 +167,10 @@ function standardizeCombination(str1, str2) {
 }
 
 function showData(xAxis, yAxis) {
+    
     unsorted_combination = `${xAxis} ${yAxis}`
     let combinedString = standardizeCombination(xAxis, yAxis);
+    get_title_axis_lables(xAxis, yAxis)
 
     let file_mapping = {
         "Geometric Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',

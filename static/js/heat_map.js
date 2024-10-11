@@ -1,6 +1,6 @@
 const heatMapSVG = d3.select('.heat-map')
   .append('svg')
-  .attr('width', SVGWIDTH + 100)
+  .attr('width', SVGWIDTH + 150)
   .attr('height', SVGHEIGHT);
 
 const width_heatMap = (SVGWIDTH + 100) - margin.left - margin.right;
@@ -62,6 +62,7 @@ let combinations_data = [
   { path: '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv', key: 'Curvature Indentation' }
 ];
 
+
 const frequency_zone_combinations = {
   "Kinematic Geometric": [],
   "Kinematic Curvature": [],
@@ -77,7 +78,6 @@ const frequency_zone_combinations = {
 };
 
 let counter_z_0 = 0, counter_z_1 = 0, counter_z_2 = 0, counter_z_3 = 0;
-
 Promise.all(combinations_data.map(({ path, key }) => {
   return d3.csv(path).then(data => {
     data.forEach(function (row) {
@@ -108,8 +108,8 @@ Promise.all(combinations_data.map(({ path, key }) => {
 const createHeatmap = (data) => {
   
   const heatmapData = transformDataForHeatmap(data);
-
-  heatmapGroup.selectAll('rect')
+  all_data = heatmapData
+    heatmapGroup.selectAll('rect')
     .data(heatmapData)
     .join('rect')
     .attr('id', d => `${d.combination}`)
@@ -117,8 +117,8 @@ const createHeatmap = (data) => {
     .attr('y', d => yScale_heatMap(d.combination))
     .attr('width', xScale_heatMap.bandwidth())
     .attr('height', yScale_heatMap.bandwidth())
-    .attr('fill', d => myColor(d.value))
-    .attr('stroke', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? '#212529' : '')
+    .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? '#cbeef3' : myColor(d.value))
+    // .attr('stroke', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'white' : '')
     .attr('stroke-width', 3)
     .on('mouseover', function(event, d) {
       const tooltip = heatmapGroup.append('g')
@@ -146,7 +146,24 @@ const createHeatmap = (data) => {
     })
     .on('mouseout', function() {
       heatmapGroup.select('.tooltip').remove();
-    });
+    }).on('click', function(e, d){
+      AxesSvg.selectAll('path.axes-zone').remove();
+      axes_coloring_zone(d.zone.slice(4), all_data)
+    })
+
+
+    heatmapGroup.selectAll('text')
+      .data(heatmapData)
+      .join('text')
+      .attr('x', d => xScale_heatMap(d.zone) + xScale_heatMap.bandwidth() / 2 + 70)
+      .attr('y', d => yScale_heatMap(d.combination) + yScale_heatMap.bandwidth() / 2)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'black' : 'transparent')
+      .attr('font-size', 20)
+      .text( d=>`${d.value}`)
+      
+
 
   heatmapGroup.append('g')
     .attr('transform', `translate(70, 0)`)
