@@ -101,7 +101,7 @@ tree_lables.forEach((label, i) => {
 
 let tree_sub_labels =[
     {text: "Speed", position:[centered_circle - offset - margin.right ,tree_height]},
-    {text: "Accelration", position:[centered_circle - offset + margin.right,tree_height]},
+    {text: "Acceleration", position:[centered_circle - offset + margin.right,tree_height]},
 
     {text: "Curvature", position:[centered_circle + offset - margin.right,tree_height]},
     {text: "Indentation", position:[centered_circle + offset + margin.right,tree_height]},
@@ -161,33 +161,42 @@ function toggleColor(element, text) {
 
 
 text_combined = [];
+let unsorted_combination = ""
+function standardizeCombination(str1, str2) {
+    return [str1, str2].sort().join(' ');
+}
 
 function showData(xAxis, yAxis) {
-    let combinedString = `${xAxis} ${yAxis}`;
+    unsorted_combination = `${xAxis} ${yAxis}`
+    let combinedString = standardizeCombination(xAxis, yAxis);
+
     let file_mapping = {
-        "Kinematic Geometric": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
-        "Kinematic Curvature": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
-        "Kinematic Indentation": '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv',
+        "Geometric Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
+        "Curvature Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
+        "Indentation Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv',
         "Geometric Speed": '../static/data_combination_foxes/foxes_Xgeometry_Yspeed_decision_scores.csv',
-        "Geometric Accelration": '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv',
-        "Speed Accelration": '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv',
-        "Speed Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv',
-        "Speed Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv',
-        "Accelration Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv',
-        "Accelration Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv',
+        "Acceleration Geometric": '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv',
+        "Acceleration Speed": '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv',
+        "Curvature Speed": '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv',
+        "Indentation Speed": '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv',
+        "Acceleration Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv',
+        "Acceleration Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv',
         "Curvature Indentation": '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv',
     };
 
     if (file_mapping.hasOwnProperty(combinedString)) {
         let selectedFile = file_mapping[combinedString];
 
-        d3.csv(selectedFile).then(data => {
-            showAxes(data)
-           
-        }).catch(error => {
-            console.error("Error loading file: ", error);
-        });
-    }
+        d3.csv(selectedFile)
+            .then(data => {
+                showAxes(data);
+                combination = combinedString
+                createHeatmap(frequency_zone_combinations);
+            })
+            .catch(error => {
+                console.error("Error loading file: ", error);
+            });
+    } 
 }
 tree_lables.forEach((label, i) => {
     let rect = tree_group.append('rect')
@@ -237,4 +246,5 @@ tree_sub_labels.forEach((label, i) => {
         .on("click", function () {
             toggleColor(rect, label.text);
         });
+        
 });
