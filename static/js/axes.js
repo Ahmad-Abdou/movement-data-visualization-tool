@@ -21,7 +21,7 @@ let yAxis = d3.axisLeft(yScale)
 const gy = AxesSvg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
 yAxis(gy)
 
-
+// let all_data = ""
 
 const axesLines = [
   {points: [[0,0.5], [0.5, 1]]},
@@ -29,6 +29,73 @@ const axesLines = [
   {points: [[0.5,0] , [1,0.5]]},
   {points:[[0,0], [1,1]]}
 ]
+
+
+const axes_zone_0  = [
+  {points: [[0,0.5], [0.5,0.5], [0.5,0],[0,0], [0,0.5]]},  //0
+]
+
+const axes_zone_1  = [
+  {points: [[0,0.5], [0.5, 1], [0, 1], [0,0.5]]},  //1
+]
+
+const axes_zone_2  = [
+  {points: [[0.5,0] , [1,0.5], [1,0], [0.5,0]]}, //2
+]
+
+const axes_zone_3  = [
+  {points:[[0,0.5], [0.5, 1],[1,1],[1,0.5], [0.5,0],[0.5,0.5], [0,0.5]]} //3
+]
+
+let axesLineGenerator = d3.line().x(d=>xScale(d[0] )).y(d=>yScale(d[1]))
+
+const axes_coloring_zone = function(zone_number, all_data){
+  if(zone_number == 0 ) {
+    axes_zone_0.forEach(( shape)=>{
+      AxesSvg.append('path')
+      .data(all_data)
+      .attr('class', 'axes-zone')
+      .attr('d', axesLineGenerator(shape.points))
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .attr('fill', '#B9E7F5')
+      .attr('opacity', 0.4)
+      .lower();
+    })
+    
+  } else if (zone_number == 1) {
+    axes_zone_1.forEach(( shape)=>{
+      AxesSvg.append('path')
+      .data(all_data)
+      .attr('class', 'axes-zone')
+      .attr('d', axesLineGenerator(shape.points))
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .attr('fill', '#B9E7F5')
+      .lower();
+    })
+  } else if (zone_number == 2) {
+    axes_zone_2.forEach(( shape)=>{
+      AxesSvg.append('path')
+      .data(all_data)
+      .attr('class', 'axes-zone')
+      .attr('d', axesLineGenerator(shape.points))
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .attr('fill', '#B9E7F5')
+      .lower();
+    })
+  } else if (zone_number == 3) {
+    axes_zone_3.forEach(( shape)=>{
+      AxesSvg.append('path')
+      .data(all_data)
+      .attr('class', 'axes-zone')
+      .attr('d', axesLineGenerator(shape.points))
+      .attr('transform', `translate(${margin.left}, ${margin.top})`)
+      .attr('fill', '#B9E7F5')
+      .lower();
+    })
+  }
+}
+
+
 
 
 
@@ -39,7 +106,6 @@ const axesLabels = [
   {text:"3" , position:[0.7, 0.7]}
 ]
 
-let axesLineGenerator = d3.line().x(d=>xScale(d[0] )).y(d=>yScale(d[1]))
 
 
 axesLines.forEach((shape, index)=>{
@@ -52,7 +118,6 @@ axesLines.forEach((shape, index)=>{
     .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none')
 })
 
-// x_axes = getLabels()
 
 axesLabels.forEach((label)=>{
   AxesSvg.append('text')
@@ -63,20 +128,29 @@ axesLabels.forEach((label)=>{
   .text(label.text)
 })
 
-AxesSvg.append('text')
-.text('Kinematic')
-.attr('x', SVGWIDTH /2)
-.attr('y', SVGHEIGHT - 5)
-.attr('text-anchor', 'middle')
-.attr('font-size', 20)
-.attr('fill', 'black');
+const get_title_axis_lables = function(x_title, y_title) {
 
-AxesSvg.append('text')
-.text("Geometric")
-.attr('y', SVGHEIGHT /2)
-.attr('font-size', 20)
-.attr('text-anchor', 'middle')
-.attr('transform', `rotate(-90, 13, ${SVGHEIGHT / 2})`)
+  AxesSvg.selectAll('text.axis-title').remove();
+
+  AxesSvg.append('text')
+    .attr('class', 'axis-title')
+    .text(x_title)
+    .attr('x', SVGWIDTH / 2)
+    .attr('y', SVGHEIGHT - 5)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', 20)
+    .attr('fill', 'black');
+
+  AxesSvg.append('text')
+    .attr('class', 'axis-title')
+    .text(y_title)
+    .attr('y', SVGHEIGHT / 2)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', 20)
+    .attr('transform', `rotate(-90, 13, ${SVGHEIGHT / 2})`)
+    .attr('fill', 'black');
+};
+
 
 const colorScale = d3.scaleOrdinal()
 .domain([0, 1])
