@@ -12,7 +12,7 @@ const heatmapGroup = heatMapSVG.append('g')
 const myGroups = ["Zone 0", "Zone 1", "Zone 2", "Zone 3"];
 const myVars = [
   "Speed Acceleration", "Indentation Speed", "Indentation Acceleration",
-  "Curvature Acceleration", "Curvature Speed", "Indentation Curvature",
+  "Acceleration Curvature", "Curvature Speed", "Curvature Indentation",
   "Geometric Acceleration", "Geometric Speed", "Kinematic Indentation",
   "Kinematic Curvature", "Kinematic Geometric"
 ];
@@ -42,6 +42,7 @@ const transformDataForHeatmap = (data) => {
         });
       }
     });
+   
   });
   return heatmapData;
 };
@@ -56,9 +57,9 @@ let combinations_data = [
   { path: '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv', key: 'Speed Acceleration' },
   { path: '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv', key: 'Curvature Speed' },
   { path: '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv', key: 'Indentation Speed' },
-  { path: '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv', key: 'Curvature Acceleration' },
+  { path: '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv', key: 'Acceleration Curvature' },
   { path: '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv', key: 'Indentation Acceleration' },
-  { path: '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv', key: 'Indentation Curvature' }
+  { path: '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv', key: 'Curvature Indentation' }
 ];
 
 const frequency_zone_combinations = {
@@ -70,9 +71,9 @@ const frequency_zone_combinations = {
   "Speed Acceleration": [],
   "Curvature Speed": [],
   "Indentation Speed": [],
-  "Curvature Acceleration": [],
+  "Acceleration Curvature": [],
   "Indentation Acceleration": [],
-  "Indentation Curvature": []
+  "Curvature Indentation": []
 };
 
 let counter_z_0 = 0, counter_z_1 = 0, counter_z_2 = 0, counter_z_3 = 0;
@@ -96,8 +97,6 @@ Promise.all(combinations_data.map(({ path, key }) => {
     counter_z_1 = 0;
     counter_z_2 = 0;
     counter_z_3 = 0;
-
-    console.log(frequency_zone_combinations)
   }).catch(error => {
     console.error(`Error processing ${path}:`, error);
   });
@@ -107,20 +106,24 @@ Promise.all(combinations_data.map(({ path, key }) => {
 
 
 const createHeatmap = (data) => {
+  
   const heatmapData = transformDataForHeatmap(data);
+
   heatmapGroup.selectAll('rect')
     .data(heatmapData)
     .join('rect')
+    .attr('id', d => `${d.combination}`)
     .attr('x', d => xScale_heatMap(d.zone) + 70)
     .attr('y', d => yScale_heatMap(d.combination))
     .attr('width', xScale_heatMap.bandwidth())
     .attr('height', yScale_heatMap.bandwidth())
     .attr('fill', d => myColor(d.value))
+    .attr('stroke', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? '#212529' : '')
+    .attr('stroke-width', 3)
     .on('mouseover', function(event, d) {
       const tooltip = heatmapGroup.append('g')
         .attr('class', 'tooltip')
         .style('pointer-events', 'none');
-
       const tooltipRect = tooltip.append('rect')
         .attr('width', 60)
         .attr('height', 40)

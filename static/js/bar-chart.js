@@ -26,7 +26,6 @@ const generate_bars = () => {
       .filter(([key, value]) => key !== 'ID')
       .sort((a, b) => b[1] - a[1]);
 
-    // Get top 5 for both geometric and kinematic features
     const top_5_1_Geometric = sorted1
       .filter(item => geometric.includes(item[0]))
       .sort((a, b) => b[1] - a[1])
@@ -46,8 +45,6 @@ const generate_bars = () => {
       .filter(item => kinematic.includes(item[0]))
       .sort((a, b) => b[1] - a[1])
       
-
-    // Create combined data for both charts
     const combinedGeometric = top_5_1_Geometric.map(item => {
       const correspondingItem = top_5_2_Geometric.find(d => d[0] === item[0]);
       return {
@@ -71,15 +68,12 @@ const generate_bars = () => {
     const offsetY = 80;
     const chartSpacing = SVGWIDTH / 2  +180;
 
-    // Create scales for both charts
     const widthScale = d3.scaleLinear()
       .domain([0, d3.max([...combinedGeometric, ...combinedKinematic], d => Math.max(d.value1, d.value2))])
       .range([0, (SVGWIDTH/2)]);
 
-    // Clear previous content
     barChartSVG.selectAll('*').remove();
 
-    // Add titles
     barChartSVG.append('text')
       .attr('x', 100)
       .attr('y', 50)
@@ -94,9 +88,7 @@ const generate_bars = () => {
       .attr('font-size', '25px')
       .attr('font-weight', 'bold');
 
-    // Draw Geometric Features Chart
     const drawChart = (data, xOffset, className) => {
-      // Bars for trajectory 1
       barChartSVG.selectAll(`.bar1-${className}`)
         .data(data)
         .join('rect')
@@ -107,7 +99,6 @@ const generate_bars = () => {
         .attr('height', barHeight)
         .attr('fill', '#69b3a2');
 
-      // Bars for trajectory 2
       barChartSVG.selectAll(`.bar2-${className}`)
         .data(data)
         .join('rect')
@@ -118,7 +109,6 @@ const generate_bars = () => {
         .attr('height', barHeight)
         .attr('fill', '#ff8282');
 
-      // Feature labels
       barChartSVG.selectAll(`.label0-${className}`)
         .data(data)
         .join('text')
@@ -129,7 +119,6 @@ const generate_bars = () => {
         .attr('fill', '#000')
         .attr('font-size', '18px');
 
-      // Value labels for trajectory 1
       barChartSVG.selectAll(`.label1-${className}`)
         .data(data)
         .join('text')
@@ -140,7 +129,6 @@ const generate_bars = () => {
         .attr('fill', '#000')
         .attr('font-size', '18px');
 
-      // Value labels for trajectory 2
       barChartSVG.selectAll(`.label2-${className}`)
         .data(data)
         .join('text')
@@ -152,14 +140,12 @@ const generate_bars = () => {
         .attr('font-size', '18px');
     };
 
-    // Draw both charts
     drawChart(combinedGeometric, 0, 'geometric');
     drawChart(combinedKinematic, chartSpacing, 'kinematic');
 
-    // Add legend
+
     const legendY = offsetY + 5 * (barHeight + barSpacing) + 50;
     
-    // Legend for Trajectory 1
     barChartSVG.append('rect')
       .attr('x', 300)
       .attr('y', legendY)
@@ -173,7 +159,7 @@ const generate_bars = () => {
       .text('Trajectory 1')
       .attr('font-size', '18px');
 
-    // Legend for Trajectory 2
+
     barChartSVG.append('rect')
       .attr('x', 440)
       .attr('y', legendY)
