@@ -1,6 +1,6 @@
 barChartSVG = d3.select('.bar-chart')
 .append('svg')
-.attr('width', SVGWIDTH + 350)
+.attr('width', SVGWIDTH + 250)
 .attr('height', SVGHEIGHT );
 
 barChartSVG.append('rect')
@@ -66,7 +66,7 @@ const generate_bars = () => {
     const barHeight = 20;
     const barSpacing = 40;
     const offsetY = 80;
-    const chartSpacing = SVGWIDTH / 2  +180;
+    const chartSpacing = SVGWIDTH / 2  +70;
 
     const widthScale = d3.scaleLinear()
       .domain([0, d3.max([...combinedGeometric, ...combinedKinematic], d => Math.max(d.value1, d.value2))])
@@ -75,14 +75,14 @@ const generate_bars = () => {
     barChartSVG.selectAll('*').remove();
 
     barChartSVG.append('text')
-      .attr('x', 100)
+      .attr('x', 20)
       .attr('y', 50)
       .text('Geometric Features')
       .attr('font-size', '25px')
       .attr('font-weight', 'bold');
 
     barChartSVG.append('text')
-      .attr('x', chartSpacing + 100)
+      .attr('x', chartSpacing + 20)
       .attr('y', 50)
       .text('Kinematic Features')
       .attr('font-size', '25px')
@@ -93,7 +93,7 @@ const generate_bars = () => {
         .data(data)
         .join('rect')
         .attr('class', `bar1-${className}`)
-        .attr('x', xOffset + 235)
+        .attr('x', xOffset + 200)
         .attr('y', (d, i) => offsetY + i * (barHeight + barSpacing))
         .attr('width', d => widthScale(d.value1))
         .attr('height', barHeight)
@@ -103,7 +103,7 @@ const generate_bars = () => {
         .data(data)
         .join('rect')
         .attr('class', `bar2-${className}`)
-        .attr('x', xOffset + 235)
+        .attr('x', xOffset + 200)
         .attr('y', (d, i) => offsetY + i * (barHeight + barSpacing) + barHeight + 5)
         .attr('width', d => widthScale(d.value2))
         .attr('height', barHeight)
@@ -113,31 +113,31 @@ const generate_bars = () => {
         .data(data)
         .join('text')
         .attr('class', `label0-${className}`)
-        .attr('x', xOffset + 100)
+        .attr('x', xOffset + 80)
         .attr('y', (d, i) => offsetY + i * (barHeight + barSpacing) + barHeight / 1.5)
         .text(d => `${d.feature}`)
         .attr('fill', '#000')
-        .attr('font-size', '18px');
+        .attr('font-size', '16px');
 
       barChartSVG.selectAll(`.label1-${className}`)
         .data(data)
         .join('text')
         .attr('class', `label1-${className}`)
-        .attr('x', xOffset + 250)
+        .attr('x', xOffset + 200)
         .attr('y', (d, i) => offsetY + i * (barHeight + barSpacing) + barHeight / 1.5)
         .text(d => `${d.value1.toFixed(4)}`)
         .attr('fill', '#000')
-        .attr('font-size', '18px');
+        .attr('font-size', '16px');
 
       barChartSVG.selectAll(`.label2-${className}`)
         .data(data)
         .join('text')
         .attr('class', `label2-${className}`)
-        .attr('x', xOffset + 250)
+        .attr('x', xOffset + 200)
         .attr('y', (d, i) => offsetY + i * (barHeight + barSpacing) + barHeight * 2)
         .text(d => `${d.value2.toFixed(4)}`)
         .attr('fill', '#000')
-        .attr('font-size', '18px');
+        .attr('font-size', '16px');
     };
 
     drawChart(combinedGeometric, 0, 'geometric');
@@ -157,7 +157,7 @@ const generate_bars = () => {
       .attr('x', 330)
       .attr('y', legendY + 15)
       .text('Trajectory 1')
-      .attr('font-size', '18px');
+      .attr('font-size', '16px');
 
 
     barChartSVG.append('rect')
@@ -171,6 +171,6 @@ const generate_bars = () => {
       .attr('x', 470)
       .attr('y', legendY + 15)
       .text('Trajectory 2')
-      .attr('font-size', '18px');
+      .attr('font-size', '16px');
   });
 };

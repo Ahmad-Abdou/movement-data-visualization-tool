@@ -70,35 +70,6 @@ let tree_lables = [
     {text: "Kinematic", position:[centered_circle - offset, tree_height- offset]},
 ]
 
-tree_lables.forEach((label, i) => {
-    tree_group.append('rect')
-        .attr('id', `box-${i}`)
-        .attr('width', tree_box_width)
-        .attr('height', tree_box_height)
-        .attr('x', label.position[0])
-        .attr('y', label.position[1])
-        .attr('transform', `translate(-35, 0)`)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .on("click", function () {
-            toggleColor(d3.select(this));
-            showData(label.text)
-        });
-
-    tree_group.append('text')
-        .attr('x', label.position[0] + 10)
-        .attr('y', label.position[1] + 35)
-        .text(label.text)
-        .attr('font-size', '16')
-        .attr('text-anchor', 'middle')
-        .on("click", function () {
-            toggleColor(d3.select(`#box-${i}`));
-            showData(label.text)
-        });
-});
-
-
-
 let tree_sub_labels =[
     {text: "Speed", position:[centered_circle - offset - margin.right ,tree_height]},
     {text: "Acceleration", position:[centered_circle - offset + margin.right,tree_height]},
@@ -107,39 +78,12 @@ let tree_sub_labels =[
     {text: "Indentation", position:[centered_circle + offset + margin.right,tree_height]},
 ]
 
-tree_sub_labels.forEach((label, i)=>{
-    tree_group.append('rect')
-    .attr('id', `box-lvl-${i}`)
-    .attr('width',tree_box_width)
-    .attr('height',tree_box_height)
-    .attr('x', label.position[0])
-    .attr('y' , label.position[1])
-    .attr('transform',`translate(-35, 30)`)
-    .attr('fill', 'white')
-    .attr('stroke', 'black')
-    .on("click", function () {
-        toggleColor(d3.select(this));
-        showData(label.text)
-    });
-
-    tree_group.append('text')
-    .attr('x', label.position[0] + 10)
-    .attr('y', label.position[1] + 70)
-    .text(label.text)
-    .attr('font-size', '16')
-    .attr('text-anchor', 'middle')
-    .on("click", function () {
-        toggleColor(d3.select(`#box-lvl-${i}`));
-        showData(label.text)
-    });
-})
-
 
 let selectedRects = [];
 
 function toggleColor(element, text) {
     const currentColor = element.attr('fill');
-
+   
     if (selectedRects.length < 2) {
         if (currentColor === "white") {
             element.attr('fill', '#B9E7F5');

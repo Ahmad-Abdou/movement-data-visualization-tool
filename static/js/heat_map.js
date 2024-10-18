@@ -147,6 +147,8 @@ const createHeatmap = (data) => {
     .on('mouseout', function() {
       heatmapGroup.select('.tooltip').remove();
     }).on('click', function(e, d){
+      combinationList = d.combination.split(" ")
+      showData(combinationList[0],combinationList[1]);
       AxesSvg.selectAll('path.axes-zone').remove();
       axes_coloring_zone(d.zone.slice(4), all_data)
     })
@@ -159,7 +161,7 @@ const createHeatmap = (data) => {
       .attr('y', d => yScale_heatMap(d.combination) + yScale_heatMap.bandwidth() / 2)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
-      .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'black' : 'transparent')
+      .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'black' : 'black')
       .attr('font-size', 20)
       .text( d=>`${d.value}`)
       
@@ -172,5 +174,6 @@ const createHeatmap = (data) => {
   heatmapGroup.append('g')
     .attr('transform', `translate(70, ${height_heatMap})`)
     .call(d3.axisBottom(xScale_heatMap));
+
 };
 

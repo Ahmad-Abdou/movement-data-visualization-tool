@@ -1,9 +1,9 @@
 let AxesSvg = d3.select('.axes')
 .append('svg')
-.attr('width', SVGWIDTH)
+.attr('width', SVGWIDTH )
 .attr('height', SVGHEIGHT)
 
-let axes_width = SVGWIDTH - margin.left - margin.right
+let axes_width = SVGWIDTH - margin.left - margin.right 
 let axes_height = SVGHEIGHT - margin.top - margin.bottom
 
 let xScale = d3.scaleLinear()

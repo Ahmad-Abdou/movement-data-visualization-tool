@@ -12,7 +12,7 @@ let bar = document.querySelector(".bar-chart")
 let toggled_pressed = true
 toggle_btn.addEventListener('click',()=>{
   if(toggled_pressed){
-    trajectory.style.opacity = 0
+    trajectory.style.opacity = 1
     if(bar){
       bar.style.display ="block"
     }
@@ -20,8 +20,16 @@ toggle_btn.addEventListener('click',()=>{
   } else {
     trajectory.style.opacity = 100   
     if(bar){
-      bar.style.display ="none"
+      bar.style.display ="block"
       }
     toggled_pressed = true
   }
 })
+
+document.addEventListener('DOMContentLoaded', function() {
+  const controller = document.getElementById('controller');
+  
+  controller.addEventListener('click', function() {
+      this.classList.toggle('expanded');
+  });
+});
