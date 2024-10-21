@@ -1,3 +1,6 @@
+tree_element_1 = null
+tree_element_2 = null
+
 const heatMapSVG = d3.select('.heat-map')
   .append('svg')
   .attr('width', SVGWIDTH + 150)
@@ -117,42 +120,45 @@ const createHeatmap = (data) => {
     .attr('y', d => yScale_heatMap(d.combination))
     .attr('width', xScale_heatMap.bandwidth())
     .attr('height', yScale_heatMap.bandwidth())
+    .attr('stroke-width', 3)
     .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? '#cbeef3' : myColor(d.value))
     // .attr('stroke', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'white' : '')
-    .attr('stroke-width', 3)
-    .on('mouseover', function(event, d) {
-      const tooltip = heatmapGroup.append('g')
-        .attr('class', 'tooltip')
-        .style('pointer-events', 'none');
-      const tooltipRect = tooltip.append('rect')
-        .attr('width', 60)
-        .attr('height', 40)
-        .attr('fill', 'rgba(255, 255, 255, 0.9)')
-        .attr('stroke', '#999')
-        .attr('rx', 4);
+    // .on('mouseover', function(event, d) {
+    //   const tooltip = heatmapGroup.append('g')
+    //     .attr('class', 'tooltip')
+    //     .style('pointer-events', 'none');
+    //   const tooltipRect = tooltip.append('rect')
+    //     .attr('width', 60)
+    //     .attr('height', 40)
+    //     .attr('fill', 'rgba(255, 255, 255, 0.9)')
+    //     .attr('stroke', '#999')
+    //     .attr('rx', 4);
 
-      tooltip.append('text')
-        .text(`${d.value}`)
-        .attr('x', 30)
-        .attr('y', 20)
-        .attr('fill', 'black')
-        .attr('text-anchor', 'middle')
-        .attr('dominant-baseline', 'middle');
-    })
-    .on('mousemove', function(event) {
-      const [mouseX, mouseY] = d3.pointer(event);
-      const tooltip = heatmapGroup.select('.tooltip');
-      tooltip.attr('transform', `translate(${mouseX + 10}, ${mouseY - 10})`);
-    })
-    .on('mouseout', function() {
-      heatmapGroup.select('.tooltip').remove();
-    }).on('click', function(e, d){
+    //   tooltip.append('text')
+    //     .text(`${d.value}`)
+    //     .attr('x', 30)
+    //     .attr('y', 20)
+    //     .attr('fill', 'black')
+    //     .attr('text-anchor', 'middle')
+    //     .attr('dominant-baseline', 'middle');
+    // })
+    // .on('mousemove', function(event) {
+    //   const [mouseX, mouseY] = d3.pointer(event);
+    //   const tooltip = heatmapGroup.select('.tooltip');
+    //   tooltip.attr('transform', `translate(${mouseX + 10}, ${mouseY - 10})`);
+    // })
+    // .on('mouseout', function() {
+    //   heatmapGroup.select('.tooltip').remove();
+    // })
+    .on('click', function(e, d){
       combinationList = d.combination.split(" ")
       showData(combinationList[0],combinationList[1]);
       AxesSvg.selectAll('path.axes-zone').remove();
       axes_coloring_zone(d.zone.slice(4), all_data)
+      colorTreeElement(combinationList[0],combinationList[1])
+      
     })
-
+  
 
     heatmapGroup.selectAll('text')
       .data(heatmapData)
