@@ -70,7 +70,7 @@ const generate_bars = () => {
 
     const widthScale = d3.scaleLinear()
       .domain([0, d3.max([...combinedGeometric, ...combinedKinematic], d => Math.max(d.value1, d.value2))])
-      .range([0, (SVGWIDTH/2)]);
+      .range([0, (SVGWIDTH/2) -50]);
 
     barChartSVG.selectAll('*').remove();
 
@@ -95,7 +95,7 @@ const generate_bars = () => {
         .attr('class', `bar1-${className}`)
         .attr('x', xOffset + 200)
         .attr('y', (d, i) => offsetY + i * (barHeight + barSpacing))
-        .attr('width', d => widthScale(d.value1))
+        .attr('width', d => widthScale(d.value1) )
         .attr('height', barHeight)
         .attr('fill', '#69b3a2');
 

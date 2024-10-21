@@ -144,53 +144,62 @@ function showData(xAxis, yAxis) {
             });
     } 
 }
-tree_lables.forEach((label, i) => {
-    let rect = tree_group.append('rect')
-        .attr('id', `box-${i}`)
-        .attr('width', tree_box_width)
-        .attr('height', tree_box_height)
-        .attr('x', label.position[0])
-        .attr('y', label.position[1])
-        .attr('transform', `translate(-35, 0)`)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .on("click", function () {
-            toggleColor(d3.select(this), label.text);
-        });
+function colorTreeElement(element1, element2) {
+    tree_lables.forEach((label, i) => {
+        let rect = tree_group.append('rect')
+            .attr('id', `${label.text}`)
+            .attr('width', tree_box_width)
+            .attr('height', tree_box_height)
+            .attr('x', label.position[0])
+            .attr('y', label.position[1])
+            .attr('transform', `translate(-35, 0)`)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .on("click", function () {
+                toggleColor(d3.select(this), label.text);  
+            });
+            if (element1 == rect._groups[0][0].id ||  element2 == rect._groups[0][0].id ) {
+                rect.attr('fill', '#B9E7F5') 
+            }
+        let text = tree_group.append('text')
+            .attr('x', label.position[0] + 10)
+            .attr('y', label.position[1] + 35)
+            .text(label.text)
+            .attr('font-size', '16')
+            .attr('text-anchor', 'middle')
+            .on("click", function () {
+                toggleColor(rect, label.text);
+            });
+    });
+    
+    tree_sub_labels.forEach((label, i) => {
+        let rect = tree_group.append('rect')
+            .attr('id', `${label.text}`)
+            .attr('width', tree_box_width)
+            .attr('height', tree_box_height)
+            .attr('x', label.position[0])
+            .attr('y', label.position[1])
+            .attr('transform', `translate(-35, 30)`)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .on("click", function () {
+                toggleColor(d3.select(this), label.text);
+            });
+            if (element1 == rect._groups[0][0].id ||  element2 == rect._groups[0][0].id ) {
+                rect.attr('fill', '#B9E7F5') 
+            }
+        let text = tree_group.append('text')
+            .attr('x', label.position[0] + 10)
+            .attr('y', label.position[1] + 70)
+            .text(label.text)
+            .attr('font-size', '16')
+            .attr('text-anchor', 'middle')
+            .on("click", function () {
+                toggleColor(rect, label.text);
+            });
+            
+    });
+}
 
-    let text = tree_group.append('text')
-        .attr('x', label.position[0] + 10)
-        .attr('y', label.position[1] + 35)
-        .text(label.text)
-        .attr('font-size', '16')
-        .attr('text-anchor', 'middle')
-        .on("click", function () {
-            toggleColor(rect, label.text);
-        });
-});
 
-tree_sub_labels.forEach((label, i) => {
-    let rect = tree_group.append('rect')
-        .attr('id', `box-lvl-${i}`)
-        .attr('width', tree_box_width)
-        .attr('height', tree_box_height)
-        .attr('x', label.position[0])
-        .attr('y', label.position[1])
-        .attr('transform', `translate(-35, 30)`)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .on("click", function () {
-            toggleColor(d3.select(this), label.text);
-        });
-
-    let text = tree_group.append('text')
-        .attr('x', label.position[0] + 10)
-        .attr('y', label.position[1] + 70)
-        .text(label.text)
-        .attr('font-size', '16')
-        .attr('text-anchor', 'middle')
-        .on("click", function () {
-            toggleColor(rect, label.text);
-        });
-        
-});
+colorTreeElement(null, null)
