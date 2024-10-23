@@ -47,6 +47,7 @@
    grid-area: tree;
    border-right: 1px solid black;
    border-bottom: 1px solid black;
+
 }
 .bar-chart{
    grid-area: bar-chart;
@@ -174,4 +175,22 @@
    cursor: pointer;
    background-color: white;
    color: cornflowerblue;
+}
+
+
+h1{
+   text-align: center;
+}
+
+.left-traj-h1 {
+   position: absolute;
+   bottom:91%;
+   z-index: 999;
+   left: 25%;
+}
+.right-traj-h1{
+   position: absolute;
+   bottom:91%;
+   left: 68%;
+   z-index: 999;
 }

@@ -10,7 +10,7 @@ const width_heatMap = (SVGWIDTH + 100) - margin.left - margin.right;
 const height_heatMap = (SVGHEIGHT + 30) - margin.top - margin.bottom;
 
 const heatmapGroup = heatMapSVG.append('g')
-  .attr('transform', `translate(${margin.left}, ${margin.top})`);
+  .attr('transform', `translate(${margin.left}, ${margin.top - 10})`);
 
 const myGroups = ["Zone 0", "Zone 1", "Zone 2", "Zone 3"];
 const myVars = [
@@ -30,8 +30,8 @@ const yScale_heatMap = d3.scaleBand()
   .padding(0.01);
 
 const myColor = d3.scaleLinear()
-  .domain([0,5 ,10, 20,30,40,50])
-  .range(['#EEF7FC', '#97CFED' , '#74BFE7', '#3FA7DE' ,'#2188C0', '#18638C' , '#124A69']);
+  .domain([0,36])
+  .range(['#ffffb2' , '#e31a1c']);
 
 const transformDataForHeatmap = (data) => {
   const heatmapData = [];
@@ -175,11 +175,13 @@ const createHeatmap = (data) => {
 
   heatmapGroup.append('g')
     .attr('transform', `translate(70, 0)`)
-    .call(d3.axisLeft(yScale_heatMap));
+    .call(d3.axisLeft(yScale_heatMap))
+
 
   heatmapGroup.append('g')
-    .attr('transform', `translate(70, ${height_heatMap})`)
-    .call(d3.axisBottom(xScale_heatMap));
+    .attr('transform', `translate(70, 0)`)
+    .call(d3.axisTop(xScale_heatMap))
+    .selectAll('text')  
+    .style('font-size', '12px');
 
 };
-
