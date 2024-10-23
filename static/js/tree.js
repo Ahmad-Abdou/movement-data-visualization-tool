@@ -1,11 +1,11 @@
 const treeSVG = d3.select('.tree')
 .append('svg')
-.attr('width', SVGWIDTH  )
+.attr('width', SVGWIDTH + 55 )
 .attr('height', (SVGHEIGHT /2 + 200) )
 
 
-let tree_width = treeSVG.attr('width') - margin.left - margin.right
-let tree_height = treeSVG.attr('height') -margin.top - margin.bottom
+let tree_width = treeSVG.attr('width') - (margin.left - 70) - margin.right 
+let tree_height = treeSVG.attr('height') -(margin.top + 30) - margin.bottom
 
 const centered_circle = (tree_width /2) + margin.right
 let tree_group = treeSVG.append('g')
