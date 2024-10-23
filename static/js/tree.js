@@ -101,6 +101,8 @@ function toggleColor(element, text) {
         const yText = selectedRects[1].text;
         showData(xText, yText);
     }
+
+    console.log(selectedRects)
 }
 
 
@@ -158,8 +160,11 @@ function colorTreeElement(element1, element2) {
             .on("click", function () {
                 toggleColor(d3.select(this), label.text);  
             });
-            if (element1 == rect._groups[0][0].id ||  element2 == rect._groups[0][0].id ) {
-                rect.attr('fill', '#B9E7F5') 
+            if (element1 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element1)
+            }
+            else if ( element2 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element2)
             }
         let text = tree_group.append('text')
             .attr('x', label.position[0] + 10)
@@ -170,6 +175,7 @@ function colorTreeElement(element1, element2) {
             .on("click", function () {
                 toggleColor(rect, label.text);
             });
+
     });
     
     tree_sub_labels.forEach((label, i) => {
@@ -185,8 +191,11 @@ function colorTreeElement(element1, element2) {
             .on("click", function () {
                 toggleColor(d3.select(this), label.text);
             });
-            if (element1 == rect._groups[0][0].id ||  element2 == rect._groups[0][0].id ) {
-                rect.attr('fill', '#B9E7F5') 
+            if (element1 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element1)
+            }
+            else if ( element2 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element2)
             }
         let text = tree_group.append('text')
             .attr('x', label.position[0] + 10)
