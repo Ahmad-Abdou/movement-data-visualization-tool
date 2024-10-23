@@ -52,6 +52,7 @@
    grid-area: bar-chart;
    margin-right: 20px;
    border-right: 1px solid black;
+   border-top: 1px solid black;
    padding: 10px;
 
 
@@ -65,8 +66,7 @@
    height: 60%;
    width: 100%;
    position: relative;
-   bottom: 60px;
-   top: 10px;
+   bottom: 70px;
 }
 
 #map2{
@@ -75,8 +75,7 @@
    width: 100%;
    position: relative;
    right: 10px;
-   bottom: 60px;
-   top: 10px;
+   bottom: 70px;
 }
 .axes-controller {
    grid-area: axes-controller;

@@ -1,12 +1,12 @@
 mapSVG = d3.select('#map1')
     .append('svg')
     .attr('width', SVGWIDTH)
-    .attr('height', SVGHEIGHT)
+    .attr('height', SVGHEIGHT - 50)
   
 
 mapSVG.append('rect')
     .attr('width', SVGWIDTH)
-    .attr('height', SVGHEIGHT)
+    .attr('height', SVGHEIGHT - 50 )
     .attr('fill', 'white');
 
 
@@ -14,11 +14,11 @@ mapSVG.append('rect')
 mapSVG2 = d3.select('#map2')
     .append('svg')
     .attr('width', SVGWIDTH)
-    .attr('height', SVGHEIGHT)
+    .attr('height', SVGHEIGHT - 50 )
 
 mapSVG2.append('rect')
     .attr('width', SVGWIDTH)
-    .attr('height', SVGHEIGHT)
+    .attr('height', SVGHEIGHT - 50)
     .attr('fill', 'white');
 
 let idFilter1 = 0;

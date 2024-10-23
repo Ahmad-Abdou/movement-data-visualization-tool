@@ -200,124 +200,147 @@ function showAxes(data) {
   let previouslySelectedBlue = null;
   let previouslySelectedGreen = null;
   
-  allPlots.on('click', function(event) {
-      const selected_circle = d3.select(this);
-      
-      if (!isChecked) {
-          if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
-              previouslySelectedBlue
-                  .attr('fill', 'grey')
-                  .attr('r', 4);
-          }
-        
-          if (previouslySelectedBlue === selected_circle) {
-              selected_circle
-                  .attr('fill', 'grey')
-                  .attr('r', 4);
-              previouslySelectedBlue = null;
-          } else {
-              selected_circle
-                  .attr('fill', '#69b3a2')
-                  .attr('r', 8);
-              previouslySelectedBlue = selected_circle;
-          }
-      } else {
-          if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
-              previouslySelectedGreen
-                  .attr('fill', 'grey')
-                  .attr('r', 4);
-          }
-      
-          if (previouslySelectedGreen === selected_circle) {
-              selected_circle
-                  .attr('fill', 'grey')
-                  .attr('r', 4);
-              previouslySelectedGreen = null;
-          } else {
-              selected_circle
-                  .attr('fill', '#ff8282')
-                  .attr('r', 8);
-              previouslySelectedGreen = selected_circle;
-          }
+  allPlots
+  .on('click', function(event) {
+    const selected_circle = d3.select(this);
+    
+    if (!isChecked) {
+      // Handle blue selection
+      if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
+        previouslySelectedBlue
+          .attr('fill', 'grey')
+          .attr('r', 4);
       }
-  
-      const id = event.target.__data__.ID;
-      if (!isChecked) {
-          get_id(id);
+      
+      if (previouslySelectedBlue === selected_circle) {
+        // Deselect if clicking the same circle
+        selected_circle
+          .attr('fill', 'grey')
+          .attr('r', 4);
+        previouslySelectedBlue = null;
       } else {
-          get_id2(id);
+        // Select new circle
+        selected_circle
+          .attr('fill', '#69b3a2')
+          .attr('r', 8);
+        previouslySelectedBlue = selected_circle;
       }
-      generate_bars()
+    } else {
+      // Handle green selection
+      if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
+        previouslySelectedGreen
+          .attr('fill', 'grey')
+          .attr('r', 4);
+      }
+      
+      if (previouslySelectedGreen === selected_circle) {
+        // Deselect if clicking the same circle
+        selected_circle
+          .attr('fill', 'grey')
+          .attr('r', 4);
+        previouslySelectedGreen = null;
+      } else {
+        // Select new circle
+        selected_circle
+          .attr('fill', '#ff8282')
+          .attr('r', 8);
+        previouslySelectedGreen = selected_circle;
+      }
+    }
+
+    const id = event.target.__data__.ID;
+    if (!isChecked) {
+      get_id(id);
+    } else {
+      get_id2(id);
+    }
+    generate_bars();
+  })
+  .on('mouseover', function() {
+    const selected_circle = d3.select(this);
+    const isSelected = (isChecked && selected_circle.node() === previouslySelectedGreen?.node()) || 
+                      (!isChecked && selected_circle.node() === previouslySelectedBlue?.node());
+    
+    // Only increase size if not already selected
+    if (!isSelected) {
+      selected_circle.attr('r', 8);
+    }
+    
+    // Add tooltips
+    AxesSvg.append('rect')
+      .attr('id', 'tooltip2')
+      .style('pointer-events', 'none');
+    
+    AxesSvg.append('text')
+      .attr('id', 'tooltip1')
+      .style('pointer-events', 'none');
+  })
+  .on('mousemove', function(event, d) {
+    const [x, y] = d3.pointer(event);
+    
+    // Update tooltip rectangle
+    AxesSvg.select('#tooltip2')
+      .attr('width', 120)
+      .attr('height', 90)
+      .attr('x', x - 20)
+      .attr('y', y - 100)
+      .attr('fill', 'rgba(230, 224, 124, 0.7)')
+      .attr('rx', 10)
+      .attr('ry', 10);
+    
+    // Update tooltip text
+    AxesSvg.select('#tooltip1')
+      .attr('x', x)
+      .attr('y', y - 65)
+      .attr('text-anchor', 'middle')
+      .attr('fill', 'black')
+      .attr('font-size', '12px')
+      .selectAll('tspan')
+      .data([
+        `Fox ID: ${d.ID.toString()}`,
+        `X: ${d.x.toString()}`,
+        `Y: ${d.y.toString()}`,
+      ])
+      .join('tspan')
+      .attr('x', x + 5)
+      .attr('text-anchor', 'start')
+      .attr('dy', (d, i) => i === 0 ? 0 : '1.2em')
+      .text(d => d)
+      .style("display", "block");
+  })
+  .on('mouseout', function() {
+    const selected_circle = d3.select(this);
+    const isSelected = (isChecked && selected_circle.node() === previouslySelectedGreen?.node()) || 
+                      (!isChecked && selected_circle.node() === previouslySelectedBlue?.node());
+    
+    // Return to original size (4) only if not selected
+    selected_circle.attr('r', isSelected ? 8 : 4);
+    
+    // Remove tooltips
+    AxesSvg.select('#tooltip1').remove();
+    AxesSvg.select('#tooltip2').remove();
   });
-      allPlots.on('mouseover', function () {
-        d3.select(this)
-        .attr('r' , 10)
-        
-        AxesSvg.append('rect')
-          .attr('id', 'tooltip2')
-          .style('pointer-events', 'none');
-      
-        AxesSvg.append('text')
-          .attr('id', 'tooltip1')
-          .style('pointer-events', 'none');
-        
-      })
-      .on('mousemove', function (event,d) {
-        const [x, y] = d3.pointer(event);
-      
-        AxesSvg.select('#tooltip2')
-          .attr('width', 120)
-          .attr('height', 90)
-          .attr('x', x - 20 )
-          .attr('y', y - 100)
-          .attr('fill', 'rgba(230, 224, 124, 0.7)')
-          .attr('rx', 10)
-          .attr('ry', 10)
-      
-        AxesSvg.select('#tooltip1')
-        .attr('x', x )
-        .attr('y', y - 65)
-        .attr('text-anchor', 'middle')
-        .attr('fill', 'black')
-        .attr('font-size', '12px')
-        .selectAll('tspan')
-        .data([
-          `Fox ID: ${d.ID.toString()}`,
-          `X: ${d.x.toString()}`,
-          `Y: ${d.y.toString()}`,
-        ])
-        .join('tspan')
-        .attr('x', x + 5)
-        .attr('text-anchor', 'start')
-        .attr('dy', (d, i) => i === 0 ? 0 : '1.2em') 
-        .text(d => d)
-        .style("display", "block");  
-        
-      }).on('mouseout', function () {
-        d3.select(this).attr('r', 4 )
-        AxesSvg.select('#tooltip1').remove();
-        AxesSvg.select('#tooltip2').remove();
-      });
-  
-      rectGroup.selectAll('rect')
-        .data(data)
-        .on('mouseover', (event, d) => {
-          const [x, y] = d3.pointer(event);
-          AxesSvg.append('text')
-            .attr('id', 'tooltip3')
-            .attr('x', x)
-            .attr('y', y - 15)
-            .attr('fill', 'black')
-            .text(d.Identifier);
-        })
-        .on('mousemove', (event) => {
-          const [x, y] = d3.pointer(event);
-          AxesSvg.select('#tooltip3')
-            .attr('x', x)
-            .attr('y', y - 15);
-        })
-        .on('mouseout', () => {
-          AxesSvg.select('#tooltip3').remove();
-        });
+
+// Rectangle group event handlers
+rectGroup.selectAll('rect')
+  .data(data)
+  .on('mouseover', (event, d) => {
+    const [x, y] = d3.pointer(event);
+    AxesSvg.append('text')
+      .attr('id', 'tooltip3')
+      .attr('x', x)
+      .attr('y', y - 15)
+      .attr('fill', 'black')
+      .text(d.Identifier);
+  })
+  .on('mousemove', (event) => {
+    const [x, y] = d3.pointer(event);
+    AxesSvg.select('#tooltip3')
+      .attr('x', x)
+      .attr('y', y - 15);
+  })
+  .on('mouseout', () => {
+    AxesSvg.select('#tooltip3').remove();
+  });
 }
 
