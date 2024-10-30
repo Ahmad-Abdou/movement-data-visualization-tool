@@ -1,0 +1,2 @@
+original_R_data/* filter=lfs diff=lfs merge=lfs -text
+original_R_data filter=lfs diff=lfs merge=lfs -text
