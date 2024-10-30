@@ -3,7 +3,15 @@ const SVGHEIGHT = 450;
 const xPadding = 20
 const yPadding = 15
 
-const margin = {left: 50, right: 50, top:50, bottom:65};
+const margin = {left: 50, right: 50, top:50, bottom:50};
+
+const outlier_dataset_name = 'data_combination_foxes';
+const trajectory_dataset_name = 'fox_trajectories.csv'
+const df_with_id = 'df_foxes_with_ID.csv'
+
+// const outlier_dataset_name = 'data_combination_cyclones';
+// const trajectory_dataset_name = 'cyclone_trajectories.csv'
+// const df_with_id = 'df_cyclones_with_ID.csv'
 
 
 geometric = ["distance_geometry_1_1","distance_geometry_2_1","distance_geometry_2_2","distance_geometry_3_1","distance_geometry_3_2","distance_geometry_3_3","distance_geometry_4_1","distance_geometry_4_2","distance_geometry_4_3","distance_geometry_4_4","distance_geometry_5_1","distance_geometry_5_2","distance_geometry_5_3","distance_geometry_5_4","distance_geometry_5_5","angles_0s","angles_mean","angles_meanse","angles_quant_min","angles_quant_05","angles_quant_10","angles_quant_25","angles_quant_median","angles_quant_75","angles_quant_90","angles_quant_95","angles_quant_max","angles_range","angles_sd","angles_vcoef","angles_mad","angles_iqr","angles_skew","angles_kurt"]
