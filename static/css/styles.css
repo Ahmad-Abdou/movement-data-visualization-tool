@@ -1,9 +1,9 @@
 /* Box sizing rules */
-*,
+/* *,
 *::before,
 *::after {
  box-sizing: border-box;
-}
+} */
 
 /* Remove default padding and margin */
 * {
@@ -15,7 +15,7 @@
 
 /* Set core body defaults */
 .container {
- display: grid;
+ display: flex;
  grid-template-areas: "tree map-container map-container"
                         "heat axes-controller bar-chart";
  grid-template-columns: 1fr 1fr 1fr;
@@ -24,7 +24,19 @@
  height: 100vh;
  /* border: 1px solid black; */
  padding-left: 5px;
+ flex-direction: column;
 }
+
+.card {
+   margin: 5px !important;
+   border: 1px solid black !important;
+   border-radius: 5px;
+}
+.top-container, .bottom-container{
+   display: flex;
+   flex-direction: row;
+}
+
 .map-container{
    grid-area: map-container;
    display: grid;
@@ -38,22 +50,17 @@
    grid-area: trajectory;
    display: grid;
    grid-template-areas: "map1 map2";
-   width: 100%;
-   border-right: 1px solid black;
+   width: 100%;   
 }
 
 
 .tree{
-   grid-area: tree;
-   border-right: 1px solid black;
-   border-bottom: 1px solid black;
+   grid-area: tree;  
 
 }
 .bar-chart{
    grid-area: bar-chart;
-   margin-right: 20px;
-   border-right: 1px solid black;
-   border-top: 1px solid black;
+   margin-right: 20px;   
    padding: 10px;
 
 
@@ -84,10 +91,16 @@
    width: 100%;
    height: 100%;
    z-index: 999;
-   border-top: 1px solid black;
+   /* border-top: 1px solid black;
    border-right: 1px solid black;
-   border-bottom: 1px solid black;
+   border-bottom: 1px solid black; */
    overflow: hidden;
+   flex-direction: row;
+}
+
+#scatter-plot, #taxonomy-container, #heat-map {
+   display: flex;
+   justify-content: center;
 }
 
 .axes {
@@ -102,7 +115,7 @@
    overflow: hidden;
    cursor: pointer;
    display: flex;
-   flex-direction: column;
+   flex-direction: row;
 }
 
 .controller.expanded {
@@ -110,7 +123,7 @@
 }
 
 .h2_controller {
-   writing-mode: vertical-lr;
+   /* writing-mode: vertical-lr; */
    text-orientation: mixed;
    padding: 10px 0;
    margin: 0;
@@ -123,7 +136,7 @@
 }
 
 .controller-content {
-   display: none;
+   /* display: none; */
    padding: 10px;
    width: 100px;
 }
@@ -144,8 +157,8 @@
 .heat-map{
    grid-area: heat;
    width: 100%;
-   border-right: 1px solid black;
-   border-bottom: 1px solid black;
+   /* border-right: 1px solid black;
+   border-bottom: 1px solid black; */
    
 }
 #checkbox_1 {
@@ -180,6 +193,9 @@
 
 h1{
    text-align: center;
+   font-size: 24px;
+   margin-top: 10px;
+   margin-bottom: 10px;
 }
 
 .left-traj-h1 {

@@ -1,27 +1,74 @@
-let AxesSvg = d3.select('.axes')
-.append('svg')
-.attr('width', SVGWIDTH )
-.attr('height', SVGHEIGHT)
+// ***** V1
 
-let axes_width = SVGWIDTH - margin.left - margin.right 
-let axes_height = SVGHEIGHT - margin.top - margin.bottom
+// let AxesSvg = d3.select('#scatter-plot')
+// .append('svg')
+// .attr('width', SVGWIDTH )
+// .attr('height', SVGHEIGHT)
 
+// let axes_width = SVGWIDTH - margin.left - margin.right 
+// let axes_height = SVGHEIGHT - margin.top - margin.bottom
+
+// let xScale = d3.scaleLinear()
+// .domain([0,1])
+// .range([0, axes_width])
+
+// let yScale = d3.scaleLinear().domain([0,1]).range([axes_height, 0])
+
+
+// let xAxis = d3.axisBottom(xScale)
+// let gx = AxesSvg.append('g').attr('transform', `translate(${margin.left},${axes_height + margin.top})`)
+// xAxis(gx)
+
+// let yAxis = d3.axisLeft(yScale)
+// const gy = AxesSvg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
+// yAxis(gy)
+
+// **** V2
+
+let availableWidth = SVGWIDTH;
+let availableHeight = SVGHEIGHT;
+
+// Use 80% of the available space
+let svg_width = 0.8 * availableWidth;
+let svg_height = 0.8 * availableHeight;
+
+// Calculate offsets to center the SVG
+let offsetX = (availableWidth - svg_width) / 2;
+let offsetY = (availableHeight - svg_height) / 2;
+
+// Append the SVG with adjusted width, height, and offsets for centralization
+let AxesSvg = d3.select('#scatter-plot')
+  .append('svg')
+  .attr('width', availableWidth) // Full width for alignment
+  .attr('height', availableHeight) // Full height for alignment
+  .attr('display', "flex") 
+  .attr('justify-content', "center") 
+  .append("g")
+  .attr("transform", `translate(${offsetX},${offsetY-20})`);
+
+// Define adjusted width and height for axes area
+let axes_width = svg_width - margin.left - margin.right;
+let axes_height = svg_height - margin.top - margin.bottom;
+
+// Scales and axes with reduced range
 let xScale = d3.scaleLinear()
-.domain([0,1])
-.range([0, axes_width])
+  .domain([0, 1])
+  .range([0, axes_width]);
 
-let yScale = d3.scaleLinear().domain([0,1]).range([axes_height, 0])
+let yScale = d3.scaleLinear()
+  .domain([0, 1])
+  .range([axes_height, 0]);
 
+let xAxis = d3.axisBottom(xScale);
+let gx = AxesSvg.append('g')
+  .attr('transform', `translate(${margin.left},${axes_height + margin.top})`);
+xAxis(gx);
 
-let xAxis = d3.axisBottom(xScale)
-let gx = AxesSvg.append('g').attr('transform', `translate(${margin.left},${axes_height + margin.top})`)
-xAxis(gx)
+let yAxis = d3.axisLeft(yScale);
+let gy = AxesSvg.append('g')
+  .attr('transform', `translate(${margin.left}, ${margin.top})`);
+yAxis(gy);
 
-let yAxis = d3.axisLeft(yScale)
-const gy = AxesSvg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
-yAxis(gy)
-
-// let all_data = ""
 
 const axesLines = [
   {points: [[0,0.5], [0.5, 1]]},
@@ -29,7 +76,6 @@ const axesLines = [
   {points: [[0.5,0] , [1,0.5]]},
   {points:[[0,0], [1,1]]}
 ]
-
 
 const axes_zone_0  = [
   {points: [[0,0.5], [0.5,0.5], [0.5,0],[0,0], [0,0.5]]},  //0
@@ -96,17 +142,12 @@ const axes_coloring_zone = function(zone_number, all_data){
 }
 
 
-
-
-
 const axesLabels = [
   {text:'0', position:[0.22, 0.22]},
   {text:'1', position:[0.15, 0.85]},
   {text:"2", position:[0.85, 0.15 ]},
   {text:"3" , position:[0.7, 0.7]}
 ]
-
-
 
 axesLines.forEach((shape, index)=>{
     AxesSvg.append('path')
@@ -135,8 +176,8 @@ const get_title_axis_lables = function(x_title, y_title) {
   AxesSvg.append('text')
     .attr('class', 'axis-title')
     .text(x_title)
-    .attr('x', (SVGWIDTH / 2))
-    .attr('y', SVGHEIGHT - 5)
+    .attr('x', (svg_width / 2))
+    .attr('y', svg_height - 15)
     .attr('text-anchor', 'middle')
     .attr('font-size', 20)
     .attr('fill', 'black');
@@ -144,10 +185,10 @@ const get_title_axis_lables = function(x_title, y_title) {
   AxesSvg.append('text')
     .attr('class', 'axis-title')
     .text(y_title)
-    .attr('y', (SVGHEIGHT / 2) + 5 )
+    .attr('y', (svg_height / 2) + 5 )
     .attr('text-anchor', 'middle')
     .attr('font-size', 20)
-    .attr('transform', `rotate(-90, 13, ${SVGHEIGHT / 2})`)
+    .attr('transform', `rotate(-90, 13, ${svg_height / 2})`)
     .attr('fill', 'black');
 };
 

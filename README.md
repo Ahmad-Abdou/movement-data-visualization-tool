@@ -33,4 +33,4 @@ python app.py
 Foxes: 66 <br>
 Cyclones: 11351 <br>
 Ships: 59 <br>
-Football: 23<br>
+<!-- Football: 23<br> -->

@@ -1,4 +1,8 @@
-const treeSVG = d3.select('.tree')
+// const treeSVG = d3.select('.tree')
+
+
+
+const treeSVG = d3.select('#taxonomy-container')
 .append('svg')
 .attr('width', SVGWIDTH + 55 )
 .attr('height', (SVGHEIGHT /2 + 200) )
@@ -8,7 +12,9 @@ let tree_width = treeSVG.attr('width') - (margin.left - 70) - margin.right
 let tree_height = treeSVG.attr('height') -(margin.top + 30) - margin.bottom
 
 const centered_circle = (tree_width /2) + margin.right
+
 let tree_group = treeSVG.append('g')
+                        
 
 const tree_box_width = 90
 const tree_box_height = 70
@@ -23,7 +29,7 @@ tree_group.append('rect')
 tree_group.append('text')
 .attr('text-anchor', 'middle')
 .selectAll('tspan')
-.data(['Movment', 'variables'])
+.data(['Movement', 'variables'])
 .enter()
 .append('tspan')
 .attr('x', centered_circle + 10)
@@ -108,33 +114,38 @@ function toggleColor(element, text) {
 
 text_combined = [];
 let unsorted_combination = ""
-function standardizeCombination(str1, str2) {
-    return [str1, str2].sort().join(' ');
-}
+// function standardizeCombination(str1, str2) {
+//     return [str1, str2].sort().join(' ');
+// }
 
-function showData(xAxis, yAxis) {
-    
+function showData(xAxis, yAxis) {    
     unsorted_combination = `${xAxis} ${yAxis}`
-    let combinedString = standardizeCombination(xAxis, yAxis);
+    // let combinedString = standardizeCombination(xAxis, yAxis);
+    let combinedString = unsorted_combination;
+    // console.log(combinedString)
     get_title_axis_lables(xAxis, yAxis)
+    let frequency_zone_combinations = {
+        "Kinematic Geometric": [],
+        "Speed Acceleration": [],
+        "Indentation Curvature": [],
+        "Curvature Speed": [],
+        "Indentation Speed": [],
+        "Curvature Acceleration": [],
+        "Indentation Acceleration": []  
+      };
 
     let file_mapping = {
-        "Geometric Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
-        "Curvature Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
-        "Indentation Kinematic": '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv',
-        "Geometric Speed": '../static/data_combination_foxes/foxes_Xgeometry_Yspeed_decision_scores.csv',
-        "Acceleration Geometric": '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv',
-        "Acceleration Speed": '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv',
-        "Curvature Speed": '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv',
-        "Indentation Speed": '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv',
-        "Acceleration Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv',
-        "Acceleration Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv',
-        "Curvature Indentation": '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv',
+        "Kinematic Geometric": `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`,
+        "Speed Acceleration": `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`,
+        "Indentation Curvature": `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`,
+        "Curvature Speed": `../static/${outlier_dataset_name}/Xcurvature_Yspeed_decision_scores.csv`,
+        "Indentation Speed": `../static/${outlier_dataset_name}/Xindentation_Yspeed_decision_scores.csv`,
+        "Curvature Acceleration": `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`,
+        "Indentation Acceleration": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
     };
 
     if (file_mapping.hasOwnProperty(combinedString)) {
         let selectedFile = file_mapping[combinedString];
-
         d3.csv(selectedFile)
             .then(data => {
                 showAxes(data);
@@ -209,6 +220,5 @@ function colorTreeElement(element1, element2) {
             
     });
 }
-
 
 colorTreeElement(null, null)

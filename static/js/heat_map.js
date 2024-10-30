@@ -1,7 +1,8 @@
 tree_element_1 = null
 tree_element_2 = null
 
-const heatMapSVG = d3.select('.heat-map')
+// const heatMapSVG = d3.select('.heat-map')
+const heatMapSVG = d3.select('#heat-map')
   .append('svg')
   .attr('width', SVGWIDTH + 150)
   .attr('height', SVGHEIGHT);
@@ -13,11 +14,18 @@ const heatmapGroup = heatMapSVG.append('g')
   .attr('transform', `translate(${margin.left}, ${margin.top - 10})`);
 
 const myGroups = ["Zone 0", "Zone 1", "Zone 2", "Zone 3"];
+// const myVars = [
+//   "Speed Acceleration", "Indentation Speed", "Indentation Acceleration",
+//   "Acceleration Curvature", "Curvature Speed", "Curvature Indentation",
+//   "Geometric Acceleration", "Geometric Speed", "Kinematic Indentation",
+//   "Kinematic Curvature", "Kinematic Geometric"
+// ];
+
 const myVars = [
-  "Speed Acceleration", "Indentation Speed", "Indentation Acceleration",
-  "Acceleration Curvature", "Curvature Speed", "Curvature Indentation",
-  "Geometric Acceleration", "Geometric Speed", "Kinematic Indentation",
-  "Kinematic Curvature", "Kinematic Geometric"
+  "Kinematic Geometric", "Speed Acceleration", "Indentation Curvature", 
+  "Curvature Speed", "Indentation Speed",
+  "Curvature Acceleration", "Indentation Acceleration"
+  
 ];
 const xScale_heatMap = d3.scaleBand()
   .domain(myGroups)
@@ -50,35 +58,26 @@ const transformDataForHeatmap = (data) => {
   return heatmapData;
 };
 
-
 let combinations_data = [
-  { path: '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv', key: 'Kinematic Geometric' },
-  { path: '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv', key: 'Kinematic Curvature' },
-  { path: '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv', key: 'Kinematic Indentation' },
-  { path: '../static/data_combination_foxes/foxes_Xgeometry_Yspeed_decision_scores.csv', key: 'Geometric Speed' },
-  { path: '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv', key: 'Geometric Acceleration' },
-  { path: '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv', key: 'Speed Acceleration' },
-  { path: '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv', key: 'Curvature Speed' },
-  { path: '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv', key: 'Indentation Speed' },
-  { path: '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv', key: 'Acceleration Curvature' },
-  { path: '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv', key: 'Indentation Acceleration' },
-  { path: '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv', key: 'Curvature Indentation' }
+  { path: `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`, key: 'Kinematic Geometric' },
+  { path: `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`, key: 'Speed Acceleration' },
+  { path: `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`, key: 'Indentation Curvature' },
+  { path: `../static/${outlier_dataset_name}/Xcurvature_Yspeed_decision_scores.csv`, key: 'Curvature Speed' },
+  { path: `../static/${outlier_dataset_name}/Xindentation_Yspeed_decision_scores.csv`, key: 'Indentation Speed' },
+  { path: `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`, key: 'Curvature Acceleration' },
+  { path: `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`, key: 'Indentation Acceleration' }
+  
 ];
-
-
-const frequency_zone_combinations = {
+let frequency_zone_combinations = {
   "Kinematic Geometric": [],
-  "Kinematic Curvature": [],
-  "Kinematic Indentation": [],
-  "Geometric Speed": [],
-  "Geometric Acceleration": [],
   "Speed Acceleration": [],
+  "Indentation Curvature": [],
   "Curvature Speed": [],
   "Indentation Speed": [],
-  "Acceleration Curvature": [],
-  "Indentation Acceleration": [],
-  "Curvature Indentation": []
+  "Curvature Acceleration": [],
+  "Indentation Acceleration": []  
 };
+
 
 let counter_z_0 = 0, counter_z_1 = 0, counter_z_2 = 0, counter_z_3 = 0;
 Promise.all(combinations_data.map(({ path, key }) => {
@@ -121,7 +120,7 @@ const createHeatmap = (data) => {
     .attr('width', xScale_heatMap.bandwidth())
     .attr('height', yScale_heatMap.bandwidth())
     .attr('stroke-width', 3)
-    .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? '#cbeef3' : myColor(d.value))
+    .attr('fill', d => d.combination.split(" ") == unsorted_combination.split(" ") ? '#cbeef3' : myColor(d.value))
     // .attr('stroke', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'white' : '')
     // .on('mouseover', function(event, d) {
     //   const tooltip = heatmapGroup.append('g')
@@ -152,11 +151,10 @@ const createHeatmap = (data) => {
     // })
     .on('click', function(e, d){
       combinationList = d.combination.split(" ")
-      showData(combinationList[0],combinationList[1]);
+      showData(combinationList[0], combinationList[1]);
       AxesSvg.selectAll('path.axes-zone').remove();
       axes_coloring_zone(d.zone.slice(4), all_data)
-      colorTreeElement(combinationList[0],combinationList[1])
-      
+      colorTreeElement(combinationList[0], combinationList[1])      
     })
   
 
@@ -167,7 +165,7 @@ const createHeatmap = (data) => {
       .attr('y', d => yScale_heatMap(d.combination) + yScale_heatMap.bandwidth() / 2)
       .attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'middle')
-      .attr('fill', d => d.combination.split(" ").sort().join(" ").trim() == unsorted_combination.split(" ").sort().join(" ").trim() ? 'black' : 'black')
+      .attr('fill', d => d.combination.split(" ") == unsorted_combination.split(" ") ? 'black' : 'black')
       .attr('font-size', 20)
       .text( d=>`${d.value}`)
       

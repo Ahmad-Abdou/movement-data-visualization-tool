@@ -30,7 +30,7 @@ let idFilter1 = 0;
         idFilter1 = id;
         mapSVG.selectAll('path').remove(); 
         if (!isChecked) {
-            d3.csv('../static/data/fox_trajectories.csv').then(data => {
+            d3.csv(`../static/data/${trajectory_dataset_name}`).then(data => {
                 const filteredData = data.filter(d => +d.fox_id == idFilter1);
                 filteredData.forEach(d => {
                     d.x = +d.x;
@@ -66,7 +66,7 @@ const get_id2 = (id) => {
     idFilter2 = id;
     mapSVG2.selectAll('path').remove(); 
     if (isChecked) {
-        d3.csv('../static/data/fox_trajectories.csv').then(data => {
+        d3.csv(`../static/data/${trajectory_dataset_name}`).then(data => {
             const filteredData = data.filter(d => +d.fox_id == idFilter2);
     
             filteredData.forEach(d => {

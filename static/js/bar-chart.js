@@ -9,7 +9,7 @@ barChartSVG.append('rect')
 .attr('height', SVGHEIGHT);
 
 const generate_bars = () => {
-  d3.csv('../static/data/df_foxes_with_ID.csv')
+  d3.csv(`../static/data/${df_with_id}`)
   .then((data) => {
     const filteredData1 = data.filter(d => +d.ID == idFilter1);
     const filteredData2 = data.filter(d => +d.ID == idFilter2);
