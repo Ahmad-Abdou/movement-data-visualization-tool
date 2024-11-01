@@ -1,7 +1,7 @@
 import pandas as pd
 
-# df = pd.read_csv('../processed-datasets/fox-outliers.csv')
-df = pd.read_csv('../processed-datasets/cyclone-outliers.csv')
+df = pd.read_csv('../processed-datasets/fox-outliers.csv')
+# df = pd.read_csv('../processed-datasets/cyclone-outliers.csv')
 
 print(df)
 #Geom X Kin

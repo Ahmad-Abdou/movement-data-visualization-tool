@@ -1,6 +1,3 @@
-// const treeSVG = d3.select('.tree')
-
-
 
 const treeSVG = d3.select('#taxonomy-container')
 .append('svg')
@@ -123,34 +120,15 @@ function showData(xAxis, yAxis) {
     // let combinedString = standardizeCombination(xAxis, yAxis);
     let combinedString = unsorted_combination;
     // console.log(combinedString)
-    get_title_axis_lables(xAxis, yAxis)
-    let frequency_zone_combinations = {
-        "Kinematic Geometric": [],
-        "Speed Acceleration": [],
-        "Indentation Curvature": [],
-        "Curvature Speed": [],
-        "Indentation Speed": [],
-        "Curvature Acceleration": [],
-        "Indentation Acceleration": []  
-      };
+    get_title_axis_lables(xAxis, yAxis)    
 
-    let file_mapping = {
-        "Kinematic Geometric": `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`,
-        "Speed Acceleration": `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`,
-        "Indentation Curvature": `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`,
-        "Curvature Speed": `../static/${outlier_dataset_name}/Xcurvature_Yspeed_decision_scores.csv`,
-        "Indentation Speed": `../static/${outlier_dataset_name}/Xindentation_Yspeed_decision_scores.csv`,
-        "Curvature Acceleration": `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`,
-        "Indentation Acceleration": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
-    };
-
-    if (file_mapping.hasOwnProperty(combinedString)) {
+    if (file_mapping.hasOwnProperty(combinedString)) {        
         let selectedFile = file_mapping[combinedString];
         d3.csv(selectedFile)
             .then(data => {
                 showAxes(data);
-                combination = combinedString
-                createHeatmap(frequency_zone_combinations);
+                combination = combinedString                
+                heatmap.render();
             })
             .catch(error => {
                 console.error("Error loading file: ", error);
