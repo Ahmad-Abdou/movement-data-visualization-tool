@@ -13,6 +13,14 @@
     <div class="container">
       <div class="top-container">
         <div class="tree card">
+          <div class="dropdown">
+            <button onclick="selectDataset()" class="dropbtn">Datasets</button>
+            <div id="datasets" class="dropdown-content">
+              <a href="#" onclick="selectFoxes()">Foxes</a>
+              <a href="#" onclick="selectHurricanes()">Hurricanes</a>
+              <a href="#" onclick="selectAIS()">AIS</a>
+            </div>
+          </div>
           <h1>Taxonomy</h1>
           <div id="taxonomy-container"></div>
         </div>
@@ -62,13 +70,13 @@
   <script src="https://d3js.org/d3.v6.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="../static/js/heat_map.js"></script>
   <script src="../static/js/global.js"></script>
   <script src="../static/js/controller.js"></script>
   <script src="../static/js/index.js"></script>
   <script src="../static/js/axes.js"></script>
   <script src="../static/js/line.js"></script>
-  <script src="../static/js/map.js"></script>
-  <script src="../static/js/heat_map.js"></script>
+  <script src="../static/js/map.js"></script>  
   <script src="../static/js/tree.js"></script>
   <script src="../static/js/bar-chart.js"></script>
   

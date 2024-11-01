@@ -10,6 +10,7 @@ from pyod.models.loda import LODA
 from pyod.models.sampling import Sampling
 from pyod.models.kde import KDE
 from pyod.models.knn import KNN
+from DBOS import DBOS, find_average_distance
 
 df = pd.read_csv("../df_with_ID/df_foxes_with_ID.csv")
 df_ID = df["ID"]
@@ -35,20 +36,25 @@ for d, name in zip(dfs, column_names):
     scaler = MinMaxScaler()
     # scaler = StandardScaler()
     scaled_data = scaler.fit_transform(data)
+    avg_d = find_average_distance(scaled_data)
+    outlier = DBOS(scaled_data, d=avg_d, fraction=0.05)
+    print(outlier['scores'])
+    scores = outlier['scores'].ravel()
+
     # Building Model
     # outlier = ECOD(contamination=.3)
     # outlier = HBOS(contamination=.2)
     # outlier = ECOD(contamination=.5)
     # outlier = HBOS()
     # outlier = DIF()
-    outlier = IForest(n_estimators=10)
+    # outlier = IForest(n_estimators=10)
     # outlier = LODA()
     # outlier = Sampling(subset_size=3, metric='euclidean', random_state=1415)
     # outlier = KDE()
     # outlier = KNN(n_neighbors=5, metric='euclidean')
-    outlier.fit(data) 
+    # outlier.fit(data) 
     
-    print(outlier.decision_scores_)
+    # print(outlier.decision_scores_)
     ################## OLD #
     # scaler = MinMaxScaler()
     # s = outlier.decision_scores_.reshape(-1, 1)   
@@ -56,14 +62,15 @@ for d, name in zip(dfs, column_names):
     # scores = scores[:, 0]    
     # df_scores.append(pd.DataFrame({name: scores}))
     ###################
-    scores = outlier.predict_proba(data, method='linear', return_confidence=False)
-    scores = scores[:, 1]    
-    # Append scores as DataFrame with the respective column name
+    # scores = outlier.predict_proba(data, method='linear', return_confidence=False)
+    # scores = scores[:, 1]    
+    # Append scores as DataFrame with the respective column name 
+
     df_scores.append(pd.DataFrame({name: scores}))
     ###################
 
 # Concatenate all score DataFrames horizontally into one final DataFrame
-final_df_scores = pd.concat(df_scores, axis=1)
+final_df_scores = pd.concat(df_scores, axis=1).round(4)
 print(final_df_scores)
 final_df_scores.to_csv('../processed-datasets/fox-outliers.csv', index=False)
 
