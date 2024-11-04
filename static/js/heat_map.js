@@ -15,9 +15,7 @@ class Heatmap {
     ]).range([0, height - margin.top - margin.bottom]).padding(0.01);
     
     // clear the container first
-    document.getElementById(`${containerId}`).innerHTML = "";
-    console.log('after cleaning')
-    console.log(document.getElementById(`${containerId}`).innerHTML)
+    document.getElementById(`${containerId}`).innerHTML = "";    
     this.svg = d3.select(`#${containerId}`).append('svg')
       .attr('width', width + margin.left + margin.right)
       .attr('height', height + margin.top + margin.bottom);
@@ -27,14 +25,12 @@ class Heatmap {
   }
 
   async prepareData(combinations_data){
-    let counter_z_0 = 0, counter_z_1 = 0, counter_z_2 = 0, counter_z_3 = 0;
-    // console.log('HERE')
-    // console.log(Object.entries(combinations_data));
+    let counter_z_0 = 0, counter_z_1 = 0, counter_z_2 = 0, counter_z_3 = 0;    
     for (const [ key, path] of Object.entries(combinations_data)) {
       try {
-        // console.log('Key '+key);
-        // console.log('PATH '+path);
-        const data = await d3.csv(path);
+        console.log('Key '+key);
+        console.log('PATH '+path);
+        let data = await d3.csv(path);
         data.forEach(row => {
           if (row.x < 0.5 && row.y < 0.5) {
             counter_z_0++;
@@ -46,8 +42,8 @@ class Heatmap {
             counter_z_3++;
           }
         });
-
         // Store counters for the current key and reset them
+        frequency_zone_combinations[key] = [];
         frequency_zone_combinations[key].push(counter_z_0, counter_z_1, counter_z_2, counter_z_3);
         counter_z_0 = 0;
         counter_z_1 = 0;
@@ -57,7 +53,7 @@ class Heatmap {
       } catch (error) {
         console.error(`Error processing ${path}:`, error);
       }
-    }
+    }    
   }
 
   transformData(data) {
@@ -80,7 +76,7 @@ class Heatmap {
     // Process data for heatmap    
     await this.prepareData(combinations_data);
     let heatmapData = this.transformData(this.data);
-    // console.log(`Data: ${heatmapData}`)
+    console.log(`Data: ${JSON.stringify(heatmapData)}`)
     let minValue = d3.min(heatmapData, d => d.value);
     let maxValue = d3.max(heatmapData, d => d.value);
     this.colorScale.domain([minValue, maxValue]);
