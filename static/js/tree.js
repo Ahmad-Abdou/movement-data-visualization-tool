@@ -128,6 +128,7 @@ function showData(xAxis, yAxis) {
             .then(data => {
                 showAxes(data);
                 combination = combinedString                
+                heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
                 heatmap.render();
             })
             .catch(error => {
