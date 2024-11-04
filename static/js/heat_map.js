@@ -24,40 +24,7 @@ class Heatmap {
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
   }
 
-  prepareData(combinations_data){
-    // let counter_z_0 = 0, counter_z_1 = 0, counter_z_2 = 0, counter_z_3 = 0;        
-    // for (const [ key, path] of Object.entries(combinations_data)) {      
-    //   console.log('Key '+key);
-    //   console.log('PATH '+path);
-    //   let data = d3.csv(path).then(data => {
-    //     let counter_z_0 = 0;
-    //     let counter_z_1 = 0;
-    //     let counter_z_2 = 0;
-    //     let counter_z_3 = 0;
-    //     data.forEach(row => {
-    //       if (row.x < 0.5 && row.y < 0.5) {
-    //             counter_z_0++;
-    //       } else if (row.x < 0.5 && row.y > 0.5 && row.x < (row.y - 0.5)) {
-    //             counter_z_1++;
-    //       } else if (row.x > 0.5 && row.y < (row.x - 0.5)) {
-    //             counter_z_2++;
-    //       } else {
-    //             counter_z_3++;
-    //       }
-    //     })
-    //     frequency_zone_combinations[key] = [];
-    //     frequency_zone_combinations[key].push(counter_z_0, counter_z_1, counter_z_2, counter_z_3);
-    //   }).catch(error => {
-    //     console.error("Error loading file: ", error);
-    //   });
-      // Store counters for the current key and reset them
-      // frequency_zone_combinations[key] = [];
-      // frequency_zone_combinations[key].push(counter_z_0, counter_z_1, counter_z_2, counter_z_3);
-      // counter_z_0 = 0;
-      // counter_z_1 = 0;
-      // counter_z_2 = 0;
-      // counter_z_3 = 0;
-      console.log(`-----XXXXX-----\n DATA: ${JSON.stringify(combinations_data)}`)    
+  prepareData(combinations_data){    
       const dataEntries = Object.entries(combinations_data).map(([key, path]) => ({ key, path }));
       return Promise.all(dataEntries.map(({ path, key }) => {
         return d3.csv(path).then(data => {
