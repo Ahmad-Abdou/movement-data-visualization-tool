@@ -105,7 +105,7 @@ function toggleColor(element, text) {
         showData(xText, yText);
     }
 
-    console.log(selectedRects)
+    // console.log(selectedRects)
 }
 
 
@@ -129,7 +129,7 @@ function showData(xAxis, yAxis) {
                 showAxes(data);
                 combination = combinedString                
                 // console.log(`COMB: ${combination}`)
-                console.log(`Freq Zone: ${frequency_zone_combinations}`)
+                // console.log(`Freq Zone: ${frequency_zone_combinations}`)
                 heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
                 heatmap.render(file_mapping);
             })
