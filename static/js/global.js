@@ -42,7 +42,7 @@ function setFileMapping(outlier_dataset_name){
         "Indentation Acceleration": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
     }
 }
-
+file_mapping = setFileMapping(outlier_dataset_name)
 let heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
 heatmap.render(file_mapping);
 
@@ -70,7 +70,7 @@ async function selectFoxes(){
     df_with_id = 'fox-df.csv';
     file_mapping = setFileMapping(outlier_dataset_name)
     heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
-    await heatmap.render(file_mapping)
+    heatmap.render(file_mapping)
 }
 async function selectHurricanes(){
     outlier_dataset_name = 'data_combination_hurricanes';
@@ -78,14 +78,14 @@ async function selectHurricanes(){
     df_with_id = 'hurricanes-df.csv';
     file_mapping = setFileMapping(outlier_dataset_name)
     heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
-    await heatmap.render(file_mapping)
+    heatmap.render(file_mapping)
 }
 async function selectAIS(){
     outlier_dataset_name = 'data_combination_ais';
     trajectory_dataset_name = 'ais_trajectories.csv';
     file_mapping = setFileMapping(outlier_dataset_name)
     heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
-    await heatmap.render(file_mapping)
+    heatmap.render(file_mapping)
 }
 
 geometric = ["distance_geometry_1_1","distance_geometry_2_1","distance_geometry_2_2","distance_geometry_3_1","distance_geometry_3_2","distance_geometry_3_3","distance_geometry_4_1","distance_geometry_4_2","distance_geometry_4_3","distance_geometry_4_4","distance_geometry_5_1","distance_geometry_5_2","distance_geometry_5_3","distance_geometry_5_4","distance_geometry_5_5","angles_0s","angles_mean","angles_meanse","angles_quant_min","angles_quant_05","angles_quant_10","angles_quant_25","angles_quant_median","angles_quant_75","angles_quant_90","angles_quant_95","angles_quant_max","angles_range","angles_sd","angles_vcoef","angles_mad","angles_iqr","angles_skew","angles_kurt"]

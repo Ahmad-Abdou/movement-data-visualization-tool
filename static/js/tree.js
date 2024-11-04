@@ -128,8 +128,10 @@ function showData(xAxis, yAxis) {
             .then(data => {
                 showAxes(data);
                 combination = combinedString                
+                // console.log(`COMB: ${combination}`)
+                console.log(`Freq Zone: ${frequency_zone_combinations}`)
                 heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
-                heatmap.render();
+                heatmap.render(file_mapping);
             })
             .catch(error => {
                 console.error("Error loading file: ", error);
