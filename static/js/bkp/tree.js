@@ -1,5 +1,5 @@
 
-const treeSVG = d3.select('#taxonomy-element')
+const treeSVG = d3.select('#taxonomy-container')
 .append('svg')
 .attr('width', SVGWIDTH + 55 )
 .attr('height', (SVGHEIGHT /2 + 200) )
