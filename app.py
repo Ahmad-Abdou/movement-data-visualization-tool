@@ -12,7 +12,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-   return render_template('index2.html')
+   # return render_template('index2.html')
+   return render_template('index3.html')
 
 # def calculate_percentage(val, total):
 #    """Calculates the percentage of a value over a total"""
