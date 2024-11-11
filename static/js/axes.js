@@ -362,26 +362,26 @@ function showAxes(data) {
     AxesSvg.select('#tooltip2').remove();
   });
 
-// Rectangle group event handlers
-rectGroup.selectAll('rect')
-  .data(data)
-  .on('mouseover', (event, d) => {
-    const [x, y] = d3.pointer(event);
-    AxesSvg.append('text')
-      .attr('id', 'tooltip3')
-      .attr('x', x)
-      .attr('y', y - 15)
-      .attr('fill', 'black')
-      .text(d.Identifier);
-  })
-  .on('mousemove', (event) => {
-    const [x, y] = d3.pointer(event);
-    AxesSvg.select('#tooltip3')
-      .attr('x', x)
-      .attr('y', y - 15);
-  })
-  .on('mouseout', () => {
-    AxesSvg.select('#tooltip3').remove();
-  });
+  // Rectangle group event handlers
+  rectGroup.selectAll('rect')
+    .data(data)
+    .on('mouseover', (event, d) => {
+      const [x, y] = d3.pointer(event);
+      AxesSvg.append('text')
+        .attr('id', 'tooltip3')
+        .attr('x', x)
+        .attr('y', y - 15)
+        .attr('fill', 'black')
+        .text(d.Identifier);
+    })
+    .on('mousemove', (event) => {
+      const [x, y] = d3.pointer(event);
+      AxesSvg.select('#tooltip3')
+        .attr('x', x)
+        .attr('y', y - 15);
+    })
+    .on('mouseout', () => {
+      AxesSvg.select('#tooltip3').remove();
+    });
 }
 
