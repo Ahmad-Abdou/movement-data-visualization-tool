@@ -62,3 +62,18 @@ html, body {
    display: flex;
    flex-direction: row;
 }
+
+#taxonomy-element {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-body {
+    padding: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

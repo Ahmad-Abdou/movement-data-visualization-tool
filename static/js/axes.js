@@ -1,3 +1,61 @@
+class AxesPlot {
+    constructor(containerId, width, height, margin) {
+        this.width = width;
+        this.height = height;
+        this.margin = margin;
+        this.colorsList = [];
+        
+        this.availableWidth = width;
+        this.availableHeight = height;
+        this.svgWidth = 0.8 * this.availableWidth;
+        this.svgHeight = 0.8 * this.availableHeight;
+        
+        this.offsetX = (this.availableWidth - this.svgWidth) / 2;
+        this.offsetY = (this.availableHeight - this.svgHeight) / 2;
+        
+        this.init(containerId);
+    }
+
+    init(containerId) {
+        this.svg = d3.select(containerId)
+            .append('svg')
+            .attr('width', this.availableWidth)
+            .attr('height', this.availableHeight)
+            .attr('display', "flex")
+            .attr('justify-content', "center")
+            .append("g")
+            .attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
+
+        this.setupScales();
+        this.drawAxes();
+        this.drawZoneLines();
+    }
+
+    setupScales() {
+        // ...existing scales setup code...
+    }
+
+    drawAxes() {
+        // ...existing axes drawing code...
+    }
+
+    drawZoneLines() {
+        // ...existing zone lines code...
+    }
+
+    colorZone(zoneNumber, allData) {
+        // ...existing axes_coloring_zone code...
+    }
+
+    setAxisTitles(xTitle, yTitle) {
+        // ...existing get_title_axis_lables code...
+    }
+
+    showPlots(data) {
+        // ...existing showAxes code...
+    }
+}
+
 // ***** V1
 
 // let AxesSvg = d3.select('#scatter-plot')
