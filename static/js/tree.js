@@ -1,7 +1,7 @@
 class Tree {
     constructor(containerId, width, height, margin) {
-        this.width = width * 0.9; // Scale down width slightly
-        this.height = height * 0.7; // Reduce height to fit better
+        this.width = width * 0.9;
+        this.height = height * 0.7;
         this.margin = margin;
         
         this.svg = d3.select(containerId)
@@ -10,15 +10,14 @@ class Tree {
             .attr('height', this.height);
             
         this.treeGroup = this.svg.append('g')
-            .attr('transform', `translate(0, ${margin.top/2})`); // Move tree up slightly
+            .attr('transform', `translate(0, ${margin.top/2})`);
             
         this.selectedRects = [];
         
-        // Adjust box dimensions
-        this.boxWidth = this.width * 0.2; // Make boxes proportional to container
-        this.boxHeight = this.height * 0.12;
+        this.boxWidth = this.width * 0.24;
+        this.boxHeight = this.height * 0.16;
         this.centeredCircle = (this.width/2);
-        this.offset = this.width * 0.25; // Make offset proportional
+        this.offset = this.width * 0.25;
         
         this.init();
     }
@@ -30,16 +29,14 @@ class Tree {
     }
 
     drawMainBox() {
-        // Adjust main box position
         this.treeGroup.append('rect')
             .attr('width', this.boxWidth)
             .attr('height', this.boxHeight)
             .attr('x', this.centeredCircle - this.boxWidth/2)
-            .attr('y', 20)
+            .attr('y', 0)
             .attr('fill', 'none')
             .attr('stroke', 'black');
 
-        // Adjust text position
         this.treeGroup.append('text')
             .attr('text-anchor', 'middle')
             .selectAll('tspan')
@@ -47,7 +44,7 @@ class Tree {
             .enter()
             .append('tspan')
             .attr('x', this.centeredCircle)
-            .attr('y', d => 45 + (d === 'variables' ? 20 : 0))
+            .attr('y', d => 25 + (d === 'variables' ? 20 : 0))
             .text(d => d)
             .attr('font-size', 14);
     }
@@ -58,14 +55,13 @@ class Tree {
             .y(d => d[1])
             .curve(d3.curveBasis);
 
-        // Adjust line positions
         let treeLines = [
-            {points: [[this.centeredCircle, this.boxHeight + 20], 
+            {points: [[this.centeredCircle, this.boxHeight ], 
                      [this.centeredCircle, this.height/2], 
-                     [this.centeredCircle - this.offset, this.height * 0.6]]},
-            {points: [[this.centeredCircle, this.boxHeight + 20], 
+                     [this.centeredCircle - this.offset, this.height * 0.4]]},
+            {points: [[this.centeredCircle, this.boxHeight ], 
                      [this.centeredCircle, this.height/2], 
-                     [this.centeredCircle + this.offset, this.height * 0.6]]}
+                     [this.centeredCircle + this.offset, this.height * 0.4]]}
         ];
 
         treeLines.forEach((shape, index) => {
@@ -77,10 +73,10 @@ class Tree {
         });
 
         let treeSubLines = [
-            {points: [[this.centeredCircle - this.offset, this.height * 0.6], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.8]]},
-            {points: [[this.centeredCircle - this.offset, this.height * 0.6], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.8]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.6], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.8]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.6], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.8]]}
+            {points: [[this.centeredCircle - this.offset, this.height * 0.3], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.55]]},
+            {points: [[this.centeredCircle - this.offset, this.height * 0.3], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.55]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.3], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.55]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.3], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.55]]}
         ];
 
         treeSubLines.forEach((shape, index) => {
@@ -94,20 +90,18 @@ class Tree {
     }
 
     drawLabels() {
-        // Adjust label positions
         let treeLabels = [
-            {text: "Geometric", position: [this.centeredCircle + this.offset, this.height * 0.6]},
-            {text: "Kinematic", position: [this.centeredCircle - this.offset, this.height * 0.6]},
+            {text: "Geometric", position: [this.centeredCircle + this.offset, this.height * 0.4]},
+            {text: "Kinematic", position: [this.centeredCircle - this.offset, this.height * 0.4]},
         ];
 
         let treeSubLabels = [
-            {text: "Speed", position: [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.8]},
-            {text: "Acceleration", position: [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.8]},
-            {text: "Curvature", position: [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.8]},
-            {text: "Indentation", position: [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.8]},
+            {text: "Speed", position: [this.centeredCircle - this.offset - this.width * 0.13, this.height * 0.7]},
+            {text: "Acceleration", position: [this.centeredCircle - this.offset + this.width * 0.12, this.height * 0.7]},
+            {text: "Curvature", position: [this.centeredCircle + this.offset - this.width * 0.12, this.height * 0.7]},
+            {text: "Indentation", position: [this.centeredCircle + this.offset + this.width * 0.13, this.height * 0.7]},
         ];
 
-        // Draw labels with adjusted font size
         treeLabels.forEach((label, i) => {
             let rect = this.treeGroup.append('rect')
                 .attr('id', `${label.text}`)
@@ -178,80 +172,6 @@ class Tree {
             showData(xText, yText);
         }
     }
-
-    colorTreeElement(element1, element2) {
-        let treeLabels = [
-            {text: "Geometric", position: [this.centeredCircle + this.offset, this.height * 0.6]},
-            {text: "Kinematic", position: [this.centeredCircle - this.offset, this.height * 0.6]},
-        ];
-
-        let treeSubLabels = [
-            {text: "Speed", position: [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.8]},
-            {text: "Acceleration", position: [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.8]},
-            {text: "Curvature", position: [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.8]},
-            {text: "Indentation", position: [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.8]},
-        ];
-
-        treeLabels.forEach((label, i) => {
-            let rect = this.treeGroup.append('rect')
-                .attr('id', `${label.text}`)
-                .attr('width', this.boxWidth)
-                .attr('height', this.boxHeight)
-                .attr('x', label.position[0] - this.boxWidth/2)
-                .attr('y', label.position[1])
-                .attr('fill', 'white')
-                .attr('stroke', 'black')
-                .on("click", () => {
-                    this.toggleColor(d3.select(rect.node()), label.text);
-                });
-
-            if (element1 == rect.node().id) {
-                this.toggleColor(d3.select(rect.node()), element1);
-            } else if (element2 == rect.node().id) {
-                this.toggleColor(d3.select(rect.node()), element2);
-            }
-
-            this.treeGroup.append('text')
-                .attr('x', label.position[0])
-                .attr('y', label.position[1] + this.boxHeight/2)
-                .text(label.text)
-                .attr('font-size', '16')
-                .attr('text-anchor', 'middle')
-                .on("click", () => {
-                    this.toggleColor(d3.select(rect.node()), label.text);
-                });
-        });
-
-        treeSubLabels.forEach((label, i) => {
-            let rect = this.treeGroup.append('rect')
-                .attr('id', `${label.text}`)
-                .attr('width', this.boxWidth)
-                .attr('height', this.boxHeight)
-                .attr('x', label.position[0] - this.boxWidth/2)
-                .attr('y', label.position[1])
-                .attr('fill', 'white')
-                .attr('stroke', 'black')
-                .on("click", () => {
-                    this.toggleColor(d3.select(rect.node()), label.text);
-                });
-
-            if (element1 == rect.node().id) {
-                this.toggleColor(d3.select(rect.node()), element1);
-            } else if (element2 == rect.node().id) {
-                this.toggleColor(d3.select(rect.node()), element2);
-            }
-
-            this.treeGroup.append('text')
-                .attr('x', label.position[0])
-                .attr('y', label.position[1] + this.boxHeight/2)
-                .text(label.text)
-                .attr('font-size', '16')
-                .attr('text-anchor', 'middle')
-                .on("click", () => {
-                    this.toggleColor(d3.select(rect.node()), label.text);
-                });
-        });
-    }
 }
 
 const tree = new Tree('#taxonomy-element', SVGWIDTH, SVGHEIGHT, margin);
@@ -279,4 +199,4 @@ function showData(xAxis, yAxis) {
     } 
 }
 
-tree.colorTreeElement(null, null);
+// tree.colorTreeElement(null, null);
