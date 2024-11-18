@@ -1,14 +1,17 @@
-const treeSVG = d3.select('.tree')
+
+const treeSVG = d3.select('#taxonomy-element')
 .append('svg')
-.attr('width', SVGWIDTH  )
+.attr('width', SVGWIDTH + 55 )
 .attr('height', (SVGHEIGHT /2 + 200) )
 
 
-let tree_width = treeSVG.attr('width') - margin.left - margin.right
-let tree_height = treeSVG.attr('height') -margin.top - margin.bottom
+let tree_width = treeSVG.attr('width') - (margin.left - 70) - margin.right 
+let tree_height = treeSVG.attr('height') -(margin.top + 30) - margin.bottom
 
 const centered_circle = (tree_width /2) + margin.right
+
 let tree_group = treeSVG.append('g')
+                        
 
 const tree_box_width = 90
 const tree_box_height = 70
@@ -23,7 +26,7 @@ tree_group.append('rect')
 tree_group.append('text')
 .attr('text-anchor', 'middle')
 .selectAll('tspan')
-.data(['Movment', 'variables'])
+.data(['Movement', 'variables'])
 .enter()
 .append('tspan')
 .attr('x', centered_circle + 10)
@@ -70,85 +73,29 @@ let tree_lables = [
     {text: "Kinematic", position:[centered_circle - offset, tree_height- offset]},
 ]
 
-tree_lables.forEach((label, i) => {
-    tree_group.append('rect')
-        .attr('id', `box-${i}`)
-        .attr('width', tree_box_width)
-        .attr('height', tree_box_height)
-        .attr('x', label.position[0])
-        .attr('y', label.position[1])
-        .attr('transform', `translate(-35, 0)`)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .on("click", function () {
-            toggleColor(d3.select(this));
-            showData(label.text)
-        });
-
-    tree_group.append('text')
-        .attr('x', label.position[0] + 10)
-        .attr('y', label.position[1] + 35)
-        .text(label.text)
-        .attr('font-size', '16')
-        .attr('text-anchor', 'middle')
-        .on("click", function () {
-            toggleColor(d3.select(`#box-${i}`));
-            showData(label.text)
-        });
-});
-
-
-
 let tree_sub_labels =[
     {text: "Speed", position:[centered_circle - offset - margin.right ,tree_height]},
-    {text: "Accelration", position:[centered_circle - offset + margin.right,tree_height]},
+    {text: "Acceleration", position:[centered_circle - offset + margin.right,tree_height]},
 
     {text: "Curvature", position:[centered_circle + offset - margin.right,tree_height]},
     {text: "Indentation", position:[centered_circle + offset + margin.right,tree_height]},
 ]
-
-tree_sub_labels.forEach((label, i)=>{
-    tree_group.append('rect')
-    .attr('id', `box-lvl-${i}`)
-    .attr('width',tree_box_width)
-    .attr('height',tree_box_height)
-    .attr('x', label.position[0])
-    .attr('y' , label.position[1])
-    .attr('transform',`translate(-35, 30)`)
-    .attr('fill', 'white')
-    .attr('stroke', 'black')
-    .on("click", function () {
-        toggleColor(d3.select(this));
-        showData(label.text)
-    });
-
-    tree_group.append('text')
-    .attr('x', label.position[0] + 10)
-    .attr('y', label.position[1] + 70)
-    .text(label.text)
-    .attr('font-size', '16')
-    .attr('text-anchor', 'middle')
-    .on("click", function () {
-        toggleColor(d3.select(`#box-lvl-${i}`));
-        showData(label.text)
-    });
-})
 
 
 let selectedRects = [];
 
 function toggleColor(element, text) {
     const currentColor = element.attr('fill');
-
+   
     if (selectedRects.length < 2) {
         if (currentColor === "white") {
-            element.attr('fill', '#00A86B');
+            element.attr('fill', '#B9E7F5');
             selectedRects.push({ element: element, text: text });
         }
     } else if (currentColor === "white" && selectedRects.length === 2) {
         selectedRects[0].element.attr('fill', 'white');
         selectedRects.shift();
-        element.attr('fill', '#00A86B');
+        element.attr('fill', '#B9E7F5');
         selectedRects.push({ element: element, text: text });
     }
 
@@ -157,84 +104,102 @@ function toggleColor(element, text) {
         const yText = selectedRects[1].text;
         showData(xText, yText);
     }
+
+    // console.log(selectedRects)
 }
 
 
 text_combined = [];
+let unsorted_combination = ""
+// function standardizeCombination(str1, str2) {
+//     return [str1, str2].sort().join(' ');
+// }
 
-function showData(xAxis, yAxis) {
-    let combinedString = `${xAxis} ${yAxis}`;
-    let file_mapping = {
-        "Kinematic Geometric": '../static/data_combination_foxes/foxes_Xkinematic_Ygeometric_decision_scores.csv',
-        "Kinematic Curvature": '../static/data_combination_foxes/foxes_Xkinematic_Ycurvature_decision_scores.csv',
-        "Kinematic Indentation": '../static/data_combination_foxes/foxes_Xkinematic_Yindentation_decision_scores.csv',
-        "Geometric Speed": '../static/data_combination_foxes/foxes_Xgeometry_Yspeed_decision_scores.csv',
-        "Geometric Accelration": '../static/data_combination_foxes/foxes_Xgeometry_Yacceleration_decision_scores.csv',
-        "Speed Accelration": '../static/data_combination_foxes/foxes_Xspeed_Yacceleration_decision_scores.csv',
-        "Speed Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yspeed_decision_scores.csv',
-        "Speed Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yspeed_decision_scores.csv',
-        "Accelration Curvature": '../static/data_combination_foxes/foxes_Xcurvature_Yacceleration_decision_scores.csv',
-        "Accelration Indentation": '../static/data_combination_foxes/foxes_Xindentation_Yacceleration_decision_scores.csv',
-        "Curvature Indentation": '../static/data_combination_foxes/foxes_Xindentation_Ycurvature_decision_scores.csv',
-    };
+function showData(xAxis, yAxis) {    
+    unsorted_combination = `${xAxis} ${yAxis}`
+    // let combinedString = standardizeCombination(xAxis, yAxis);
+    let combinedString = unsorted_combination;
+    // console.log(combinedString)
+    get_title_axis_lables(xAxis, yAxis)    
 
-    if (file_mapping.hasOwnProperty(combinedString)) {
+    if (file_mapping.hasOwnProperty(combinedString)) {        
         let selectedFile = file_mapping[combinedString];
-
-        d3.csv(selectedFile).then(data => {
-            showAxes(data)
-           
-        }).catch(error => {
-            console.error("Error loading file: ", error);
-        });
-    }
+        d3.csv(selectedFile)
+            .then(data => {
+                showAxes(data);
+                combination = combinedString                
+                // console.log(`COMB: ${combination}`)
+                // console.log(`Freq Zone: ${frequency_zone_combinations}`)
+                heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
+                heatmap.render(file_mapping);
+            })
+            .catch(error => {
+                console.error("Error loading file: ", error);
+            });
+    } 
 }
-tree_lables.forEach((label, i) => {
-    let rect = tree_group.append('rect')
-        .attr('id', `box-${i}`)
-        .attr('width', tree_box_width)
-        .attr('height', tree_box_height)
-        .attr('x', label.position[0])
-        .attr('y', label.position[1])
-        .attr('transform', `translate(-35, 0)`)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .on("click", function () {
-            toggleColor(d3.select(this), label.text);
-        });
+function colorTreeElement(element1, element2) {
+    tree_lables.forEach((label, i) => {
+        let rect = tree_group.append('rect')
+            .attr('id', `${label.text}`)
+            .attr('width', tree_box_width)
+            .attr('height', tree_box_height)
+            .attr('x', label.position[0])
+            .attr('y', label.position[1])
+            .attr('transform', `translate(-35, 0)`)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .on("click", function () {
+                toggleColor(d3.select(this), label.text);  
+            });
+            if (element1 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element1)
+            }
+            else if ( element2 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element2)
+            }
+        let text = tree_group.append('text')
+            .attr('x', label.position[0] + 10)
+            .attr('y', label.position[1] + 35)
+            .text(label.text)
+            .attr('font-size', '16')
+            .attr('text-anchor', 'middle')
+            .on("click", function () {
+                toggleColor(rect, label.text);
+            });
 
-    let text = tree_group.append('text')
-        .attr('x', label.position[0] + 10)
-        .attr('y', label.position[1] + 35)
-        .text(label.text)
-        .attr('font-size', '16')
-        .attr('text-anchor', 'middle')
-        .on("click", function () {
-            toggleColor(rect, label.text);
-        });
-});
+    });
+    
+    tree_sub_labels.forEach((label, i) => {
+        let rect = tree_group.append('rect')
+            .attr('id', `${label.text}`)
+            .attr('width', tree_box_width)
+            .attr('height', tree_box_height)
+            .attr('x', label.position[0])
+            .attr('y', label.position[1])
+            .attr('transform', `translate(-35, 30)`)
+            .attr('fill', 'white')
+            .attr('stroke', 'black')
+            .on("click", function () {
+                toggleColor(d3.select(this), label.text);
+            });
+            if (element1 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element1)
+            }
+            else if ( element2 == rect._groups[0][0].id ) { 
+                toggleColor(rect, element2)
+            }
+        let text = tree_group.append('text')
+            .attr('x', label.position[0] + 10)
+            .attr('y', label.position[1] + 70)
+            .text(label.text)
+            .attr('font-size', '16')
+            .attr('text-anchor', 'middle')
+            .on("click", function () {
+                toggleColor(rect, label.text);
+            });
+            
+    });
+}
 
-tree_sub_labels.forEach((label, i) => {
-    let rect = tree_group.append('rect')
-        .attr('id', `box-lvl-${i}`)
-        .attr('width', tree_box_width)
-        .attr('height', tree_box_height)
-        .attr('x', label.position[0])
-        .attr('y', label.position[1])
-        .attr('transform', `translate(-35, 30)`)
-        .attr('fill', 'white')
-        .attr('stroke', 'black')
-        .on("click", function () {
-            toggleColor(d3.select(this), label.text);
-        });
-
-    let text = tree_group.append('text')
-        .attr('x', label.position[0] + 10)
-        .attr('y', label.position[1] + 70)
-        .text(label.text)
-        .attr('font-size', '16')
-        .attr('text-anchor', 'middle')
-        .on("click", function () {
-            toggleColor(rect, label.text);
-        });
-});
+colorTreeElement(null, null)
