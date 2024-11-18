@@ -1,9 +1,4 @@
-const SVGWIDTH = 450;
-const SVGHEIGHT = 450;
-const xPadding = 20
-const yPadding = 15
 
-const margin = {left: 50, right: 50, top:50, bottom:50};
 const margin_heat = {top: 20, right: 30, bottom: 30, left: 40};
 
 // default
