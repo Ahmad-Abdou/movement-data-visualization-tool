@@ -1,78 +1,124 @@
-const heatMapSVG = d3.select('.heat-map')
-.append('svg')
-.attr('width', SVGWIDTH)
-.attr('height', SVGHEIGHT)
+class Heatmap {
+  constructor(containerId, width, height, margin, data, colorRange = ['#ffffb2', '#e31a1c']) {
+    this.containerId = containerId;
+    this.width = width;
+    this.height = height;
+    this.margin = margin;
+    this.data = data;
 
-const width_heatMap = heatMapSVG.attr('width') - margin.left - margin.right
-const height_heatMap = heatMapSVG.attr('height') - margin.top - margin.bottom
+    // Define scales, color, and SVG elements
+    this.colorScale = d3.scaleLinear().range(colorRange);
+    this.xScale = d3.scaleBand().domain(["Zone 0", "Zone 1", "Zone 2", "Zone 3"]).range([0, width - margin.left - margin.right]).padding(0.01);
+    this.yScale = d3.scaleBand().domain([
+      "Kinematic Geometric", "Speed Acceleration", "Indentation Curvature", 
+      "Curvature Speed", "Indentation Speed", "Curvature Acceleration", "Indentation Acceleration"
+    ]).range([0, height - margin.top - margin.bottom]).padding(0.01);
+    
+    // clear the container first
+    document.getElementById(`${containerId}`).innerHTML = "";    
+    this.svg = d3.select(`#${containerId}`).append('svg')
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', height + margin.top + margin.bottom);
 
+    this.heatmapGroup = this.svg.append('g')
+      .attr('transform', `translate(${margin.left}, ${margin.top})`);
+  }
 
-const myGroups = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
-const myVars = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]
+  prepareData(combinations_data){    
+      const dataEntries = Object.entries(combinations_data).map(([key, path]) => ({ key, path }));
+      return Promise.all(dataEntries.map(({ path, key }) => {
+        return d3.csv(path).then(data => {
+          let counter_z_0 = 0;
+          let counter_z_1 = 0;
+          let counter_z_2 = 0;
+          let counter_z_3 = 0;
+          data.forEach(function (row) {
+            if (row.x < 0.5 && row.y < 0.5) {
+              counter_z_0++;
+            } else if (row.x < 0.5 && row.y > 0.5 && row.x < (row.y - 0.5)) {
+              counter_z_1++;
+            } else if (row.x > 0.5 && row.y < (row.x - 0.5)) {
+              counter_z_2++;
+            } else {
+              counter_z_3++;
+            }
+          });
+          frequency_zone_combinations[key] = []      
+          frequency_zone_combinations[key].push(counter_z_0, counter_z_1, counter_z_2, counter_z_3);          
+        }).catch(error => {
+          console.error(`Error processing ${path}:`, error);
+        });
+      }))
+    
+  }
+  
+  transformData(data) {
+    const heatmapData = [];    
+    Object.entries(data).forEach(([combination, values]) => {
+      values.forEach((value, zoneIndex) => {
+        if (zoneIndex < 4) {
+          heatmapData.push({
+            combination: combination,
+            zone: `Zone ${zoneIndex}`,
+            value: value || 0
+          });
+        }
+      });
+    });
+    return heatmapData;
+  }
 
-xScale_heatMap = d3.scaleBand().domain(myGroups).range([0, width_heatMap]).padding('0.01')
-yScale_heatMap =  d3.scaleBand().domain(myVars).range([height_heatMap, 0]).padding('0.01')
+  render(combinations_data) {
+    // Process data for heatmap    
+    this.prepareData(combinations_data).then(f => {
+      let heatmapData = this.transformData(this.data);    
+      let minValue = d3.min(heatmapData, d => d.value);
+      let maxValue = d3.max(heatmapData, d => d.value);
+      this.colorScale.domain([minValue, maxValue]);
 
+      // Clear existing elements to ensure a fresh render
+      this.heatmapGroup.selectAll('rect').remove();
+      this.heatmapGroup.selectAll('text').remove();
 
-heatMapSVG.append('g').attr('transform', `translate(${margin.left}, ${width_heatMap + margin.top})`).call(d3.axisBottom(xScale_heatMap))
-heatMapSVG.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`).call(d3.axisLeft(yScale_heatMap))
+      // Create the heatmap cells
+      this.heatmapGroup.selectAll('rect')
+        .data(heatmapData)
+        .join('rect')
+        .attr('class', 'heatmap-rect')
+        .attr('id', d => `${d.combination}`)
+        .attr('x', d => this.xScale(d.zone))
+        .attr('y', d => this.yScale(d.combination))
+        .attr('width', this.xScale.bandwidth())
+        .attr('height', this.yScale.bandwidth())
+        .attr('stroke-width', 3)
+        .attr('fill', d => this.colorScale(d.value))
+        .on('click', (e, d) => this.onCellClick(d));
 
+      // Add text labels for values in each cell
+      this.heatmapGroup.selectAll('text')
+        .data(heatmapData)
+        .join('text')
+        .attr('x', d => this.xScale(d.zone) + this.xScale.bandwidth() / 2)
+        .attr('y', d => this.yScale(d.combination) + this.yScale.bandwidth() / 2)
+        .attr('text-anchor', 'middle')
+        .attr('dominant-baseline', 'middle')
+        .attr('fill', 'black')
+        .attr('font-size', 20)
+        .text(d => `${d.value}`);
 
-const myColor = d3.scaleLinear()
-  .domain([1,50, 100])
-  .range(['white' , 'grey' , 'purple'])
+      // Add axes
+      this.heatmapGroup.append('g').call(d3.axisLeft(this.yScale));
+      this.heatmapGroup.append('g').call(d3.axisTop(this.xScale));
+      }).catch(error => {
+        console.error(`Error processing ${path}:`, error);
+      });    
+  }
 
-
-
-d3.csv('https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/heatmap_data.csv').then((data)=>{
-  const all_rect_g = heatMapSVG.append('g')
-
-  const all_rect = all_rect_g.selectAll('rect')
-  .data(data, (d) => {d.group + ':' +d.variable})
-  .join('rect')
-  .attr('x', d=> xScale_heatMap(d.group) + margin.left)
-  .attr('y', d=> yScale_heatMap(d.variable) + margin.top)
-  .attr('width', xScale_heatMap.bandwidth())
-  .attr('height', yScale_heatMap.bandwidth())
-  .attr('fill', d=>myColor(d.value))
-
-  all_rect.on('mouseover',()=>{
-    heatMapSVG.append('rect')
-    .attr('id', 'tooltip2')
-    .style('pointers-event', 'none')
-
-    heatMapSVG.append('text')
-    .attr('id', 'tooltip1')
-    .style('pointer-events', 'none')
-
-
-  }).on('mousemove', (event,d)=>{
-    const [x,y] = d3.pointer(event)
-
-    heatMapSVG
-    .select('#tooltip2')
-    .attr('width', '50')
-    .attr('height', '40')
-    .attr('x', x - 20)
-    .attr('y', y - 50)
-    .attr('fill', 'rgba(230, 15, 124, 0.7)')
-    .attr('rx', '15')
-    .attr('ry', '15')
-
-    heatMapSVG.select('#tooltip1')
-    .attr('x', x + 5)
-    .attr('y', y - 25)
-    .attr('text-anchor', 'middle')
-    .attr('fill', 'black')
-    .attr('font-size', '20px')
-    .text(d.value);
-
-
-  }).on('mouseout',()=>{
-    heatMapSVG.select('#tooltip2').remove()
-    heatMapSVG.select('#tooltip1').remove()
-  })
-
-})
-
-
+  onCellClick(d) {
+    const combinationList = d.combination.split(" ");
+    showData(combinationList[0], combinationList[1]);
+    AxesSvg.selectAll('path.axes-zone').remove();
+    axes_coloring_zone(d.zone.slice(4), this.data);
+    colorTreeElement(combinationList[0], combinationList[1]);
+  }
+}

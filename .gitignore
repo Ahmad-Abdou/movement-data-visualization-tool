@@ -1,2 +1,4 @@
-High-Dimensional-Unlabeled-Movement-Data-visualization-tool/raw csv/ship_trajectories.csv
-High-Dimensional-Unlabeled-Movement-Data-visualization-tool/raw csv/cyclone_trajectories.csv
+hdmovementviz/*
+static/data/*
+raw csv/*
+**/.DS_Store
