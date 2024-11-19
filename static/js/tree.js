@@ -182,13 +182,14 @@ let unsorted_combination = "";
 function showData(xAxis, yAxis) {    
     unsorted_combination = `${xAxis} ${yAxis}`;
     let combinedString = unsorted_combination;
-    get_title_axis_lables(xAxis, yAxis);
+    axesPlot.setAxisTitles(xAxis, yAxis);
 
     if (file_mapping.hasOwnProperty(combinedString)) {        
         let selectedFile = file_mapping[combinedString];
         d3.csv(selectedFile)
             .then(data => {
-                showAxes(data);
+                
+                axesPlot.showPlots(data);
                 combination = combinedString;
                 heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
                 heatmap.render(file_mapping);

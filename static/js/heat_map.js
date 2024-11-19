@@ -117,8 +117,9 @@ class Heatmap {
   onCellClick(d) {
     const combinationList = d.combination.split(" ");
     showData(combinationList[0], combinationList[1]);
-    AxesSvg.selectAll('path.axes-zone').remove();
-    axes_coloring_zone(d.zone.slice(4), this.data);
-    colorTreeElement(combinationList[0], combinationList[1]);
+    axesPlot.svg.selectAll('path.axes-zone').remove();
+    
+    axesPlot.colorZone(d.zone.slice(4), this.data);
+    // colorTreeElement(combinationList[0], combinationList[1]);
   }
 }
