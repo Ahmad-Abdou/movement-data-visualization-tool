@@ -96,49 +96,26 @@ class AxesPlot {
     }
 
     colorZone(zone_number, all_data) {
-          if(zone_number == 0 ) {
-            this.axes_zone_0.forEach(( shape)=>{
-              this.svg.append('path')
-              .data(all_data)
-              .attr('class', 'axes-zone')
-              .attr('d', this.axesLineGenerator(shape.points))
-              .attr('transform', `translate(${margin.left}, ${margin.top})`)
-              .attr('fill', '#B9E7F5')
-              .attr('opacity', 0.4)
-              .lower();
-            })
-            
-          } else if (zone_number == 1) {
-            this.axes_zone_1.forEach(( shape)=>{
-              this.svg.append('path')
-              .data(all_data)
-              .attr('class', 'axes-zone')
-              .attr('d', this.axesLineGenerator(shape.points))
-              .attr('transform', `translate(${margin.left}, ${margin.top})`)
-              .attr('fill', '#B9E7F5')
-              .lower();
-            })
-          } else if (zone_number == 2) {
-            this.axes_zone_2.forEach(( shape)=>{
-              this.svg.append('path')
-              .data(all_data)
-              .attr('class', 'axes-zone')
-              .attr('d', this.axesLineGenerator(shape.points))
-              .attr('transform', `translate(${margin.left}, ${margin.top})`)
-              .attr('fill', '#B9E7F5')
-              .lower();
-            })
-          } else if (zone_number == 3) {
-            this.axes_zone_3.forEach(( shape)=>{
-              this.svg.append('path')
-              .data(all_data)
-              .attr('class', 'axes-zone')
-              .attr('d', this.axesLineGenerator(shape.points))
-              .attr('transform', `translate(${margin.left}, ${margin.top})`)
-              .attr('fill', '#B9E7F5')
-              .lower();
-            })
+        const zoneColor = '#B9E7F5';
+        const zoneOpacity = 0.7;
+        let zoneShape;
+        
+        switch(zone_number) {
+            case 0: zoneShape = this.axes_zone_0[0]; break;
+            case 1: zoneShape = this.axes_zone_1[0]; break;
+            case 2: zoneShape = this.axes_zone_2[0]; break;
+            case 3: zoneShape = this.axes_zone_3[0]; break;
+            default: return;
         }
+        
+        this.svg.append('path')
+            .data([all_data])
+            .attr('class', 'axes-zone')
+            .attr('d', this.axesLineGenerator(zoneShape.points))
+            .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
+            .attr('fill', zoneColor)
+            .attr('opacity', zoneOpacity)
+            .lower();
     }
 
     setAxisTitles(x_title, y_title) {
@@ -349,85 +326,3 @@ class AxesPlot {
       
     }
 }
-
-// ***** V1
-
-// let AxesSvg = d3.select('#scatter-plot')
-// .append('svg')
-// .attr('width', SVGWIDTH )
-// .attr('height', SVGHEIGHT)
-
-// let axes_width = SVGWIDTH - margin.left - margin.right 
-// let axes_height = SVGHEIGHT - margin.top - margin.bottom
-
-// let xScale = d3.scaleLinear()
-// .domain([0,1])
-// .range([0, axes_width])
-
-// let yScale = d3.scaleLinear().domain([0,1]).range([axes_height, 0])
-
-
-// let xAxis = d3.axisBottom(xScale)
-// let gx = AxesSvg.append('g').attr('transform', `translate(${margin.left},${axes_height + margin.top})`)
-// xAxis(gx)
-
-// let yAxis = d3.axisLeft(yScale)
-// const gy = AxesSvg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
-// yAxis(gy)
-
-// **** V2
-
-// let availableWidth = SVGWIDTH;
-// let availableHeight = SVGHEIGHT;
-
-// // Use 80% of the available space
-// let svg_width = 0.8 * availableWidth;
-// let svg_height = 0.8 * availableHeight;
-
-// // Calculate offsets to center the SVG
-// let offsetX = (availableWidth - svg_width) / 2;
-// let offsetY = (availableHeight - svg_height) / 2;
-
-// Append the SVG with adjusted width, height, and offsets for centralization
-// let AxesSvg = d3.select('#scatter-plot')
-//   .append('svg')
-//   .attr('width', availableWidth) // Full width for alignment
-//   .attr('height', availableHeight) // Full height for alignment
-//   .attr('display', "flex") 
-//   .attr('justify-content', "center") 
-//   .append("g")
-//   .attr("transform", `translate(${offsetX},${offsetY-20})`);
-
-// Define adjusted width and height for axes area
-// let axes_width = svg_width - margin.left - margin.right;
-// let axes_height = svg_height - margin.top - margin.bottom;
-
-// Scales and axes with reduced range
-// let xScale = d3.scaleLinear()
-//   .domain([0, 1])
-//   .range([0, axes_width]);
-
-// let yScale = d3.scaleLinear()
-//   .domain([0, 1])
-//   .range([axes_height, 0]);
-
-// let xAxis = d3.axisBottom(xScale);
-// let gx = AxesSvg.append('g')
-//   .attr('transform', `translate(${margin.left},${axes_height + margin.top})`);
-// xAxis(gx);
-
-// let yAxis = d3.axisLeft(yScale);
-// let gy = AxesSvg.append('g')
-//   .attr('transform', `translate(${margin.left}, ${margin.top})`);
-// yAxis(gy);
-
-
-
-
-
-
-
-
-
-
-

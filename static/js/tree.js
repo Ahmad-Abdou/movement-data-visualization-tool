@@ -170,6 +170,13 @@ class Tree {
             const xText = this.selectedRects[0].text;
             const yText = this.selectedRects[1].text;
             showData(xText, yText);
+            
+            // Highlight corresponding heatmap row after it's rendered
+            setTimeout(() => {
+                if (heatmap) {
+                    heatmap.highlightRow(`${xText} ${yText}`);
+                }
+            }, 100);
         }
     }
 }

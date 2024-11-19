@@ -114,12 +114,34 @@ class Heatmap {
       });    
   }
 
+  highlightRow(combination) {
+    // Reset all cells to their original colors
+    this.heatmapGroup.selectAll('rect')
+        .attr('fill', d => this.colorScale(d.value));
+        
+    // Highlight the matching row with a light blue background
+    this.heatmapGroup.selectAll('rect')
+        .filter(d => d.combination === combination)
+        .attr('fill', '#B9E7F5');
+  }
+
   onCellClick(d) {
     const combinationList = d.combination.split(" ");
-    showData(combinationList[0], combinationList[1]);
     axesPlot.svg.selectAll('path.axes-zone').remove();
+    axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
     
-    axesPlot.colorZone(d.zone.slice(4), this.data);
-    // colorTreeElement(combinationList[0], combinationList[1]);
+    // Find the corresponding tree boxes and trigger their toggleColor
+    const firstBox = tree.treeGroup.select(`rect#${combinationList[0]}`);
+    const secondBox = tree.treeGroup.select(`rect#${combinationList[1]}`);
+    
+    if (firstBox.node() && secondBox.node()) {
+        // Reset previous selections
+        tree.selectedRects.forEach(rect => rect.element.attr('fill', 'white'));
+        tree.selectedRects = [];
+        
+        // Trigger toggleColor on both boxes
+        tree.toggleColor(firstBox, combinationList[0]);
+        tree.toggleColor(secondBox, combinationList[1]);
+    }
   }
 }
