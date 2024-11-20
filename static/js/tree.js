@@ -174,7 +174,10 @@ class Tree {
             // Highlight corresponding heatmap row after it's rendered
             setTimeout(() => {
                 if (heatmap) {
-                    heatmap.highlightRow(`${xText} ${yText}`);
+                    // Sorting combination before passing it to highlighting.
+                    list_combination = [xText, yText].sort();
+                    sorted_combination = list_combination.join(" ");
+                    heatmap.highlightRow(sorted_combination);
                 }
             }, 100);
         }

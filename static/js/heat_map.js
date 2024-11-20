@@ -115,15 +115,22 @@ class Heatmap {
   }
 
   highlightRow(combination) {
-    // Reset all cells to their original colors
+
     this.heatmapGroup.selectAll('rect')
-        .attr('fill', d => this.colorScale(d.value));
+      .attr('fill', d => this.colorScale(d.value))
+      .filter(d => d.combination === combination)
+      .attr('fill', '#B9E7F5');
+
+    // // Reset all cells to their original colors
+    // this.heatmapGroup.selectAll('rect')
+    //     .attr('fill', d => this.colorScale(d.value));
         
-    // Highlight the matching row with a light blue background
-    this.heatmapGroup.selectAll('rect')
-        .filter(d => d.combination === combination)
-        .attr('fill', '#B9E7F5');
+    // // Highlight the matching row with a light blue background
+    // this.heatmapGroup.selectAll('rect')
+    //     .filter(d => d.combination === combination)
+    //     .attr('fill', '#B9E7F5');
   }
+  
 
   onCellClick(d) {
     const combinationList = d.combination.split(" ");
