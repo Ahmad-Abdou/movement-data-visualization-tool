@@ -186,9 +186,13 @@ const tree = new Tree('#taxonomy-element', SVGWIDTH, SVGHEIGHT, margin);
 text_combined = [];
 let unsorted_combination = "";
 
-function showData(xAxis, yAxis) {    
+function showData(xAxis, yAxis) {
+    // Settings labels as list, sorting, and then joinning them as string.
+    list_combination = [xAxis, yAxis].sort();
+    sorted_combination = list_combination.join(" ");
+
     unsorted_combination = `${xAxis} ${yAxis}`;
-    let combinedString = unsorted_combination;
+    let combinedString = sorted_combination;  // Was replaced from unsorted -> to sorted.
     axesPlot.setAxisTitles(xAxis, yAxis);
 
     if (file_mapping.hasOwnProperty(combinedString)) {        

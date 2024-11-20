@@ -7,34 +7,34 @@ let trajectory_dataset_name = 'fox_trajectories.csv';
 let df_with_id = 'fox-df.csv';
 
 let frequency_zone_combinations = {
-    "Kinematic Geometric": [],
-    "Speed Acceleration": [],
-    "Indentation Curvature": [],
+    "Geometric Kinematic": [],
+    "Acceleration Speed": [],
+    "Curvature Indentation": [],
     "Curvature Speed": [],
     "Indentation Speed": [],
-    "Curvature Acceleration": [],
-    "Indentation Acceleration": []  
+    "Acceleration Curvature": [],
+    "Acceleration Indentation": []  
   };
 
 let file_mapping = {
-    "Kinematic Geometric": `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`,
-    "Speed Acceleration": `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`,
-    "Indentation Curvature": `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`,
+    "Geometric Kinematic": `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`,
+    "Acceleration Speed": `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`,
+    "Curvature Indentation": `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`,
     "Curvature Speed": `../static/${outlier_dataset_name}/Xcurvature_Yspeed_decision_scores.csv`,
     "Indentation Speed": `../static/${outlier_dataset_name}/Xindentation_Yspeed_decision_scores.csv`,
-    "Curvature Acceleration": `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`,
-    "Indentation Acceleration": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
+    "Acceleration Curvature": `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`,
+    "Acceleration Indentation": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
 };
 
 function setFileMapping(outlier_dataset_name){
     return {
-        "Kinematic Geometric": `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`,
-        "Speed Acceleration": `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`,
-        "Indentation Curvature": `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`,
+        "Geometric Kinematic": `../static/${outlier_dataset_name}/Xkinematic_Ygeometric_decision_scores.csv`,
+        "Acceleration Speed": `../static/${outlier_dataset_name}/Xspeed_Yacceleration_decision_scores.csv`,
+        "Curvature Indentation": `../static/${outlier_dataset_name}/Xindentation_Ycurvature_decision_scores.csv`,
         "Curvature Speed": `../static/${outlier_dataset_name}/Xcurvature_Yspeed_decision_scores.csv`,
         "Indentation Speed": `../static/${outlier_dataset_name}/Xindentation_Yspeed_decision_scores.csv`,
-        "Curvature Acceleration": `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`,
-        "Indentation Acceleration": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
+        "Acceleration Curvature": `../static/${outlier_dataset_name}/Xcurvature_Yacceleration_decision_scores.csv`,
+        "Acceleration Indentation": `../static/${outlier_dataset_name}/Xindentation_Yacceleration_decision_scores.csv`        
     }
 }
 file_mapping = setFileMapping(outlier_dataset_name)
