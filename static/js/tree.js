@@ -171,7 +171,6 @@ class Tree {
             const yText = this.selectedRects[1].text;
             showData(xText, yText);
             
-            // Highlight corresponding heatmap row after it's rendered
             setTimeout(() => {
                 if (heatmap) {
                     heatmap.highlightRow(`${xText} ${yText}`);
