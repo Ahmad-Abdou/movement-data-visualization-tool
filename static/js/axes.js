@@ -181,9 +181,27 @@ class AxesPlot {
         let previouslySelectedBlue = null;
         let previouslySelectedGreen = null;
         
+        const tooltipContainer = this.svg.append('g')
+            .attr('class', 'tooltip-container')
+            .style('display', 'none');
+            
+        tooltipContainer.append('rect')
+            .attr('class', 'tooltip-bg')
+            .attr('width', 120)
+            .attr('height', 90)
+            .attr('fill', 'rgba(230, 224, 124, 0.7)')
+            .attr('rx', 10)
+            .attr('ry', 10);
+            
+        tooltipContainer.append('text')
+            .attr('class', 'tooltip-text')
+            .attr('fill', 'black')
+            .attr('font-size', '12px');
+
         allPlots
         .on('click', function(event) {
           const selected_circle = d3.select(this);
+          const id = event.target.__data__.ID;
           
           if (!isChecked) {
             // Handle blue selection
@@ -206,6 +224,7 @@ class AxesPlot {
                 .attr('r', 8);
               previouslySelectedBlue = selected_circle;
             }
+            get_id(id);
           } else {
             // Handle green selection
             if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
@@ -227,82 +246,44 @@ class AxesPlot {
                 .attr('r', 8);
               previouslySelectedGreen = selected_circle;
             }
-          }
-      
-          const id = event.target.__data__.ID;
-          if (!isChecked) {
-            get_id(id);
-          } else {
             get_id2(id);
           }
-          generate_bars();
+      
+          // Display trajectory on map
+          showTrajectoryOnMap(id);
         })
         .on('mouseover', function() {
-          const selected_circle = d3.select(this);
-          const isSelected = (isChecked && selected_circle.node() === previouslySelectedGreen?.node()) || 
-                            (!isChecked && selected_circle.node() === previouslySelectedBlue?.node());
-          
-          // Only increase size if not already selected
-          if (!isSelected) {
-            selected_circle.attr('r', 8);
-          }
-          
-          // Add tooltips
-          this.svg.append('rect')
-            .attr('id', 'tooltip2')
-            .style('pointer-events', 'none');
-          
-          this.svg.append('text')
-            .attr('id', 'tooltip1')
-            .style('pointer-events', 'none');
+            const selected_circle = d3.select(this);
+            if (!selected_circle.classed('selected')) {
+                selected_circle.attr('r', 8);
+            }
+            tooltipContainer.style('display', null);
         })
         .on('mousemove', function(event, d) {
-          const [x, y] = d3.pointer(event);
-          
-          // Update tooltip rectangle
-          this.svg.select('#tooltip2')
-            .attr('width', 120)
-            .attr('height', 90)
-            .attr('x', x - 20)
-            .attr('y', y - 100)
-            .attr('fill', 'rgba(230, 224, 124, 0.7)')
-            .attr('rx', 10)
-            .attr('ry', 10);
-          
-          // Update tooltip text
-          this.svg.select('#tooltip1')
-            .attr('x', x)
-            .attr('y', y - 65)
-            .attr('text-anchor', 'middle')
-            .attr('fill', 'black')
-            .attr('font-size', '12px')
-            .selectAll('tspan')
-            .data([
-              `Fox ID: ${d.ID.toString()}`,
-              `X: ${d.x.toString()}`,
-              `Y: ${d.y.toString()}`,
-            ])
-            .join('tspan')
-            .attr('x', x + 5)
-            .attr('text-anchor', 'start')
-            .attr('dy', (d, i) => i === 0 ? 0 : '1.2em')
-            .text(d => d)
-            .style("display", "block");
+            const [x, y] = d3.pointer(event);
+            tooltipContainer
+                .attr('transform', `translate(${x - 20},${y - 100})`);
+                
+            tooltipContainer.select('.tooltip-text')
+                .selectAll('tspan')
+                .data([
+                    `ID: ${d.ID}`,
+                    `X: ${d.x.toFixed(4)}`,
+                    `Y: ${d.y.toFixed(4)}`
+                ])
+                .join('tspan')
+                .attr('x', 10)
+                .attr('y', (d, i) => 20 + i * 20)
+                .text(d => d);
         })
         .on('mouseout', function() {
-          const selected_circle = d3.select(this);
-          const isSelected = (isChecked && selected_circle.node() === previouslySelectedGreen?.node()) || 
-                            (!isChecked && selected_circle.node() === previouslySelectedBlue?.node());
-          
-          // Return to original size (4) only if not selected
-          selected_circle.attr('r', isSelected ? 8 : 4);
-          
-          // Remove tooltips
-          this.svg.select('#tooltip1').remove();
-          this.svg.select('#tooltip2').remove();
+            const selected_circle = d3.select(this);
+            if (!selected_circle.classed('selected')) {
+                selected_circle.attr('r', 4);
+            }
+            tooltipContainer.style('display', 'none');
         });
       
-        // Rectangle group event handlers
         rectGroup.selectAll('rect')
           .data(data)
           .on('mouseover', (event, d) => {
