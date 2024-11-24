@@ -59,6 +59,7 @@ class AxesPlot {
         ]
         
         this.init(containerId);
+        this.plotGroup = this.svg.append('g').attr('class', 'plot-group');
     }
 
     init() {
@@ -73,26 +74,30 @@ class AxesPlot {
     }
 
     drawZoneLines(axesLines, axesLabels) {
-      axesLines.forEach((shape, index)=>{
-        this.svg.append('path')
-        .attr('d', this.axesLineGenerator(shape.points))
-        .attr('transform', `translate(${margin.left}, ${margin.top})`)
-        .attr('fill', 'none')
-        .attr('stroke', index === axesLines.length -1 ? 'grey': 'black')
-        .attr('stroke-width', 2)
-        .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none')
-    })
-    
-    
-    axesLabels.forEach((label)=>{
-      this.svg.append('text')
-      .attr('x', this.xScale(label.position[0]))
-      .attr('y', this.yScale(label.position[1]))
-      .attr('transform', `translate(${margin.left} , ${margin.top})`)
-      .attr('font-size', 40)
-      .text(label.text)
-    })
-    
+        // Create a group for all axis-related elements
+        const axisGroup = this.svg.append('g').attr('class', 'axis-group');
+        
+        axesLines.forEach((shape, index)=>{
+            axisGroup.append('path')
+                .attr('d', this.axesLineGenerator(shape.points))
+                .attr('transform', `translate(${margin.left}, ${margin.top})`)
+                .attr('fill', 'none')
+                .attr('stroke', index === axesLines.length -1 ? 'grey': 'black')
+                .attr('stroke-width', 2)
+                .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none');
+        });
+        
+        axesLabels.forEach((label)=>{
+            axisGroup.append('text')
+                .attr('x', this.xScale(label.position[0]))
+                .attr('y', this.yScale(label.position[1]))
+                .attr('transform', `translate(${margin.left} , ${margin.top})`)
+                .attr('font-size', 40)
+                .text(label.text);
+        });
+        
+        // Raise the axis group to the front
+        axisGroup.raise();
     }
 
     colorZone(zone_number, all_data) {
@@ -115,7 +120,12 @@ class AxesPlot {
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
             .attr('fill', zoneColor)
             .attr('opacity', zoneOpacity)
-            .lower();
+            .lower();  // This ensures zones go below the axes
+
+        // Raise axes and grid lines to the top
+        this.svg.select('.axis-group').raise();
+        this.gx.raise();
+        this.gy.raise();
     }
 
     setAxisTitles(x_title, y_title) {
@@ -140,7 +150,8 @@ class AxesPlot {
     }
 
     showPlots(data) {
-        this.svg.selectAll("#plots").remove();
+        // Clear existing plots
+        this.plotGroup.selectAll("*").remove();
         this.svg.selectAll("#rectangles").remove();
       
         data.forEach((d)=>{
@@ -156,15 +167,16 @@ class AxesPlot {
           d.normalizedY = (d.y - yExtent[0]) / (yExtent[1] - yExtent[0]);
         })
       
-        const allPlots = this.svg.append('g')
-        .attr('id', 'plots')
-        .selectAll('circle')
-        .data(data)
-        .join('circle')
-        .attr('r', 4)
-        .attr('cx', (d,i)=> this.xScale(d.normalizedX) + margin.left )
-        .attr('cy', (d,i)=> this.yScale(d.normalizedY) + margin.top )
-        .attr('fill' , 'grey')
+        // Add plots to the plot group instead of directly to svg
+        const allPlots = this.plotGroup.append('g')
+            .attr('id', 'plots')
+            .selectAll('circle')
+            .data(data)
+            .join('circle')
+            .attr('r', 4)
+            .attr('cx', (d,i)=> this.xScale(d.normalizedX) + margin.left )
+            .attr('cy', (d,i)=> this.yScale(d.normalizedY) + margin.top )
+            .attr('fill' , 'grey');
       
         allPlots.each((d,i,n)=>{
           d3.select(n[i])
@@ -305,5 +317,8 @@ class AxesPlot {
             this.svg.select('#tooltip3').remove();
           });
       
+        this.svg.select('.axis-group').raise();
+        this.gx.raise();
+        this.gy.raise();
     }
 }

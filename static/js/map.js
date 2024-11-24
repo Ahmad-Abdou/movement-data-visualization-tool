@@ -12,7 +12,7 @@ function showTrajectoryOnMap(id) {
     // Clear previous trajectories
     activeTrajectories.forEach(layer => map.removeLayer(layer));
     activeTrajectories = [];
-    const geojsonPath = `../static/fox/${id}.geojson`;
+    const geojsonPath = `../static/hurricanes/${id}.geojson`;
     
     fetch(geojsonPath)
         .then(response => {
