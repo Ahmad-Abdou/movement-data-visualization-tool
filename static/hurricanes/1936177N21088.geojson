@@ -1,0 +1,16 @@
+{
+    "type": "Feature",
+    "geometry": {
+        "type": "LineString",
+        "coordinates": [
+            [
+                87.5,
+                20.7
+            ]
+        ]
+    },
+    "properties": {
+        "tid": "1936177N21088",
+        "label": "NI"
+    }
+}

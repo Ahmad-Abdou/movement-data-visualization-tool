@@ -1,0 +1,16 @@
+{
+    "type": "Feature",
+    "geometry": {
+        "type": "LineString",
+        "coordinates": [
+            [
+                130.6,
+                26.6
+            ]
+        ]
+    },
+    "properties": {
+        "tid": "1921294N27131",
+        "label": "WP"
+    }
+}
