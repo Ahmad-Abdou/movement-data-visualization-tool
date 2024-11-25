@@ -134,8 +134,7 @@ class Heatmap {
 
   onCellClick(d) {
     const combinationList = d.combination.split(" ");
-    axesPlot.svg.selectAll('path.axes-zone').remove();
-    axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
+
     
     // Find the corresponding tree boxes and trigger their toggleColor
     const firstBox = tree.treeGroup.select(`rect#${combinationList[0]}`);
@@ -150,5 +149,7 @@ class Heatmap {
         tree.toggleColor(firstBox, combinationList[0]);
         tree.toggleColor(secondBox, combinationList[1]);
     }
+    axesPlot.svg.selectAll('path.axes-zone').remove();
+    axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
   }
 }
