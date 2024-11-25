@@ -5,7 +5,7 @@ class Heatmap {
     this.height = height;
     this.margin = margin;
     this.data = data;
-
+    this.zones = []
     // Define scales, color, and SVG elements
     this.colorScale = d3.scaleLinear().range(colorRange);
     this.xScale = d3.scaleBand().domain(["Zone 0", "Zone 1", "Zone 2", "Zone 3"]).range([0, width - margin.left - margin.right]).padding(0.01);
@@ -23,7 +23,6 @@ class Heatmap {
     this.heatmapGroup = this.svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
   }
-
   prepareData(combinations_data){    
       const dataEntries = Object.entries(combinations_data).map(([key, path]) => ({ key, path }));
       return Promise.all(dataEntries.map(({ path, key }) => {
@@ -43,8 +42,9 @@ class Heatmap {
               counter_z_3++;
             }
           });
-          frequency_zone_combinations[key] = []      
-          frequency_zone_combinations[key].push(counter_z_0, counter_z_1, counter_z_2, counter_z_3);          
+          frequency_zone_combinations[key] = []    
+          frequency_zone_combinations[key].push(counter_z_0, counter_z_1, counter_z_2, counter_z_3);     
+    
         }).catch(error => {
           console.error(`Error processing ${path}:`, error);
         });
@@ -123,9 +123,10 @@ class Heatmap {
     this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
         .attr('fill', '#B9E7F5');
+        current_selected_combination = combination
   }
 
-  onCellClick(d) {
+  async onCellClick(d) {
     const combinationList = d.combination.split(" ");
 
     
@@ -144,5 +145,8 @@ class Heatmap {
     }
     axesPlot.svg.selectAll('path.axes-zone').remove();
     axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
+    
+    // Send data to Python
+    // await sendDataToPython(d.combination, d.zone);
   }
 }
