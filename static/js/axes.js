@@ -5,7 +5,7 @@ class AxesPlot {
         this.height = height;
         this.margin = margin;
         this.colorsList = [];
-        
+        this.allPlots = null
         this.availableWidth = width;
         this.availableHeight = height;
         this.svgWidth = 0.7 * this.availableWidth;
@@ -96,13 +96,13 @@ class AxesPlot {
                 .text(label.text);
         });
         
-        // Raise the axis group to the front
         axisGroup.raise();
     }
 
     colorZone(zone_number, all_data) {
-        const zoneColor = '#B9E7F5';
-        const zoneOpacity = 0.7;
+        this.svg.selectAll('path.axes-zone').remove();
+        const zoneColor = '#FFFF00';
+        const zoneOpacity = 0.4; 
         let zoneShape;
         
         switch(zone_number) {
@@ -119,10 +119,10 @@ class AxesPlot {
             .attr('d', this.axesLineGenerator(zoneShape.points))
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
             .attr('fill', zoneColor)
-            .attr('opacity', zoneOpacity)
-            .lower();  // This ensures zones go below the axes
+            .attr('opacity', zoneOpacity);
 
-        // Raise axes and grid lines to the top
+        this.plotGroup.lower();
+        this.svg.selectAll('path.axes-zone').raise();
         this.svg.select('.axis-group').raise();
         this.gx.raise();
         this.gy.raise();
@@ -168,7 +168,7 @@ class AxesPlot {
         })
       
         // Add plots to the plot group instead of directly to svg
-        const allPlots = this.plotGroup.append('g')
+        this.allPlots = this.plotGroup.append('g')
             .attr('id', 'plots')
             .selectAll('circle')
             .data(data)
@@ -178,7 +178,7 @@ class AxesPlot {
             .attr('cy', (d,i)=> this.yScale(d.normalizedY) + margin.top )
             .attr('fill' , 'grey');
       
-        allPlots.each((d,i,n)=>{
+          this.allPlots.each((d,i,n)=>{
           d3.select(n[i])
           .transition()
           .ease(d3.easeBounce)
@@ -210,7 +210,7 @@ class AxesPlot {
             .attr('fill', 'black')
             .attr('font-size', '12px');
 
-        allPlots
+            this.allPlots
         .on('click', function(event) {
           const selected_circle = d3.select(this);
           const id = event.target.__data__.ID;
