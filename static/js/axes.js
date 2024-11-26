@@ -74,7 +74,6 @@ class AxesPlot {
     }
 
     drawZoneLines(axesLines, axesLabels) {
-        // Create a group for all axis-related elements
         const axisGroup = this.svg.append('g').attr('class', 'axis-group');
         
         axesLines.forEach((shape, index)=>{
@@ -101,8 +100,8 @@ class AxesPlot {
 
     colorZone(zone_number, all_data) {
         this.svg.selectAll('path.axes-zone').remove();
-        const zoneColor = '#FFFF00';
-        const zoneOpacity = 0.4; 
+        const zoneColor = '#0080FF';
+        const zoneOpacity = 0.5; 
         let zoneShape;
         
         switch(zone_number) {
