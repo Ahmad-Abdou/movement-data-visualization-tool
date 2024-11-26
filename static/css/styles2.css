@@ -82,3 +82,27 @@ html, body {
    margin-right: 50px;
    margin-bottom: 50px;
 }
+
+.accuracy-info {
+   margin-bottom: 15px;
+   padding: 10px;
+   background-color: #f8f9fa;
+   border-radius: 4px;
+}
+
+.feature-table {
+   width: 100%;
+   margin-top: 10px;
+   font-size: 0.9em;
+}
+
+.feature-table th,
+.feature-table td {
+   padding: 8px;
+   border-bottom: 1px solid #dee2e6;
+}
+
+.feature-table th {
+   background-color: #f8f9fa;
+   font-weight: bold;
+}

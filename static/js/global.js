@@ -127,49 +127,103 @@ kinematic = ["speed_0s","speed_mean","speed_meanse","speed_quant_min","speed_qua
 
 async function sendDataToPython(path_combination, zone, df_path_with_id) {
     try {
+        const cleanPath = path => path.replace('../static/', '');
+        
         const response = await fetch('/api/data', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                path_combination: path_combination,
-                zone: zone,
-                df_path_with_id: df_path_with_id
+                path_combination: cleanPath(path_combination),
+                zone: parseInt(zone),
+                df_path_with_id: cleanPath(df_path_with_id)
             })
         });
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorData = await response.json();
+            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
         }
         
         const result = await response.json();
         if (result.status === 'success') {
-            return result.data;
-        } else {
-            throw new Error(result.message);
+            displayFeatureImportance(result.data);
         }
+        
+        return result;
     } catch (error) {
         console.error('Error sending data to Python:', error);
         throw error;
     }
 }
+
+function displayFeatureImportance(data) {
+    const { feature_importance, accuracy, f1_score } = data;
+    
+    // Get the container
+    let container = document.getElementById('feature-importance-container');
+    if (!container) return;
+    
+    // Clear previous content
+    container.innerHTML = '';
+    
+    // Add metrics information
+    const metricsElement = document.createElement('div');
+    metricsElement.classList.add('metrics-info');
+    metricsElement.innerHTML = `
+        <h5>Model Metrics:</h5>
+        <p>Accuracy: ${(accuracy * 100).toFixed(2)}%</p>
+        <p>F1 Score: ${f1_score === 0 ? 'N/A (single class)' : (f1_score * 100).toFixed(2) + '%'}</p>
+    `;
+    container.appendChild(metricsElement);
+    
+    // Create feature importance table
+    const table = document.createElement('table');
+    table.classList.add('feature-table');
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Importance</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${feature_importance
+                .slice(0, 10) // Show only top 10 features
+                .map(item => `
+                    <tr>
+                        <td>${item.Feature}</td>
+                        <td>${(item.Importance * 100).toFixed(2)}%</td>
+                    </tr>
+                `)
+                .join('')}
+        </tbody>
+    `;
+    
+    container.appendChild(table);
+}
+
 resultasdas = []
 let selector = document.getElementById("#zone-select")
 selector.addEventListener('change', async (e) => {
     current_selected_zone = parseInt(e.target.value);
     
-    if (current_selected_zone !== undefined) {
-        await sendDataToPython(file_mapping[current_selected_combination], current_selected_zone, file_mapping2[current_selectec_data]);
-        
-        axesPlot.svg.selectAll('circle')
-            .attr('fill', function(d) {
-                const x = d.normalizedX;
-                const y = d.normalizedY;
-                const pointZone = getZoneForPoint(x, y);
-                return pointZone === current_selected_zone ? '#ff0000' : 'grey';
-            });
+    if (current_selected_zone !== undefined && current_selected_combination) {
+        try {
+            const result = await sendDataToPython(
+                file_mapping[current_selected_combination], 
+                current_selected_zone, 
+                file_mapping2[current_selectec_data]
+            );
             
+            if (result.status === 'success') {
+                displayFeatureImportance(result.data);
+                // ...existing circle color update code...
+            }
+        } catch (error) {
+            console.error('Failed to process data:', error);
+        }
     }
 });
 

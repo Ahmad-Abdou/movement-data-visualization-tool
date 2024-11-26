@@ -27,37 +27,26 @@ def process_data():
         zone = data.get('zone')
         features_path = data.get('df_path_with_id')
         
-        # Clean up paths
-        combination_path = combination_path.replace('../static/', '').strip('/')
-        features_path = features_path.replace('../static/', '').strip('/')
+        if not all([combination_path, features_path, zone is not None]):
+            return jsonify({'status': 'error', 'message': 'Missing required parameters'}), 400
         
-        # Convert to absolute paths
         abs_combination_path = get_absolute_path(f'static/{combination_path}')
         abs_features_path = get_absolute_path(f'static/{features_path}')
         
-        # Verify files exist
-        if not os.path.exists(abs_combination_path):
-            return jsonify({
-                'status': 'error',
-                'message': f'Combination file not found: {combination_path}'
-            }), 404
+        if not os.path.exists(abs_combination_path) or not os.path.exists(abs_features_path):
+            return jsonify({'status': 'error', 'message': 'Data files not found'}), 404
             
-        if not os.path.exists(abs_features_path):
-            return jsonify({
-                'status': 'error',
-                'message': f'Features file not found: {features_path}'
-            }), 404
-            
-        feature_importance_df, accuracy = feature_importance.getData(zone, abs_combination_path, abs_features_path)
+        feature_importance_df, accuracy, f1_score = feature_importance.getData(zone, abs_combination_path, abs_features_path)
+        
+        # Convert DataFrame to dict for JSON serialization
+        feature_importance_data = feature_importance_df.to_dict('records')
         
         return jsonify({
             'status': 'success',
-            'message': 'Data processed successfully',
             'data': {
-                'combination': combination_path,
-                'zone': zone,
-                'df-file': features_path,
-                'accuracy': accuracy
+                'feature_importance': feature_importance_data,
+                'accuracy': float(accuracy),
+                'f1_score': float(f1_score)
             }
         })
         
@@ -65,7 +54,7 @@ def process_data():
         app.logger.error(f'Error processing request: {str(e)}\n{traceback.format_exc()}')
         return jsonify({
             'status': 'error',
-            'message': str(e)
+            'message': f'Server error: {str(e)}'
         }), 500
 
 if __name__ == '__main__':
