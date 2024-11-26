@@ -220,6 +220,13 @@ selector.addEventListener('change', async (e) => {
             if (result.status === 'success') {
                 displayFeatureImportance(result.data);
                 // ...existing circle color update code...
+                axesPlot.svg.selectAll('circle')
+                .attr('fill', function(d) {
+                    const x = d.normalizedX;
+                    const y = d.normalizedY;
+                    const pointZone = getZoneForPoint(x, y);
+                    return pointZone === current_selected_zone ? '#ff0000' : 'grey';
+                });
             }
         } catch (error) {
             console.error('Failed to process data:', error);
