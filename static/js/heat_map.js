@@ -122,7 +122,7 @@ class Heatmap {
     // Highlight the matching row with a light blue background
     this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
-        .attr('fill', '#B9E7F5');
+        .attr('fill', '#0080FF').attr('opacity', 0.5);
         current_selected_combination = combination
   }
 

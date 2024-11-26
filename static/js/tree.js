@@ -57,10 +57,10 @@ class Tree {
 
         let treeLines = [
             {points: [[this.centeredCircle, this.boxHeight ], 
-                     [this.centeredCircle, this.height/2], 
+                     [this.centeredCircle, this.height/2 - 50], 
                      [this.centeredCircle - this.offset, this.height * 0.4]]},
             {points: [[this.centeredCircle, this.boxHeight ], 
-                     [this.centeredCircle, this.height/2], 
+                     [this.centeredCircle, this.height/2 - 50], 
                      [this.centeredCircle + this.offset, this.height * 0.4]]}
         ];
 
@@ -73,10 +73,10 @@ class Tree {
         });
 
         let treeSubLines = [
-            {points: [[this.centeredCircle - this.offset, this.height * 0.3], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.55]]},
-            {points: [[this.centeredCircle - this.offset, this.height * 0.3], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.55]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.3], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.55]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.3], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.55]]}
+            {points: [[this.centeredCircle - this.offset, this.height * 0.38], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.52]]},
+            {points: [[this.centeredCircle - this.offset, this.height * 0.38], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.52]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.38], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.52]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.38], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.52]]}
         ];
 
         treeSubLines.forEach((shape, index) => {
@@ -156,13 +156,13 @@ class Tree {
        
         if (this.selectedRects.length < 2) {
             if (currentColor === "white") {
-                element.attr('fill', '#B9E7F5');
+                element.attr('fill', '#0080FF').attr('opacity', 0.5);
                 this.selectedRects.push({ element: element, text: text });
             }
         } else if (currentColor === "white" && this.selectedRects.length === 2) {
             this.selectedRects[0].element.attr('fill', 'white');
             this.selectedRects.shift();
-            element.attr('fill', '#B9E7F5');
+            element.attr('fill', '#0080FF').attr('opacity', 0.5);
             this.selectedRects.push({ element: element, text: text });
         }
 

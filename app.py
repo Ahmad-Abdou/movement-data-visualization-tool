@@ -16,8 +16,6 @@ def process_data():
 
     try:
         df = pd.read_csv(selected_combination)
-        
-        # result = df.to_dict('records')
         return jsonify({
             'status': 'success',
             'message': f'Received combination: {selected_combination}, zone: {selected_zone}'
