@@ -15,18 +15,18 @@
         <div id="container" class="container-fluid h-100">
             <!-- Left container composed with three subcontainers in the left side -->
             <div id="left-container" class="col-4 h-100">
-                <div id="taxonomy-container" class="h-100">
+                <div id="taxonomy-container" class="h-40">
                     <div class="card">
                         <div id="top-taxonomy-header" class="card-header">
                             <div class="dropdown">
-                                <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Datasets</button>
+                                <button id="dataset-btn" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Datasets</button>
                                 <ul id="datasets" class="dropdown-menu">
                                   <li><a class="dropdown-item" href="#" onclick="selectFoxes()">Foxes </a></li>
                                   <li><a class="dropdown-item" href="#" onclick="selectHurricanes()">Hurricanes</a></li>
                                   <li><a class="dropdown-item" href="#" onclick="selectAIS()">AIS</a></li>
                                 </ul>
                               </div>
-                            <h4>Taxonomy</h4>
+                            <p class="taxonomy-p">Taxonomy</p>
                         </div>                        
                         <div class="card-body">
                             <div id="taxonomy-element">
@@ -36,7 +36,7 @@
                 </div>
                 <div id="heatmap-container" class="h-100">
                     <div class="card">
-                        <h4 class="card-header">Heatmap</h4>
+                        <p class="card-header">Heatmap</p>
                         <div class="card-body">                            
                             <div id="heat-map"></div>
                         </div>
@@ -44,9 +44,9 @@
                 </div>
                 <div id="scatter-plot-container" class="h-100">
                     <div class="card">
-                        <h4 class="card-header">Zone Explorer</h4>
+                        <p class="card-header">Zone Explorer</p>
                         <div class="zone-selector">
-                            <select id="#zone-select">
+                            <select id="zone-select">
                              <option  value="0">Zone 0</option>
                              <option  value="1">Zone 1</option>
                              <option  value="2">Zone 2</option>
@@ -67,7 +67,7 @@
                 <div id="bottom-subcontainer" class="d-flex">
                     <div class="col-4 h-100" id="feature-importance-container">
                         <div class="card">
-                            <h4 class="card-header">Feature Importance</h4>
+                            <p class="card-header">Feature Importance</p>
                             <div class="card-body">      
                             <div id="feature-importance-container"></div>                          
                             </div>
@@ -75,7 +75,7 @@
                     </div>
                     <div class="col-4" id="trajectory-features-detailed-container">
                         <div class="card">
-                            <h4 class="card-header">Trajectory Features Detailed</h4>
+                            <p class="card-header">Trajectory Features Detailed</p>
                             <div class="card-body">                                
                             </div>
                         </div>

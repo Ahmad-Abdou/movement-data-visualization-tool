@@ -14,8 +14,8 @@ class Tree {
             
         this.selectedRects = [];
         
-        this.boxWidth = this.width * 0.24;
-        this.boxHeight = this.height * 0.16;
+        this.boxWidth = this.width * 0.20;
+        this.boxHeight = this.height * 0.13;
         this.centeredCircle = (this.width/2);
         this.offset = this.width * 0.25;
         
@@ -44,9 +44,9 @@ class Tree {
             .enter()
             .append('tspan')
             .attr('x', this.centeredCircle)
-            .attr('y', d => 25 + (d === 'variables' ? 20 : 0))
+            .attr('y', d => 12 + (d === 'variables' ? 12 : 0))
             .text(d => d)
-            .attr('font-size', 14);
+            .attr('font-size', 10);
     }
 
     drawTreeLines() {
@@ -73,10 +73,10 @@ class Tree {
         });
 
         let treeSubLines = [
-            {points: [[this.centeredCircle - this.offset, this.height * 0.38], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.52]]},
-            {points: [[this.centeredCircle - this.offset, this.height * 0.38], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.52]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.38], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.52]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.38], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.52]]}
+            {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.36]]},
+            {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.36]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.36]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.36]]}
         ];
 
         treeSubLines.forEach((shape, index) => {
@@ -119,7 +119,7 @@ class Tree {
                 .attr('x', label.position[0])
                 .attr('y', label.position[1] + this.boxHeight/2)
                 .text(label.text)
-                .attr('font-size', '16')
+                .attr('font-size', '14')
                 .attr('text-anchor', 'middle')
                 .on("click", () => {
                     this.toggleColor(d3.select(rect.node()), label.text);
@@ -143,7 +143,7 @@ class Tree {
                 .attr('x', label.position[0])
                 .attr('y', label.position[1] + this.boxHeight/2)
                 .text(label.text)
-                .attr('font-size', '16')
+                .attr('font-size', '14')
                 .attr('text-anchor', 'middle')
                 .on("click", () => {
                     this.toggleColor(d3.select(rect.node()), label.text);
@@ -180,7 +180,6 @@ class Tree {
     }
 }
 
-const tree = new Tree('#taxonomy-element', SVGWIDTH, SVGHEIGHT, margin);
 
 text_combined = [];
 let unsorted_combination = "";
@@ -197,7 +196,7 @@ function showData(xAxis, yAxis) {
                 
                 axesPlot.showPlots(data);
                 combination = combinedString;
-                heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
+                // heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
                 heatmap.render(file_mapping);
             })
             .catch(error => {

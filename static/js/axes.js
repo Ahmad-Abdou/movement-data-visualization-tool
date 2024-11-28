@@ -11,18 +11,18 @@ class AxesPlot {
         this.svgWidth = 0.7 * this.availableWidth;
         this.svgHeight = 0.7 * this.availableHeight;
         
-        this.offsetX = (this.availableWidth - this.svgWidth) / 2;
-        this.offsetY = (this.availableHeight - this.svgHeight) / 2;
+        this.offsetX = (this.availableWidth - this.svgWidth) / 2  - margin.right;
+        this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top;
         this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
 
         this.xScale = d3.scaleLinear().domain([0, 1]).range([0, this.svgWidth]);
         this.yScale = d3.scaleLinear().domain([0, 1]).range([this.svgHeight, 0]);
         this.xAxis = d3.axisBottom(this.xScale);
-        this.gx = this.svg.append('g').attr('transform', `translate(${margin.left},${this.svgHeight + margin.top})`);
+        this.gx = this.svg.append('g').attr('transform', `translate(${this.margin.left},${this.svgHeight + this.margin.top})`);
 
         this.yAxis = d3.axisLeft(this.yScale);
 
-        this.gy = this.svg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`);
+        this.gy = this.svg.append('g').attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
         this.axesLineGenerator = d3.line().x(d=>this.xScale(d[0] )).y(d=>this.yScale(d[1]))
         this.colorScale = d3.scaleOrdinal().domain([0, 1]).range(['#1f77b4', '#ff7f0e']);
         this.colorsList = []
@@ -79,7 +79,7 @@ class AxesPlot {
         axesLines.forEach((shape, index)=>{
             axisGroup.append('path')
                 .attr('d', this.axesLineGenerator(shape.points))
-                .attr('transform', `translate(${margin.left}, ${margin.top})`)
+                .attr('transform', `translate(${this.margin.left}, ${this.margin.bottom + this.margin.top})`)
                 .attr('fill', 'none')
                 .attr('stroke', index === axesLines.length -1 ? 'grey': 'black')
                 .attr('stroke-width', 2)
@@ -90,7 +90,7 @@ class AxesPlot {
             axisGroup.append('text')
                 .attr('x', this.xScale(label.position[0]))
                 .attr('y', this.yScale(label.position[1]))
-                .attr('transform', `translate(${margin.left} , ${margin.top})`)
+                .attr('transform', `translate(${this.margin.left} , ${this.margin.top})`)
                 .attr('font-size', 40)
                 .text(label.text);
         });
@@ -133,7 +133,7 @@ class AxesPlot {
             .attr('class', 'axis-title')
             .text(x_title)
             .attr('x', (this.svgWidth / 2) + 50)
-            .attr('y', this.svgHeight + 90)
+            .attr('y', this.svgHeight)
             .attr('text-anchor', 'middle')
             .attr('font-size', 20)
             .attr('fill', 'black');
@@ -141,7 +141,8 @@ class AxesPlot {
           this.svg.append('text')
             .attr('class', 'axis-title')
             .text(y_title)
-            .attr('y', (this.svgHeight / 2) + 5 )
+            .attr('x', 40)
+            .attr('y', (this.svgHeight / 2) )
             .attr('text-anchor', 'middle')
             .attr('font-size', 20)
             .attr('transform', `rotate(-90, 13, ${this.svgHeight / 2})`)
@@ -173,8 +174,8 @@ class AxesPlot {
             .data(data)
             .join('circle')
             .attr('r', 4)
-            .attr('cx', (d,i)=> this.xScale(d.normalizedX) + margin.left )
-            .attr('cy', (d,i)=> this.yScale(d.normalizedY) + margin.top )
+            .attr('cx', (d,i)=> this.xScale(d.normalizedX) + this.margin.left )
+            .attr('cy', (d,i)=> this.yScale(d.normalizedY) + this.margin.top )
             .attr('fill' , 'grey');
       
           this.allPlots.each((d,i,n)=>{
@@ -182,7 +183,7 @@ class AxesPlot {
           .transition()
           .ease(d3.easeBounce)
           .duration(2000)
-          .attr('cy', (d,i) => this.yScale(d.normalizedY) + margin.top )
+          .attr('cy', (d,i) => this.yScale(d.normalizedY) + this.margin.top )
           this.colorsList.push(d3.select(n[i]).attr('fill'))
         })
       

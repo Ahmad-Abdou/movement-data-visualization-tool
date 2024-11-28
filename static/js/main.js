@@ -1,9 +1,16 @@
 
-const margin2 = {left: 50, right: 50, top: 50, bottom: 65};
-// const tree2 = new Tree('#taxonomy-element', 450, 450, margin2);
-const barChart2 = new BarChart('.bar-chart', 450, 450);
-const axesPlot = new AxesPlot('#scatter-plot', 500, 500, margin2);
+const margin_heat = {top: 20, right: -150, bottom: -150, left: 120};
+let heatmap = new Heatmap('heat-map', 600, 325, margin_heat, frequency_zone_combinations);
+heatmap.render(file_mapping);
 
 
-// barChart2.generateBars(idFilter1, idFilter2);
-// axesPlot2.showPlots(data);
+
+const margin_axes= {left: 50, right: 0, top: -35, bottom: 0};
+const axesPlot = new AxesPlot('#scatter-plot', 450, 350, margin_axes);
+
+
+const tree = new Tree('#taxonomy-element', 500, 300, 0);
+
+const barChart = new BarChart('.bar-chart', 450, 450);
+
+
