@@ -10,7 +10,7 @@ class Tree {
             .attr('height', this.height);
             
         this.treeGroup = this.svg.append('g')
-            .attr('transform', `translate(0, ${margin.top/2})`);
+            .attr('transform', `translate(0, ${this.margin/2})`);
             
         this.selectedRects = [];
         
