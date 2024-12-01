@@ -202,7 +202,8 @@ function displayFeatureImportance(data) {
 }
 
 resultasdas = []
-let selector = document.getElementById("#zone-select")
+let selector = document.getElementById("zone-select")
+console.log(selector)
 selector.addEventListener('change', async (e) => {
     current_selected_zone = parseInt(e.target.value);
     
