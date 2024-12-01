@@ -154,63 +154,23 @@ async function sendDataToPython(path_combination, zone, df_path_with_id) {
 
 function displayFeatureImportance(data) {
     const { feature_importance, accuracy, f1_score } = data;
-    // Get the container
     let container = document.querySelector('.feature-importance-container');
     if (!container) return;
     
+    container.innerHTML = ''
     const accuracy_p  = document.createElement('p')
     const f1_score_p  = document.createElement('p')
-    console.log(accuracy_p)
-
     accuracy_p.innerHTML = `Model Accuracy: ${(accuracy * 100).toFixed(2)}`
     f1_score_p.innerHTML = `F1- Score: ${(f1_score * 100).toFixed(2)}`
-    
     container.appendChild(accuracy_p)
     container.appendChild(f1_score_p)
-
     const featureBar = new FeatureBar('.feature-importance-container', 600, 400,feature_importance)
-
     featureBar.render()
-    // const featureBarSVG = d3.select('#feature-importance-container')
-    // .append('svg')
-    // .attr('width',450)
-    // .attr('height', 450)
-
-    // console.log(featureBarSVG)
-    // featureBarSVG.append('rect')
-    // .attr('fill', 'red')
-    // .attr('width', 450)
-    // .attr('height', 450)
-
-    // // Create feature importance table
-    // const table = document.createElement('table');
-    // table.classList.add('feature-table');
-    // table.innerHTML = `
-    //     <thead>
-    //         <tr>
-    //             <th>Feature</th>
-    //             <th>Importance</th>
-    //         </tr>
-    //     </thead>
-    //     <tbody>
-    //         ${feature_importance
-    //             .slice(0, 10) // Show only top 10 features
-    //             .map(item => `
-    //                 <tr>
-    //                     <td>${item.Feature}</td>
-    //                     <td>${(item.Importance * 100).toFixed(2)}%</td>
-    //                 </tr>
-    //             `)
-    //             .join('')}
-    //     </tbody>
-    // `;
-    
-    // container.appendChild(table);
 }
 
 resultasdas = []
 function displayselectedZone() {
-    let selector = document.getElementById("zone-select")
+    let selector = document.getElementById("zone-select-1")
     selector.addEventListener('change', async (e) => {
         current_selected_zone = parseInt(e.target.value);
         
@@ -230,6 +190,33 @@ function displayselectedZone() {
                         const y = d.normalizedY;
                         const pointZone = getZoneForPoint(x, y);
                         return pointZone === current_selected_zone ? '#ff0000' : 'grey';
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to process data:', error);
+            }
+        }
+    });
+    let selector2 = document.getElementById("zone-select-2")
+    selector2.addEventListener('change', async (e) => {
+        current_selected_zone = parseInt(e.target.value);
+        
+        if (current_selected_zone !== undefined && current_selected_combination) {
+            try {
+                const result = await sendDataToPython(
+                    file_mapping[current_selected_combination], 
+                    current_selected_zone, 
+                    file_mapping2[current_selectec_data]
+                );
+                
+                if (result.status === 'success') {
+                    displayFeatureImportance(result.data);
+                    axesPlot.svg.selectAll('circle')
+                    .attr('fill', function(d) {
+                        const x = d.normalizedX;
+                        const y = d.normalizedY;
+                        const pointZone = getZoneForPoint(x, y);
+                        return pointZone === current_selected_zone ? 'green' : 'grey';
                     });
                 }
             } catch (error) {

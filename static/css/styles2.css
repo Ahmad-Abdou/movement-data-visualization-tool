@@ -153,8 +153,14 @@ p {
     left: 10px;
     top: 8px;
 }
+.zone-selector-2{
+   position: absolute;
+   left: 100px;
+   top: 8px;
+   
+}
 
-.zone-selector select {
+.zone-selector select, .zone-selector-2 select{
     padding: 2px 5px;
     font-size: 14px;
     border-radius: 4px;
@@ -162,6 +168,4 @@ p {
     color: white;
     border: none;
     opacity: 0.5;
-
-
 }
