@@ -149,5 +149,6 @@ class Heatmap {
     // Send data to Python
     // await sendDataToPython(d.combination, d.zone);
     displayselectedZone()
+
   }
 }

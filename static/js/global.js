@@ -154,48 +154,58 @@ async function sendDataToPython(path_combination, zone, df_path_with_id) {
 
 function displayFeatureImportance(data) {
     const { feature_importance, accuracy, f1_score } = data;
-    console.log(feature_importance)
     // Get the container
-    let container = document.getElementById('feature-importance-container');
+    let container = document.querySelector('.feature-importance-container');
     if (!container) return;
     
-    // Clear previous content
-    container.innerHTML = '';
+    const accuracy_p  = document.createElement('p')
+    const f1_score_p  = document.createElement('p')
+    console.log(accuracy_p)
+
+    accuracy_p.innerHTML = `Model Accuracy: ${(accuracy * 100).toFixed(2)}`
+    f1_score_p.innerHTML = `F1- Score: ${(f1_score * 100).toFixed(2)}`
     
-    // Add metrics information
-    const metricsElement = document.createElement('div');
-    metricsElement.classList.add('metrics-info');
-    metricsElement.innerHTML = `
-        <h5>Model Metrics:</h5>
-        <p>Accuracy: ${(accuracy * 100).toFixed(2)}%</p>
-        <p>F1 Score: ${f1_score === 0 ? 'N/A (single class)' : (f1_score * 100).toFixed(2) + '%'}</p>
-    `;
-    container.appendChild(metricsElement);
+    container.appendChild(accuracy_p)
+    container.appendChild(f1_score_p)
+
+    const featureBar = new FeatureBar('.feature-importance-container', 600, 400,feature_importance)
+
+    featureBar.render()
+    // const featureBarSVG = d3.select('#feature-importance-container')
+    // .append('svg')
+    // .attr('width',450)
+    // .attr('height', 450)
+
+    // console.log(featureBarSVG)
+    // featureBarSVG.append('rect')
+    // .attr('fill', 'red')
+    // .attr('width', 450)
+    // .attr('height', 450)
+
+    // // Create feature importance table
+    // const table = document.createElement('table');
+    // table.classList.add('feature-table');
+    // table.innerHTML = `
+    //     <thead>
+    //         <tr>
+    //             <th>Feature</th>
+    //             <th>Importance</th>
+    //         </tr>
+    //     </thead>
+    //     <tbody>
+    //         ${feature_importance
+    //             .slice(0, 10) // Show only top 10 features
+    //             .map(item => `
+    //                 <tr>
+    //                     <td>${item.Feature}</td>
+    //                     <td>${(item.Importance * 100).toFixed(2)}%</td>
+    //                 </tr>
+    //             `)
+    //             .join('')}
+    //     </tbody>
+    // `;
     
-    // Create feature importance table
-    const table = document.createElement('table');
-    table.classList.add('feature-table');
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>Feature</th>
-                <th>Importance</th>
-            </tr>
-        </thead>
-        <tbody>
-            ${feature_importance
-                .slice(0, 10) // Show only top 10 features
-                .map(item => `
-                    <tr>
-                        <td>${item.Feature}</td>
-                        <td>${(item.Importance * 100).toFixed(2)}%</td>
-                    </tr>
-                `)
-                .join('')}
-        </tbody>
-    `;
-    
-    container.appendChild(table);
+    // container.appendChild(table);
 }
 
 resultasdas = []
