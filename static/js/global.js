@@ -144,9 +144,6 @@ async function sendDataToPython(path_combination, zone, df_path_with_id) {
         }
         
         const result = await response.json();
-        if (result.status === 'success') {
-            displayFeatureImportance(result.data);
-        }
         
         return result;
     } catch (error) {
@@ -157,7 +154,7 @@ async function sendDataToPython(path_combination, zone, df_path_with_id) {
 
 function displayFeatureImportance(data) {
     const { feature_importance, accuracy, f1_score } = data;
-    
+    console.log(feature_importance)
     // Get the container
     let container = document.getElementById('feature-importance-container');
     if (!container) return;
@@ -202,34 +199,36 @@ function displayFeatureImportance(data) {
 }
 
 resultasdas = []
-let selector = document.getElementById("zone-select")
-console.log(selector)
-selector.addEventListener('change', async (e) => {
-    current_selected_zone = parseInt(e.target.value);
-    
-    if (current_selected_zone !== undefined && current_selected_combination) {
-        try {
-            const result = await sendDataToPython(
-                file_mapping[current_selected_combination], 
-                current_selected_zone, 
-                file_mapping2[current_selectec_data]
-            );
-            
-            if (result.status === 'success') {
-                displayFeatureImportance(result.data);
-                axesPlot.svg.selectAll('circle')
-                .attr('fill', function(d) {
-                    const x = d.normalizedX;
-                    const y = d.normalizedY;
-                    const pointZone = getZoneForPoint(x, y);
-                    return pointZone === current_selected_zone ? '#ff0000' : 'grey';
-                });
+function displayselectedZone() {
+    let selector = document.getElementById("zone-select")
+    selector.addEventListener('change', async (e) => {
+        current_selected_zone = parseInt(e.target.value);
+        
+        if (current_selected_zone !== undefined && current_selected_combination) {
+            try {
+                const result = await sendDataToPython(
+                    file_mapping[current_selected_combination], 
+                    current_selected_zone, 
+                    file_mapping2[current_selectec_data]
+                );
+                
+                if (result.status === 'success') {
+                    displayFeatureImportance(result.data);
+                    axesPlot.svg.selectAll('circle')
+                    .attr('fill', function(d) {
+                        const x = d.normalizedX;
+                        const y = d.normalizedY;
+                        const pointZone = getZoneForPoint(x, y);
+                        return pointZone === current_selected_zone ? '#ff0000' : 'grey';
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to process data:', error);
             }
-        } catch (error) {
-            console.error('Failed to process data:', error);
         }
-    }
-});
+    });
+}
+
 
 function getZoneForPoint(x, y) {
     if (x < 0.5 && y < 0.5) {
