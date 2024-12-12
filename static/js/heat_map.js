@@ -10,8 +10,8 @@ class Heatmap {
     this.colorScale = d3.scaleLinear().range(colorRange);
     this.xScale = d3.scaleBand().domain(["Zone 0", "Zone 1", "Zone 2", "Zone 3"]).range([0, width - 150]).padding(0.01);
     this.yScale = d3.scaleBand().domain([
-      "Kinematic Geometric", "Speed Acceleration", "Indentation Curvature", 
-      "Curvature Speed", "Indentation Speed", "Curvature Acceleration", "Indentation Acceleration"
+      "Geometric Kinematic", "Acceleration Speed", "Curvature Indentation", 
+      "Curvature Speed", "Indentation Speed", "Acceleration Curvature", "Acceleration Indentation"
     ]).range([0, height - 150]).padding(0.01);
     
     // clear the container first

@@ -173,7 +173,10 @@ class Tree {
             
             setTimeout(() => {
                 if (heatmap) {
-                    heatmap.highlightRow(`${xText} ${yText}`);
+                    // Sorting combination before passing it to highlighting.
+                    list_combination = [xText, yText].sort();
+                    sorted_combination = list_combination.join(" ");
+                    heatmap.highlightRow(sorted_combination);
                 }
             }, 100);
         }
@@ -185,8 +188,11 @@ text_combined = [];
 let unsorted_combination = "";
 
 function showData(xAxis, yAxis) {    
-    unsorted_combination = `${xAxis} ${yAxis}`;
-    let combinedString = unsorted_combination;
+    // unsorted_combination = `${xAxis} ${yAxis}`;
+    list_combination = [xAxis, yAxis].sort();
+    sorted_combination = list_combination.join(" ");
+    let combinedString = sorted_combination;
+    // let combinedString = unsorted_combination;
     axesPlot.setAxisTitles(xAxis, yAxis);
 
     if (file_mapping.hasOwnProperty(combinedString)) {        
@@ -196,13 +202,11 @@ function showData(xAxis, yAxis) {
                 
                 axesPlot.showPlots(data);
                 combination = combinedString;
-                // heatmap = new Heatmap('heat-map', 450, 450, margin_heat, frequency_zone_combinations);
                 heatmap.render(file_mapping);
             })
             .catch(error => {
                 console.error("Error loading file: ", error);
             });
     } 
+    displayselectedZone()
 }
-
-// tree.colorTreeElement(null, null);
