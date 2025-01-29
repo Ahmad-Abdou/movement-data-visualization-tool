@@ -200,13 +200,13 @@ class AxesPlot {
             .attr('class', 'tooltip-bg')
             .attr('width', 120)
             .attr('height', 90)
-            .attr('fill', 'rgba(230, 224, 124, 0.7)')
+            .attr('fill', 'rgba(85, 85, 85, 0.79)')
             .attr('rx', 10)
             .attr('ry', 10);
             
         tooltipContainer.append('text')
             .attr('class', 'tooltip-text')
-            .attr('fill', 'black')
+            .attr('fill', 'white')
             .attr('font-size', '12px');
 
             this.allPlots
@@ -231,7 +231,7 @@ class AxesPlot {
             } else {
               // Select new circle
               selected_circle
-                .attr('fill', '#69b3a2')
+                .attr('fill', '#0080FF')
                 .attr('r', 8);
               previouslySelectedBlue = selected_circle;
             }

@@ -215,7 +215,7 @@ function displayselectedZone() {
                         const x = d.normalizedX;
                         const y = d.normalizedY;
                         const pointZone = getZoneForPoint(x, y);
-                        return pointZone === zoneB ? 'green' : 'grey';
+                        return pointZone === zoneB ? 'red' : 'grey';
                     });
                 }
             } catch (error) {
