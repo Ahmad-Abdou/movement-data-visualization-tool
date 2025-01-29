@@ -28,6 +28,9 @@ class FeatureBar {
     .attr('y', (d, i)=> 15 * i +27)
     .attr('x', 150)
     .attr('opacity', 0.5)
+    .attr('id', (d,i) => {
+      return this.featurelabel[i]
+    })
 
     this.svg.selectAll('label')
     .data(this.featurelabel)
@@ -79,5 +82,8 @@ class FeatureBar {
     .attr('y', 12)
     .attr('font-weight', 700)
 
+    allRect.on('click', function(e) {
+      featureDetail.drawAxisLabels(e.target.id)
+    })
   }
 }

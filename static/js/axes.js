@@ -167,7 +167,6 @@ class AxesPlot {
           d.normalizedY = (d.y - yExtent[0]) / (yExtent[1] - yExtent[0]);
         })
       
-        // Add plots to the plot group instead of directly to svg
         this.allPlots = this.plotGroup.append('g')
             .attr('id', 'plots')
             .selectAll('circle')
