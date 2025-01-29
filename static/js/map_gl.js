@@ -1,10 +1,4 @@
-// Remove these imports since we're using global d3
-// import { csvParse } from 'd3-dsv';
-// import { scaleLinear } from 'd3-scale';
-// import { color } from 'd3';
-
-// Update the data path to point to the correct location
-const data = '../static/data/modefied-fox.csv' // Adjust this path based on your actual file location
+const data = '../static/data/modefied-fox.csv'
 
 const allTrajBox = document.getElementById('trajSelect')
 
@@ -105,12 +99,10 @@ const traject = async function(trajectories) {
   try {
     const initialPathData = await pathConverter(trajectories);
     
-    // Add default center coordinates in case no data is available
     let centerLon = 0;
     let centerLat = 0;
     
     if (initialPathData && initialPathData.length > 0) {
-      // Calculate center from actual data
       const bounds = {
         minLon: Infinity,
         maxLon: -Infinity,
@@ -131,7 +123,6 @@ const traject = async function(trajectories) {
       centerLat = (bounds.minLat + bounds.maxLat) / 2;
     }
 
-    // Add validation for center coordinates
     if (isNaN(centerLon) || isNaN(centerLat)) {
       console.warn('Invalid coordinates, using default center');
       centerLon = 0;
@@ -209,30 +200,30 @@ const colorizing = function (type, initialPathData) {
     const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
     const minSpeed = Math.min(...speeds);
     const maxSpeed = Math.max(...speeds);
-    colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]]); // Use global d3
+    colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]]);
   } else if (type === 'acceleration') {
     const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
     const minAcc = Math.min(...accelerations)
     const maxAcc = Math.max(...accelerations)
-    colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[254,229,217], [165,15,21]]) // Use global d3
+    colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[254,229,217], [165,15,21]])
   }
   else if (type === 'distance') {
     const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
     const minDist = Math.min(...distances)
     const maxDist = Math.max(...distances)
-    colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[254,229,217], [165,15,21]]) // Use global d3
+    colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[254,229,217], [165,15,21]])
   }
   else if (type === 'angle') {
     const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
     const minAngle= Math.min(...angles)
     const maxAngle = Math.max(...angles)
-    colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[254,229,217], [165,15,21]]) // Use global d3
+    colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[254,229,217], [165,15,21]])
   }
   else if (type === 'bearing') {
     const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
     const minBearing = Math.min(...bearings)
     const maxBearing = Math.max(...bearings)
-    colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[254,229,217], [165,15,21]]) // Use global d3
+    colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[254,229,217], [165,15,21]])
   }
   return colorScale
 }
