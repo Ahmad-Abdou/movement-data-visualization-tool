@@ -66,7 +66,6 @@ async function selectFoxes(){
     file_mapping = setFileMapping(outlier_dataset_name)
     heatmap.render(file_mapping)
     current_selectec_data = outlier_dataset_name
-
 }
 async function selectHurricanes(){
     outlier_dataset_name = 'data_combination_hurricanes';

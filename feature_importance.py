@@ -49,11 +49,11 @@ def getData(zone, combination_path, features_path):
         else:
             f1 = f1_score(y_test, y_pred_test, average='binary', zero_division=0)
 
-        print(f"Zone {zone} statistics:")
-        print(f"Number of samples in zone: {sum(y == 1)}")
-        print(f"Number of samples outside zone: {sum(y == 0)}")
-        print(f"Test set positive samples: {sum(y_test == 1)}")
-        print(f"Test set predictions: {sum(y_pred_test == 1)}")
+        # print(f"Zone {zone} statistics:")
+        # print(f"Number of samples in zone: {sum(y == 1)}")
+        # print(f"Number of samples outside zone: {sum(y == 0)}")
+        # print(f"Test set positive samples: {sum(y_test == 1)}")
+        # print(f"Test set predictions: {sum(y_pred_test == 1)}")
         
         feature_importance_df = pd.DataFrame({
             'Feature': X.columns,
@@ -102,8 +102,8 @@ def getDataTwoZonesComparison(zoneA, zoneB, combination_path, features_path):
         
         df_features["zone"] = 0
         
-        print("BEFORE FILTERING!\nDF FEATURES:", df_features)
-        print("DF SHAPE:", df_features.shape)
+        # print("BEFORE FILTERING!\nDF FEATURES:", df_features)
+        # print("DF SHAPE:", df_features.shape)
         for _, row in df_combination.iterrows():
             x, y = row['x'], row['y']
             row_ID = str(row['ID'])
@@ -169,8 +169,8 @@ def getDataTwoZonesComparison(zoneA, zoneB, combination_path, features_path):
         # print(feature_importance_df)
         # print(test_accuracy)
         # print(f1)
-        print("AFTER FILTERING!\nDF FEATURES:", df_features)
-        print("DF SHAPE:", df_features.shape)
+        # print("AFTER FILTERING!\nDF FEATURES:", df_features)
+        # print("DF SHAPE:", df_features.shape)
         return feature_importance_df, test_accuracy, f1
     except Exception as e:
         print(f"Error in getData: {str(e)}")

@@ -47,7 +47,7 @@ html, body {
    height: 100%;
 }
 #map-container {
-   height: 58.5%;
+   height: 75%;
    width: 100%;
 }
 #feature-importance-container, #trajectory-features-detailed-container{
