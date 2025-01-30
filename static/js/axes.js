@@ -1,6 +1,8 @@
+
 class AxesPlot {
+
     constructor(containerId, width, height, margin) {
-      
+
         this.width = width;
         this.height = height;
         this.margin = margin;
@@ -60,6 +62,7 @@ class AxesPlot {
         
         this.init(containerId);
         this.plotGroup = this.svg.append('g').attr('class', 'plot-group');
+
     }
 
     init() {
@@ -210,11 +213,14 @@ class AxesPlot {
             .attr('font-size', '12px');
 
             this.allPlots
-        .on('click', function(event) {
+        .on('click', async function(event) {
           const selected_circle = d3.select(this);
           const id = event.target.__data__.ID;
           
-          if (!isChecked) {
+          const trajectories = await mapGl.generateMapGl('../static/data/fox-point-feats.csv')
+          await mapGl.traject(trajectories, id);
+
+          if (!isChecked) { 
             // Handle blue selection
             if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
               previouslySelectedBlue
@@ -261,7 +267,7 @@ class AxesPlot {
           }
       
           // Display trajectory on map
-          showTrajectoryOnMap(id);
+          // showTrajectoryOnMap(id);
         })
         .on('mouseover', function() {
             const selected_circle = d3.select(this);

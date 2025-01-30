@@ -6,7 +6,7 @@ let outlier_dataset_name = 'data_combination_foxes';
 let trajectory_dataset_name = 'fox_trajectories.csv';
 let df_with_id = 'fox-df.csv';
 current_selectec_data = outlier_dataset_name
-
+let currentSelectedId = null
 let frequency_zone_combinations = {
     "Geometric Kinematic": [],
     "Acceleration Speed": [],
@@ -141,7 +141,7 @@ async function sendDataToPython(path_combination, zoneA, zoneB ,df_path_with_id)
         }
         
         const result = await response.json();
-        
+
         return result;
     } catch (error) {
         console.error('Error sending data to Python:', error);
@@ -238,3 +238,11 @@ function getZoneForPoint(x, y) {
     }
 }
 
+
+const featureDetails = ' ../static/data/modefied-fox.csv'
+function getFeatureDetails(file) {
+    d3.csv(file).then((data)=>{
+
+    })
+}
+getFeatureDetails(featureDetails)

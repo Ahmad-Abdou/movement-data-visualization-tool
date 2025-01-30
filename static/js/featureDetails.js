@@ -11,7 +11,6 @@ class FeatureDetail {
     this.offsetX = (this.availableWidth - this.svgWidth) / 2  - margin.right;
     this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top ;
     this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
-
     this.xScale = d3.scaleLinear().domain([0,1]).range([0, this.svgWidth])
     this.yScale = d3.scaleLinear().domain([0,1]).range([this.svgHeight, 0])
     this.xAxis = d3.axisBottom(this.xScale)
