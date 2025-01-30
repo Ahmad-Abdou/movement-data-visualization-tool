@@ -12,6 +12,12 @@ const axesPlot = new AxesPlot('#scatter-plot', 450, 350, margin_axes);
 const tree = new Tree('#taxonomy-element', 500, 300, 0);
 
 const  featureDetail = new FeatureDetail('#feature-detail',550, 475, margin_axes )
+
+const mapGl = new MapGl('#mapgl')
+const data = '../static/data/modefied-fox.csv'
+
+// mapGl.generateMapGl(data)
+
 // const barChart = new BarChart('.bar-chart', 450, 450);
 
 
