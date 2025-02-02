@@ -11,7 +11,7 @@ class FeatureBar {
     .attr('width', this.width)
     .attr('height', this.height)
 
-    this.xScale = d3.scaleLinear().domain([0, d3.max(this.featureValue)]).range([1, 450])
+    this.xScale = d3.scaleLinear().domain([0, d3.max(this.featureValue)]).range([1, 250])
 
   }
 
@@ -26,7 +26,7 @@ class FeatureBar {
       return geometric.includes(feature) ? '#DC143C' : '#0080FF'
     })
     .attr('y', (d, i)=> 15 * i +27)
-    .attr('x', 150)
+    .attr('x', 250)
     .attr('opacity', 0.5)
     .attr('id', (d,i) => {
       return this.featurelabel[i]
@@ -39,7 +39,7 @@ class FeatureBar {
     .attr('fill', 'black')
     .attr('y', (d, i)=> 15 * i +34)
     .attr('font-size', 10)
-    .attr('x', 10)
+    .attr('x', 110)
 
     this.svg.selectAll('label')
     .data(this.featureValue)
@@ -48,7 +48,7 @@ class FeatureBar {
     .attr('fill', 'black')
     .attr('y', (d, i)=> 15 * i +34)
     .attr('font-size', 11)
-    .attr('x', 160)
+    .attr('x', 260)
     .attr('font-weight', 700)
 
     this.svg.append('rect')
@@ -56,13 +56,14 @@ class FeatureBar {
     .attr('height' , 20)
     .attr('fill' , '#0080FF')
     .attr('opacity', 0.5)
+    .attr('x' , 100)
 
 
     this.svg.append('rect')
     .attr('width' , 56)
     .attr('height' , 20)
     .attr('fill' , '#DC143C')
-    .attr('x' , 70)
+    .attr('x' , 170)
     .attr('opacity', 0.5)
 
 
@@ -70,7 +71,7 @@ class FeatureBar {
     .text('Kinematic')
     .attr('font-size', 10)
     .attr('fill', 'black')
-    .attr('x', 5)
+    .attr('x', 105)
     .attr('y', 12)
     .attr('font-weight', 700)
 
@@ -78,7 +79,7 @@ class FeatureBar {
     .text('Curvature')
     .attr('font-size', 10)
     .attr('fill', 'black')
-    .attr('x', 75)
+    .attr('x', 175)
     .attr('y', 12)
     .attr('font-weight', 700)
 

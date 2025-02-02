@@ -8,7 +8,7 @@ class Heatmap {
     this.zones = []
     // Define scales, color, and SVG elements
     this.colorScale = d3.scaleLinear().range(colorRange);
-    this.xScale = d3.scaleBand().domain(["Zone 0", "Zone 1", "Zone 2", "Zone 3"]).range([0, width - 150]).padding(0.01);
+    this.xScale = d3.scaleBand().domain(["Zone 0", "Zone 1", "Zone 2", "Zone 3"]).range([0, width - 270]).padding(0.01);
     this.yScale = d3.scaleBand().domain([
       "Geometric Kinematic", "Acceleration Speed", "Curvature Indentation", 
       "Curvature Speed", "Indentation Speed", "Acceleration Curvature", "Acceleration Indentation"
@@ -17,8 +17,9 @@ class Heatmap {
     // clear the container first
     document.getElementById(`${containerId}`).innerHTML = "";    
     this.svg = d3.select(`#${containerId}`).append('svg')
-      .attr('width', width + margin.left + margin.right)
-      .attr('height', height + margin.top + margin.bottom);
+      .attr('width', width + margin.left + margin.right - 100)
+      .attr('height', height + margin.top + margin.bottom)
+      
 
     this.heatmapGroup = this.svg.append('g')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
