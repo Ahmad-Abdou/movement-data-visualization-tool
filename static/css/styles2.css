@@ -24,10 +24,7 @@ html, body {
    display: flex;
    flex-direction: column;
 }
-#bottom-subcontainer{
-   display: flex;
-   flex-direction: row;
-}
+
 
 .container-fluid {
    height: 100%;
@@ -35,27 +32,26 @@ html, body {
 
 #left-container {
    height: 100%;
-   width: 33.33%;
+   width: 25%;
 }
 
 #center-container {
    height: 100%;
-   width: 66.67%;
-}
-
-#taxonomy-container, #heatmap-container, #scatter-plot-container, #map-container, #feature-importance-container, #trajectory-features-detailed-container {
-   height: 100%;
-}
-#map-container {
-   height: 75%;
-   width: 100%;
-}
-#feature-importance-container, #trajectory-features-detailed-container{
-   
    width: 50%;
 }
-.d-flex {
-   display: flex;
+
+#right-container{
+   height: 100%;
+   width: 25%;
+   z-index: 1000;
+}
+
+#feature-importance-container, #trajectory-features-detailed-container{
+   width: 100%;
+} 
+#feature-importance-container{
+   overflow-y: auto;
+   overflow-x: hidden;
 }
 
 #top-taxonomy-header{
