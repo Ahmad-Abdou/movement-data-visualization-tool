@@ -60,42 +60,7 @@ class MapGl {
    
   }
   
-  // async getTrajId (trajectories){
-  //   try {
-  //     const data = await trajectories
-  //     const trajIDs = data.flatMap((item) =>{
-  //       return item.tid
-  //     })
-  //     return [... new Set(trajIDs)]
-  //   } catch (error) {
-  //     console.error(error)
-  //     return []
-  //   }
-  
-  // }
-  
-  // async showTrajIdAsOption (trajectories, updateLayer) {
-    
-  //   const trajIDs = await this.getTrajId(trajectories)
-  
-  //   trajIDs.forEach((id) =>{
-  //     const option = document.createElement('option')
-  //     option.id = id
-  //     option.textContent = id
-  //     this.allTrajBox.appendChild(option)
-  //   })
-  
-  //   this.allTrajBox.addEventListener('change', async (e) =>{
-  //     let newTrajectories
-  //     if(e.target.value === 'all') {
-  //       newTrajectories = await trajectories
-  //     } else {
-  //       newTrajectories = await this.filteringTrajectories(trajectories, e.target.value)
-  //     }
-  //     updateLayer(newTrajectories)
-  //   })
-  //   return trajectories
-  // }
+
   async traject (trajectories, id) {
     try {
       const updateLayer = async () => {
@@ -340,12 +305,6 @@ class MapGl {
   async generateMapGl(data) {
     try {
       const trajectories = await this.fetchData(data);
-      if (trajectories && trajectories.length > 0) {
-        // await this.traject(trajectories);
-        // await this.pathConverter(trajectories);
-      } else {
-        console.error('No trajectory data available');
-      }
       return trajectories
 
     } catch (error) {
