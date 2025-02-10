@@ -4,10 +4,11 @@ import numpy as np
 import os
 import traceback
 import feature_importance
+from database import Database
 
 app = Flask(__name__)
+db = Database()
 
-# Add this helper function at the top
 def get_absolute_path(relative_path):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_dir, relative_path)
@@ -15,6 +16,31 @@ def get_absolute_path(relative_path):
 @app.route('/')
 def index():
    return render_template('index3.html')
+
+@app.route('/api/trajectories', methods=['GET'])
+def fetch_trajectories():
+    try:
+        data = db.get_fox_data()
+        if data is not None:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
+
+@app.route('/api/scatter', methods=['GET'])
+def decision_scores():
+    combination = request.args.get('combination')
+    try:
+        data = db.get_scatter_plot_data(combination)
+        if data is not None:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
 
 @app.route('/api/data', methods=['POST'])
 def process_data():
@@ -27,9 +53,6 @@ def process_data():
         zoneA = data.get('zoneA')
         zoneB = data.get('zoneB')
         features_path = data.get('df_path_with_id')
-        # print(data)
-        # print(zoneA)
-        # print(zoneB)
         if not all([combination_path, features_path, zoneA, zoneB is not None]):
             return jsonify({'status': 'error', 'message': 'Missing required parameters'}), 400
         
@@ -39,11 +62,9 @@ def process_data():
         if not os.path.exists(abs_combination_path) or not os.path.exists(abs_features_path):
             return jsonify({'status': 'error', 'message': 'Data files not found'}), 404
             
-        # feature_importance_df, accuracy, f1_score = feature_importance.getData(zone, abs_combination_path, abs_features_path)
         feature_importance_df, accuracy, f1_score = feature_importance.getDataTwoZonesComparison(zoneA, zoneB, abs_combination_path, abs_features_path)
 
         
-        # Convert DataFrame to dict for JSON serialization
         feature_importance_data = feature_importance_df.to_dict('records')
         
         return jsonify({

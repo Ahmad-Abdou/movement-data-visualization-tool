@@ -187,26 +187,29 @@ class Tree {
 text_combined = [];
 let unsorted_combination = "";
 
-function showData(xAxis, yAxis) {    
+async function showData(xAxis, yAxis) {    
     // unsorted_combination = `${xAxis} ${yAxis}`;
     list_combination = [xAxis, yAxis].sort();
     sorted_combination = list_combination.join(" ");
     let combinedString = sorted_combination;
     // let combinedString = unsorted_combination;
     axesPlot.setAxisTitles(xAxis, yAxis);
-
+    let combinationToBeSent = `x${xAxis.toLowerCase()}_y${yAxis.toLowerCase()}`
     if (file_mapping.hasOwnProperty(combinedString)) {        
-        let selectedFile = file_mapping[combinedString];
-        d3.csv(selectedFile)
-            .then(data => {
-                
-                axesPlot.showPlots(data);
+        // let selectedFile = file_mapping[combinedString];
+        try {
+            const response = await fetch(`/api/scatter?combination=${combinationToBeSent}`);
+            const result = await response.json();
+            if(response.status === 200) {
+                axesPlot.showPlots(result);
                 combination = combinedString;
                 heatmap.render(file_mapping);
-            })
-            .catch(error => {
-                console.error("Error loading file: ", error);
-            });
+            }
+
+        } catch (error) {
+            
+        }
+
     } 
     displayselectedZone()
 }
