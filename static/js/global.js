@@ -45,7 +45,6 @@ function selectDataset() {
   document.getElementById("datasets").classList.toggle("show");
 }
 
-// Close the dropdown menu if the user clicks outside of it
 window.onclick = function(event) {
   if (!event.target.matches('.dropbtn')) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
@@ -60,12 +59,23 @@ window.onclick = function(event) {
 }
 
 async function selectFoxes(){
-    outlier_dataset_name = 'data_combination_foxes';
-    trajectory_dataset_name = 'fox_trajectories.csv';
-    df_with_id = 'fox-df.csv';
-    file_mapping = setFileMapping(outlier_dataset_name)
-    heatmap.render(file_mapping)
-    current_selectec_data = outlier_dataset_name
+    try {
+        const response = await fetch('/api/trajectories');
+        const result = await response.json();
+        if (response.status === 200) {
+            outlier_dataset_name = 'data_combination_foxes';
+            trajectory_dataset_name = 'fox_trajectories.csv';
+            df_with_id = 'fox-df.csv';
+            file_mapping = setFileMapping(outlier_dataset_name);
+            console.log(file_mapping)
+            heatmap.render(file_mapping);
+            current_selectec_data = outlier_dataset_name;
+        } else {
+            console.error('Failed to fetch fox data');
+        }
+    } catch (error) {
+        console.error('Error fetching fox data:', error);
+    }
 }
 async function selectHurricanes(){
     outlier_dataset_name = 'data_combination_hurricanes';
@@ -239,10 +249,10 @@ function getZoneForPoint(x, y) {
 }
 
 
-const featureDetails = ' ../static/data/modefied-fox.csv'
-function getFeatureDetails(file) {
-    d3.csv(file).then((data)=>{
+// const featureDetails = ' ../static/data/modefied-fox.csv'
+// function getFeatureDetails(file) {
+//     d3.csv(file).then((data)=>{
 
-    })
-}
-getFeatureDetails(featureDetails)
+//     })
+// }
+// getFeatureDetails(featureDetails)

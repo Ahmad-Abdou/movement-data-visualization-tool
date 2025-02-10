@@ -205,7 +205,7 @@ class MapGl {
       stroked: true,
       filled: true,
       extruded: true,
-      wireframe: false,
+      wireframe: true,
       getPolygon: d => d.polygon,
       getFillColor: d => {
         if (type === 'speed' && colorScale) {
