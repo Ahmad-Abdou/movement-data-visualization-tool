@@ -32,20 +32,24 @@ class MapGl {
 
   }
   
-  async fetchData (url) {
+  async fetchData(id) {
     try {
-      const response = await fetch(url)
-      if(!response.ok) {
-        throw new Error('file not found or something!!!!!')
-      }
-      const csvText = await response.text()
-      const data = d3.csvParse(csvText)
-      return data
+        const response = await fetch(`/api/data/map?tid=${id}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (!data || data.length === 0) {
+            throw new Error('No data received');
+        }
+        return data;
     } catch (error) {
-      console.error(error)
-      return []
+        console.error('Error fetching data:', error);
+        return [];
     }
-  }
+}
+
   async filteringTrajectories (trajectories, id) {
     try {
       const data = await trajectories
@@ -63,8 +67,9 @@ class MapGl {
 
   async traject (trajectories, id) {
     try {
+      let pathData = null
       const updateLayer = async () => {
-        const pathData = await this.pathConverter(trajectories, id);
+        pathData = await this.pathConverter(trajectories, id);
         const updatedLayers = Object.keys(this.polygonLayerType[0]).map((type) => {
           const category = this.polygonLayerType[0][type];
           this.polygonGenerator(type, pathData, category);
@@ -79,12 +84,12 @@ class MapGl {
   
         };
         await updateLayer()
-      const initialPathData = await this.pathConverter(trajectories, id);
+      // const initialPathData = await this.pathConverter(trajectories, id);
       
       let centerLon = 0;
       let centerLat = 0;
       
-      if (initialPathData && initialPathData.length > 0) {
+      if (pathData && pathData.length > 0) {
         const bounds = {
           minLon: Infinity,
           maxLon: -Infinity,
@@ -92,7 +97,7 @@ class MapGl {
           maxLat: -Infinity
         };
   
-        initialPathData.forEach(poly => {
+        pathData.forEach(poly => {
           poly.polygon.forEach(point => {
             bounds.minLon = Math.min(bounds.minLon, point[0]);
             bounds.maxLon = Math.max(bounds.maxLon, point[0]);
@@ -142,7 +147,7 @@ class MapGl {
   
       const layers = Object.keys(this.polygonLayerType[0]).map((type) => {
         const category = this.polygonLayerType[0][type];
-         return this.polygonGenerator(type, initialPathData, category);
+         return this.polygonGenerator(type, pathData, category);
       });
   
       
@@ -246,11 +251,13 @@ class MapGl {
   }
 
   async pathConverter (trajectories, id) {
+
     const data = await trajectories;
-    const filtered = data.filter((t)=>{
+
+    const filtered = await data.filter((t)=>{
       return t.tid === id
     })
-    
+
     const groupedByTraj = {};
     filtered.forEach(row => {
       if (!groupedByTraj[row.tid]) {
@@ -302,9 +309,9 @@ class MapGl {
   };
   
   
-  async generateMapGl(data) {
+  async generateMapGl(id) {
     try {
-      const trajectories = await this.fetchData(data);
+      const trajectories = await this.fetchData(id);
       return trajectories
 
     } catch (error) {

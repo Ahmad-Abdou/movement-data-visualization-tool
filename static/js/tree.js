@@ -194,7 +194,7 @@ async function showData(xAxis, yAxis) {
     let combinedString = sorted_combination;
     // let combinedString = unsorted_combination;
     axesPlot.setAxisTitles(xAxis, yAxis);
-    let combinationToBeSent = `x${xAxis.toLowerCase()}_y${yAxis.toLowerCase()}`
+    let combinationToBeSent = `${xAxis.toLowerCase()}_${yAxis.toLowerCase()}`
     if (file_mapping.hasOwnProperty(combinedString)) {        
         // let selectedFile = file_mapping[combinedString];
         try {

@@ -85,6 +85,8 @@ class FeatureBar {
 
     allRect.on('click', function(e) {
       featureDetail.drawAxisLabels(e.target.id)
+      const features = featureDetail.drawQuantile(e.target.id)
+      featureDetail.timeConverter(features)
     })
   }
 }
