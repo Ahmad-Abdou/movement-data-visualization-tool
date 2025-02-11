@@ -42,6 +42,25 @@ def decision_scores():
         print(f'Error: {str(e)}')
         return jsonify({"error": "Server error"}), 500
 
+
+@app.route('/api/data/map', methods=['GET'])
+def data_map():
+    tid = request.args.get('tid') 
+    try:
+        if not tid:
+            return jsonify({"error": "No trajectory ID provided"}), 400
+            
+        data = db.get_data_for_map(tid)
+        if data and len(data) > 0:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+            
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
+
+
 @app.route('/api/data', methods=['POST'])
 def process_data():
     try:

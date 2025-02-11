@@ -24,8 +24,8 @@ class FeatureDetail {
   }
 
   drawAxis(gx, gy) {
-    this.xAxis(gx)
-    this.yAxis(gy)
+    // this.xAxis(gx)
+    // this.yAxis(gy)
   }
 
   drawAxisLabels(x_title) {
@@ -57,4 +57,54 @@ class FeatureDetail {
     // .attr('class', 'feature-detail')
     // .attr('d', lineGenerator())
   }
+  async drawQuantile(name) {
+    let splitted = name.split("_")[0]; 
+    const result = [];
+
+    const data = await d3.csv('../static/data/fox-point-feats.csv');
+
+    data.forEach((row) => {
+        if (row[splitted] !== undefined) { 
+            result.push({
+              time: row.time,
+              feature: row[splitted]
+              
+            });
+        }
+    });
+
+    return result
+}
+
+async timeConverter(features) {
+  const data = await features
+  const timeParsed = d3.timeParse("%Y-%m-%d %H:%M:%S")
+  data.forEach(d => {
+    d.time = timeParsed(d.time)
+  })
+  console.log(data)
+  const xScale = d3.scaleTime().domain(d3.extent(data, d => d.time)).range([0, this.width])
+  const yScale = d3.scaleLinear()
+    .domain([0, d3.max(data, d => d.feature)])
+    .range([this.height - this.margin.bottom, this.margin.top]);
+  const line = d3.line()
+    .x(d => xScale(d.time))
+    .y(d => yScale(d.feature)); 
+
+  this.svg.append("path")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-width", 2)
+    .attr("d", line);
+
+    const xAxis = d3.axisBottom(xScale)
+    .ticks(5) 
+    .tickFormat(d3.timeFormat("%H:%M:%S"));
+
+this.svg.append("g")
+    .attr("transform", `translate(0, ${this.height})`)
+    .call(xAxis);
+}
+
 }

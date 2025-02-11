@@ -1,6 +1,7 @@
 let current_selected_combination = null
 let current_selected_zone = null
 let current_selectec_data = null
+let selectedTrajectory = null
 // default
 let outlier_dataset_name = 'data_combination_foxes';
 let trajectory_dataset_name = 'fox_trajectories.csv';

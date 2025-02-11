@@ -215,9 +215,9 @@ class AxesPlot {
             this.allPlots
         .on('click', async function(event) {
           const selected_circle = d3.select(this);
-          const id = event.target.__data__.ID;
-          
-          const trajectories = await mapGl.generateMapGl('../static/data/fox-point-feats.csv')
+          const id = event.target.__data__.entity_id;
+          selectedTrajectory = id
+          const trajectories = await mapGl.generateMapGl(id)
           await mapGl.traject(trajectories, id);
 
           if (!isChecked) { 
@@ -284,7 +284,7 @@ class AxesPlot {
             tooltipContainer.select('.tooltip-text')
                 .selectAll('tspan')
                 .data([
-                    `ID: ${d.ID}`,
+                    `ID: ${d.entity_id}`,
                     `X: ${d.x.toFixed(4)}`,
                     `Y: ${d.y.toFixed(4)}`
                 ])

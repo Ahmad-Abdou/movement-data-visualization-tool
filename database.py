@@ -67,11 +67,20 @@ class Database:
             print(f"Database error: {e}")
             return None
         
+        
     def get_scatter_plot_data(self, combination):
+        sec_combination = combination.split("_")
+        xAxis = sec_combination[1]
+        yAxis = sec_combination[0]
+        joined = "x"+xAxis + "_y" +yAxis
+
+        xAxis2 = sec_combination[0]
+        yAxis2 = sec_combination[1]
+        joined2= "x"+xAxis2 + "_y" +yAxis2
         try:
             self.cursor.execute("""
-            SELECT * FROM decision_scores WHERE score_type = %s
-        """, (combination,))
+            SELECT * FROM decision_scores WHERE score_type IN (%s, %s)
+        """, (joined, joined2))
             columns = [desc[0] for desc in self.cursor.description]
             results = []
             for row in self.cursor.fetchall():
@@ -79,4 +88,26 @@ class Database:
             return results
         except Exception as e:
             print(f"Database error: {e}")
+            return None
+
+    def get_data_for_map(self, tid):
+        try:
+            # Convert tid to tuple for MySQL query
+            self.cursor.execute("""
+                SELECT * FROM point_features 
+                WHERE tid = %s
+                ORDER BY time
+            """, (tid,))  # Note the comma to make it a tuple
+            
+            columns = [desc[0] for desc in self.cursor.description]
+            results = []
+            
+            for row in self.cursor.fetchall():
+                results.append(dict(zip(columns, row)))
+                
+            print(f"Found {len(results)} records for trajectory {tid}")
+            return results
+            
+        except Exception as e:
+            print(f"Database error for trajectory {tid}: {e}")
             return None

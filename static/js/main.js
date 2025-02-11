@@ -14,8 +14,8 @@ const tree = new Tree('#taxonomy-element', 500, 300, 0);
 const  featureDetail = new FeatureDetail('#feature-detail',450, 400, margin_axes )
 
 const mapGl = new MapGl('#mapgl')
-const trajectories =  mapGl.generateMapGl('../static/data/fox-point-feats.csv')
-mapGl.traject(trajectories);
+// const trajectories =  mapGl.generateMapGl()
+// mapGl.traject(trajectories);
 // mapGl.generateMapGl(data)
 
 // const barChart = new BarChart('.bar-chart', 450, 450);
