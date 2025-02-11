@@ -34,7 +34,7 @@ class MapGl {
   
   async fetchData(id) {
     try {
-        const response = await fetch(`/api/data/map?tid=${id}`);
+        const response = await fetch(`/api/feats/map?tid=${id}`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);

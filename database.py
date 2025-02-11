@@ -92,12 +92,9 @@ class Database:
 
     def get_data_for_map(self, tid):
         try:
-            # Convert tid to tuple for MySQL query
             self.cursor.execute("""
-                SELECT * FROM point_features 
-                WHERE tid = %s
-                ORDER BY time
-            """, (tid,))  # Note the comma to make it a tuple
+                SELECT * FROM point_features WHERE tid = %s
+            """, (tid,))
             
             columns = [desc[0] for desc in self.cursor.description]
             results = []
@@ -105,9 +102,26 @@ class Database:
             for row in self.cursor.fetchall():
                 results.append(dict(zip(columns, row)))
                 
-            print(f"Found {len(results)} records for trajectory {tid}")
             return results
             
         except Exception as e:
             print(f"Database error for trajectory {tid}: {e}")
+            return None
+
+    def get_data_for_quantile(self):
+        try:
+            self.cursor.execute("""
+                SELECT * FROM point_features
+            """)
+            
+            columns = [desc[0] for desc in self.cursor.description]
+            results = []
+            
+            for row in self.cursor.fetchall():
+                results.append(dict(zip(columns, row)))
+                
+            return results
+            
+        except Exception as e:
+            print(f"Database error: {e}")
             return None
