@@ -188,15 +188,12 @@ text_combined = [];
 let unsorted_combination = "";
 
 async function showData(xAxis, yAxis) {    
-    // unsorted_combination = `${xAxis} ${yAxis}`;
     list_combination = [xAxis, yAxis].sort();
     sorted_combination = list_combination.join(" ");
     let combinedString = sorted_combination;
-    // let combinedString = unsorted_combination;
     axesPlot.setAxisTitles(xAxis, yAxis);
     let combinationToBeSent = `${xAxis.toLowerCase()}_${yAxis.toLowerCase()}`
     if (file_mapping.hasOwnProperty(combinedString)) {        
-        // let selectedFile = file_mapping[combinedString];
         try {
             const response = await fetch(`/api/scatter?combination=${combinationToBeSent}`);
             const result = await response.json();

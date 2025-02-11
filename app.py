@@ -43,7 +43,7 @@ def decision_scores():
         return jsonify({"error": "Server error"}), 500
 
 
-@app.route('/api/data/map', methods=['GET'])
+@app.route('/api/feats/map', methods=['GET'])
 def data_map():
     tid = request.args.get('tid') 
     try:
@@ -60,6 +60,19 @@ def data_map():
         print(f'Error: {str(e)}')
         return jsonify({"error": "Server error"}), 500
 
+@app.route('/api/feats/quantile', methods=['GET'])
+
+def data_quantile():
+    try:
+        data = db.get_data_for_quantile()
+        if data and len(data) > 0:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+            
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
 
 @app.route('/api/data', methods=['POST'])
 def process_data():

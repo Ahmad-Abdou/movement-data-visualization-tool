@@ -34,7 +34,7 @@ class FeatureDetail {
     .attr('class', 'axis-title-x')
     .text('Time')
     .attr('font-size', 30)
-    .attr('x', (this.svgWidth /2 ) + 50 )
+    .attr('x', (this.svgWidth /2 ) + 20 )
     .attr('y', (this.svgHeight ) + 20)
     .attr('text-anchor', 'middle')
 
@@ -44,7 +44,7 @@ class FeatureDetail {
 
     .attr('font-size', 30)
     .attr('x', 40 )
-    .attr('y', (this.svgHeight / 2) )
+    .attr('y', (this.svgHeight / 2) - 50 )
     .attr('text-anchor', 'middle')
     .attr('transform', `rotate(-90, 13, ${this.svgHeight / 2})`)
   }
@@ -60,8 +60,15 @@ class FeatureDetail {
   async drawQuantile(name) {
     let splitted = name.split("_")[0]; 
     const result = [];
-
-    const data = await d3.csv('../static/data/fox-point-feats.csv');
+    const response = await fetch('/api/feats/quantile');
+    console.log(response)
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    if (!data || data.length === 0) {
+        throw new Error('No data received');
+    }
 
     data.forEach((row) => {
         if (row[splitted] !== undefined) { 
@@ -82,11 +89,10 @@ async timeConverter(features) {
   data.forEach(d => {
     d.time = timeParsed(d.time)
   })
-  console.log(data)
-  const xScale = d3.scaleTime().domain(d3.extent(data, d => d.time)).range([0, this.width])
+  const xScale = d3.scaleTime().domain(d3.extent(data, d => d.time)).range([0, this.width - 20])
   const yScale = d3.scaleLinear()
     .domain([0, d3.max(data, d => d.feature)])
-    .range([this.height - this.margin.bottom, this.margin.top]);
+    .range([this.height - this.margin.bottom - 200, this.margin.top - 40]);
   const line = d3.line()
     .x(d => xScale(d.time))
     .y(d => yScale(d.feature)); 
@@ -103,7 +109,7 @@ async timeConverter(features) {
     .tickFormat(d3.timeFormat("%H:%M:%S"));
 
 this.svg.append("g")
-    .attr("transform", `translate(0, ${this.height})`)
+    .attr("transform", `translate(0, ${this.height} )`)
     .call(xAxis);
 }
 
