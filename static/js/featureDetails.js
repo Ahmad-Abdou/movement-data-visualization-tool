@@ -28,40 +28,38 @@ class FeatureDetail {
     // this.yAxis(gy)
   }
 
-  drawAxisLabels(x_title) {
-    this.svg.selectAll('text.axis-title-x').remove()
-    this.svg.append('text')
-    .attr('class', 'axis-title-x')
-    .text('Time')
-    .attr('font-size', 30)
-    .attr('x', (this.svgWidth /2 ) + 20 )
-    .attr('y', (this.svgHeight ) + 20)
-    .attr('text-anchor', 'middle')
+  drawAxisLabels(y_title) {
+    this.svg.selectAll('.axis-label').remove();
 
-    this.svg.append('text')
-    .attr('class', 'axis-title-x')
-    .text(x_title)
+    const labelGroup = this.svg.append("g")
+        .attr("class", "axis-label")
+        .style("pointer-events", "none");
 
-    .attr('font-size', 30)
-    .attr('x', 40 )
-    .attr('y', (this.svgHeight / 2) - 50 )
-    .attr('text-anchor', 'middle')
-    .attr('transform', `rotate(-90, 13, ${this.svgHeight / 2})`)
+    labelGroup.append('text')
+        .attr('class', 'axis-title-x')
+        .text('Time')
+        .attr('font-size', 25)
+        .attr('x', (this.svgWidth / 2) + 10)
+        .attr('y', (this.svgHeight) + 20)
+        .attr('text-anchor', 'middle')
+
+    labelGroup.append('text')
+        .attr('class', 'axis-title-y')
+        .text(y_title)
+        .attr('font-size', 20)
+        .attr('x', 40)
+        .attr('y', (this.svgHeight / 2) - 70)
+        .attr('text-anchor', 'middle')
+        .attr('transform', `rotate(-90, 40, ${this.svgHeight / 2})`)
   }
 
-  renderTrajectoryFeature(data) {
-    const lineGenerator = d3.line().x(d=>d[0]).y(d=>d[1])
-    console.log(data)
-    // this.svg.append('path')
-    // .data(data)
-    // .attr('class', 'feature-detail')
-    // .attr('d', lineGenerator())
-  }
   async drawQuantile(name) {
     let splitted = name.split("_")[0]; 
+    if (splitted === 'angles') {
+      splitted = 'angle'
+    }
     const result = [];
     const response = await fetch('/api/feats/quantile');
-    console.log(response)
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -84,33 +82,59 @@ class FeatureDetail {
 }
 
 async timeConverter(features) {
-  const data = await features
-  const timeParsed = d3.timeParse("%Y-%m-%d %H:%M:%S")
-  data.forEach(d => {
-    d.time = timeParsed(d.time)
-  })
-  const xScale = d3.scaleTime().domain(d3.extent(data, d => d.time)).range([0, this.width - 20])
-  const yScale = d3.scaleLinear()
-    .domain([0, d3.max(data, d => d.feature)])
-    .range([this.height - this.margin.bottom - 200, this.margin.top - 40]);
-  const line = d3.line()
-    .x(d => xScale(d.time))
-    .y(d => yScale(d.feature)); 
+  try {
+    const data = await features;
+    
+    this.svg.selectAll(".chart-content").remove();
 
-  this.svg.append("path")
-    .datum(data)
-    .attr("fill", "none")
-    .attr("stroke", "steelblue")
-    .attr("stroke-width", 2)
-    .attr("d", line);
+    const chartGroup = this.svg.append("g")
+        .attr("class", "chart-content");
+
+    const timeParsed = d3.timeParse("%Y-%m-%d %H:%M:%S");
+    data.forEach(d => {
+        d.time = timeParsed(d.time);
+        d.feature = +d.feature;
+    });
+
+    const xScale = d3.scaleTime()
+        .domain(d3.extent(data, d => d.time))
+        .range([0, this.width - 100]);
+
+    const yScale = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.feature)])
+        .range([this.height - 150, 0]);
+
+    const line = d3.line()
+        .x(d => xScale(d.time))
+        .y(d => yScale(d.feature));
+
+    chartGroup.append("path")
+        .datum(data)
+        .attr("class", "line")
+        .attr("fill", "none")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 2)
+        .attr("d", line);
 
     const xAxis = d3.axisBottom(xScale)
-    .ticks(5) 
-    .tickFormat(d3.timeFormat("%H:%M:%S"));
+        .ticks(5)
+        .tickFormat(d3.timeFormat("%H:%M:%S"));
 
-this.svg.append("g")
-    .attr("transform", `translate(0, ${this.height} )`)
-    .call(xAxis);
+    const yAxis = d3.axisLeft(yScale)
+        .ticks(5);
+
+    chartGroup.append("g")
+        .attr("class", "x-axis")
+        .attr("transform", `translate(0, ${this.height - 150})`)
+        .call(xAxis);
+
+    chartGroup.append("g")
+        .attr("class", "y-axis")
+        .call(yAxis);
+
+  } catch (error) {
+    console.error("Error drawing line chart:", error);
+  }
 }
 
 }
