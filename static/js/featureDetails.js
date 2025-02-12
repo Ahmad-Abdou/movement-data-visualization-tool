@@ -119,7 +119,7 @@ async timeConverter(features) {
 
     const xAxis = d3.axisBottom(xScale)
         .ticks(5)
-        .tickFormat(d3.timeFormat("%H:%M:%S"));
+        // .tickFormat(d3.timeFormat("%H:%M:%S"));
 
     const yAxis = d3.axisLeft(yScale)
         .ticks(5);
