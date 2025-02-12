@@ -108,11 +108,11 @@ class Database:
             print(f"Database error for trajectory {tid}: {e}")
             return None
 
-    def get_data_for_quantile(self):
+    def get_data_for_quantile(self, tid):
         try:
             self.cursor.execute("""
-                SELECT * FROM point_features
-            """)
+                SELECT * FROM point_features where tid = %s
+            """, (tid,))
             
             columns = [desc[0] for desc in self.cursor.description]
             results = []

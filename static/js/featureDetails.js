@@ -54,12 +54,13 @@ class FeatureDetail {
   }
 
   async drawQuantile(name) {
+    console.log(selectedTrajectory)
     let splitted = name.split("_")[0]; 
     if (splitted === 'angles') {
       splitted = 'angle'
     }
     const result = [];
-    const response = await fetch('/api/feats/quantile');
+    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
