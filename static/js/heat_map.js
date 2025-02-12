@@ -6,7 +6,6 @@ class Heatmap {
     this.margin = margin;
     this.data = data;
     this.zones = []
-    // Define scales, color, and SVG elements
     this.colorScale = d3.scaleLinear().range(colorRange);
     this.xScale = d3.scaleBand().domain(["Zone 0", "Zone 1", "Zone 2", "Zone 3"]).range([0, width - 270]).padding(0.01);
     this.yScale = d3.scaleBand().domain([
@@ -14,7 +13,6 @@ class Heatmap {
       "Curvature Speed", "Indentation Speed", "Acceleration Curvature", "Acceleration Indentation"
     ]).range([0, height - 150]).padding(0.01);
     
-    // clear the container first
     document.getElementById(`${containerId}`).innerHTML = "";    
     this.svg = d3.select(`#${containerId}`).append('svg')
       .attr('width', width + margin.left + margin.right - 100)
@@ -70,18 +68,15 @@ class Heatmap {
   }
 
   render(combinations_data) {
-    // Process data for heatmap    
     this.prepareData(combinations_data).then(f => {
       let heatmapData = this.transformData(this.data);    
       let minValue = d3.min(heatmapData, d => d.value);
       let maxValue = d3.max(heatmapData, d => d.value);
       this.colorScale.domain([minValue, maxValue]);
 
-      // Clear existing elements to ensure a fresh render
       this.heatmapGroup.selectAll('rect').remove();
       this.heatmapGroup.selectAll('text').remove();
 
-      // Create the heatmap cells
       this.heatmapGroup.selectAll('rect')
         .data(heatmapData)
         .join('rect')
@@ -95,7 +90,6 @@ class Heatmap {
         .attr('fill', d => this.colorScale(d.value))
         .on('click', (e, d) => this.onCellClick(d));
 
-      // Add text labels for values in each cell
       this.heatmapGroup.selectAll('text')
         .data(heatmapData)
         .join('text')
@@ -107,7 +101,6 @@ class Heatmap {
         .attr('font-size', 15)
         .text(d => `${d.value}`);
 
-      // Add axes
       this.heatmapGroup.append('g').call(d3.axisLeft(this.yScale));
       this.heatmapGroup.append('g').call(d3.axisTop(this.xScale));
       }).catch(error => {
@@ -116,11 +109,9 @@ class Heatmap {
   }
 
   highlightRow(combination) {
-    // Reset all cells to their original colors
     this.heatmapGroup.selectAll('rect')
         .attr('fill', d => this.colorScale(d.value));
         
-    // Highlight the matching row with a light blue background
     this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
         .attr('fill', '#0080FF').attr('opacity', 0.5);
@@ -130,17 +121,13 @@ class Heatmap {
   async onCellClick(d) {
     const combinationList = d.combination.split(" ");
 
-    
-    // Find the corresponding tree boxes and trigger their toggleColor
     const firstBox = tree.treeGroup.select(`rect#${combinationList[0]}`);
     const secondBox = tree.treeGroup.select(`rect#${combinationList[1]}`);
     
     if (firstBox.node() && secondBox.node()) {
-        // Reset previous selections
         tree.selectedRects.forEach(rect => rect.element.attr('fill', 'white'));
         tree.selectedRects = [];
         
-        // Trigger toggleColor on both boxes
         tree.toggleColor(firstBox, combinationList[0]);
         tree.toggleColor(secondBox, combinationList[1]);
     }

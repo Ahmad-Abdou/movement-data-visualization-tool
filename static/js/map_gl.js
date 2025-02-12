@@ -172,31 +172,31 @@ class MapGl {
       const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
       const minSpeed = Math.min(...speeds);
       const maxSpeed = Math.max(...speeds);
-      colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]]);
+      colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[199,233,180], [29,145,192]]);
 
     } else if (type === 'acceleration') {
       const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
       const minAcc = Math.min(...accelerations)
       const maxAcc = Math.max(...accelerations)
-      colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[254,229,217], [165,15,21]])
+      colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[199,233,180], [29,145,192]])
     }
     else if (type === 'distance') {
       const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
       const minDist = Math.min(...distances)
       const maxDist = Math.max(...distances)
-      colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[254,229,217], [165,15,21]])
+      colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[199,233,180], [29,145,192]])
     }
     else if (type === 'angle') {
       const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
       const minAngle= Math.min(...angles)
       const maxAngle = Math.max(...angles)
-      colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[254,229,217], [165,15,21]])
+      colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[199,233,180], [29,145,192]])
     }
     else if (type === 'bearing') {
       const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
       const minBearing = Math.min(...bearings)
       const maxBearing = Math.max(...bearings)
-      colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[254,229,217], [165,15,21]])
+      colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[199,233,180], [29,145,192]])
     }
     return colorScale
   }

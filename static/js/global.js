@@ -68,7 +68,6 @@ async function selectFoxes(){
             trajectory_dataset_name = 'fox_trajectories.csv';
             df_with_id = 'fox-df.csv';
             file_mapping = setFileMapping(outlier_dataset_name);
-            console.log(file_mapping)
             heatmap.render(file_mapping);
             current_selectec_data = outlier_dataset_name;
         } else {
@@ -184,28 +183,6 @@ function displayselectedZone() {
     selector.addEventListener('change', async (e) => {
         current_selected_zone_1 = parseInt(e.target.value);
         zoneA = current_selected_zone_1
-        if (current_selected_zone_1 !== undefined && current_selected_combination) {
-            // try {
-            //     const result = await sendDataToPython(
-            //         file_mapping[current_selected_combination], 
-            //         current_selected_zone_1, 
-            //         file_mapping2[current_selectec_data]
-            //     );
-                
-            //     if (result.status === 'success') {
-            //         displayFeatureImportance(result.data);
-            //         axesPlot.svg.selectAll('circle')
-            //         .attr('fill', function(d) {
-            //             const x = d.normalizedX;
-            //             const y = d.normalizedY;
-            //             const pointZone = getZoneForPoint(x, y);
-            //             return pointZone === current_selected_zone_1 ? '#ff0000' : 'grey';
-            //         });
-            //     }
-            // } catch (error) {
-            //     console.error('Failed to process data:', error);
-            // }
-        }
     });
     selector2.addEventListener('change', async (e) => {
         zoneB = parseInt(e.target.value);
@@ -248,12 +225,3 @@ function getZoneForPoint(x, y) {
         return 3;
     }
 }
-
-
-// const featureDetails = ' ../static/data/modefied-fox.csv'
-// function getFeatureDetails(file) {
-//     d3.csv(file).then((data)=>{
-
-//     })
-// }
-// getFeatureDetails(featureDetails)

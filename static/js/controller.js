@@ -28,12 +28,3 @@ if (toggle_btn && trajectory && bar_chart) {
         }
     });
 }
-
-// these functions for trajectory visualization
-function get_id(id) {
-    // showTrajectoryOnMap(id);
-}
-
-function get_id2(id) {
-    // showTrajectoryOnMap(id);
-}
