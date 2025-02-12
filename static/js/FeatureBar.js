@@ -83,7 +83,7 @@ class FeatureBar {
     .attr('y', 12)
     .attr('font-weight', 700)
 
-    allRect.on('click', function(e) {
+    allRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
       const features = featureDetail.drawQuantile(e.target.id)
       featureDetail.timeConverter(features)

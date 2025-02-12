@@ -63,8 +63,10 @@ def data_map():
 @app.route('/api/feats/quantile', methods=['GET'])
 
 def data_quantile():
+    tid = request.args.get('tid') 
+
     try:
-        data = db.get_data_for_quantile()
+        data = db.get_data_for_quantile(tid)
         if data and len(data) > 0:
             return jsonify(data)
         else:

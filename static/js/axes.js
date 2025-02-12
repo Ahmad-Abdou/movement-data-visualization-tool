@@ -38,19 +38,19 @@ class AxesPlot {
         ]
         
         this.axes_zone_0  = [
-          {points: [[0,0.5], [0.5,0.5], [0.5,0],[0,0], [0,0.5]]},  //0
+          {points: [[0,0.5], [0.5,0.5], [0.5,0],[0,0], [0,0.5]]},
         ]
         
         this.axes_zone_1  = [
-          {points: [[0,0.5], [0.5, 1], [0, 1], [0,0.5]]},  //1
+          {points: [[0,0.5], [0.5, 1], [0, 1], [0,0.5]]},
         ]
         
         this.axes_zone_2  = [
-          {points: [[0.5,0] , [1,0.5], [1,0], [0.5,0]]}, //2
+          {points: [[0.5,0] , [1,0.5], [1,0], [0.5,0]]},
         ]
         
         this.axes_zone_3  = [
-          {points:[[0,0.5], [0.5, 1],[1,1],[1,0.5], [0.5,0],[0.5,0.5], [0,0.5]]} //3
+          {points:[[0,0.5], [0.5, 1],[1,1],[1,0.5], [0.5,0],[0.5,0.5], [0,0.5]]}
         ]
         
         this.axesLabels = [
@@ -153,7 +153,6 @@ class AxesPlot {
     }
 
     showPlots(data) {
-        // Clear existing plots
         this.plotGroup.selectAll("*").remove();
         this.svg.selectAll("#rectangles").remove();
       
@@ -221,7 +220,6 @@ class AxesPlot {
           await mapGl.traject(trajectories, id);
 
           if (!isChecked) { 
-            // Handle blue selection
             if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
               previouslySelectedBlue
                 .attr('fill', 'grey')
@@ -229,13 +227,11 @@ class AxesPlot {
             }
             
             if (previouslySelectedBlue === selected_circle) {
-              // Deselect if clicking the same circle
               selected_circle
                 .attr('fill', 'grey')
                 .attr('r', 4);
               previouslySelectedBlue = null;
             } else {
-              // Select new circle
               selected_circle
                 .attr('fill', '#0080FF')
                 .attr('r', 8);
@@ -243,7 +239,6 @@ class AxesPlot {
             }
             get_id(id);
           } else {
-            // Handle green selection
             if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
               previouslySelectedGreen
                 .attr('fill', 'grey')
@@ -251,13 +246,11 @@ class AxesPlot {
             }
             
             if (previouslySelectedGreen === selected_circle) {
-              // Deselect if clicking the same circle
               selected_circle
                 .attr('fill', 'grey')
                 .attr('r', 4);
               previouslySelectedGreen = null;
             } else {
-              // Select new circle
               selected_circle
                 .attr('fill', '#ff8282')
                 .attr('r', 8);
@@ -265,9 +258,6 @@ class AxesPlot {
             }
             get_id2(id);
           }
-      
-          // Display trajectory on map
-          // showTrajectoryOnMap(id);
         })
         .on('mouseover', function() {
             const selected_circle = d3.select(this);
