@@ -28,3 +28,22 @@ if (toggle_btn && trajectory && bar_chart) {
         }
     });
 }
+
+
+const rightPanel = document.getElementById('right-container')
+rightPanel.addEventListener('mouseover', ()=> {
+        rightPanel.style.transform = 'translate(0px, 0)'
+        
+})
+rightPanel.addEventListener('mouseout', ()=> {
+    rightPanel.style.transform = 'translate(99%, 0)'
+})
+
+const leftPanel = document.getElementById('left-container')
+leftPanel.addEventListener('mouseover', ()=> {
+        leftPanel.style.transform = 'translate(0px, 0)'
+        
+})
+leftPanel.addEventListener('mouseout', ()=> {
+    leftPanel.style.transform = 'translate(-99%, 0)'
+})

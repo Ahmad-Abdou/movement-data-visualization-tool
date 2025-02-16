@@ -237,7 +237,6 @@ class AxesPlot {
                 .attr('r', 8);
               previouslySelectedBlue = selected_circle;
             }
-            get_id(id);
           } else {
             if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
               previouslySelectedGreen
@@ -256,7 +255,6 @@ class AxesPlot {
                 .attr('r', 8);
               previouslySelectedGreen = selected_circle;
             }
-            get_id2(id);
           }
         })
         .on('mouseover', function() {

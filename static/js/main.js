@@ -14,10 +14,9 @@ const tree = new Tree('#taxonomy-element', 500, 300, 0);
 const  featureDetail = new FeatureDetail('#feature-detail',450, 400, margin_axes )
 
 const mapGl = new MapGl('#mapgl')
-// const trajectories =  mapGl.generateMapGl()
-// mapGl.traject(trajectories);
-// mapGl.generateMapGl(data)
+const trajectories =  mapGl.generateMapGl('116')
+mapGl.traject(trajectories);
 
-// const barChart = new BarChart('.bar-chart', 450, 450);
+const featureBar = new FeatureBar('.feature-importance-container', 600, 400, [])
 
-
+featureBar.render()

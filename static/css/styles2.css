@@ -2,6 +2,7 @@ html, body {
    height: 100%;
    margin: 0;
    padding: 0;
+   overflow: hidden;
 }
 
 #container {
@@ -31,20 +32,37 @@ html, body {
 }
 
 #left-container {
+   position: absolute;
+   left: 0;
    height: 100%;
    width: 25%;
+   transition: all 0.3s;
+   overflow: hidden;
+   cursor: pointer;
+   transform : translate(-99%, 0);
+   z-index: 1000;
+   box-shadow: 1px 10px 10px 2px black;
 }
 
 #center-container {
    height: 100%;
-   width: 50%;
+   width: 125%;
 }
 
 #right-container{
+   position: absolute;
+   right: 0;
    height: 100%;
    width: 25%;
    z-index: 1000;
+   transition: all 0.3s;
+   overflow: hidden;
+   cursor: pointer;
+   transform : translate(99%, 0);
+   box-shadow: 1px 10px 10px 2px black;
+   
 }
+
 
 #feature-importance-container, #trajectory-features-detailed-container{
    width: 100%;
@@ -81,6 +99,7 @@ html, body {
    display: flex;
    justify-content: center;
    align-items: center;
+   
 }
 
 
@@ -153,7 +172,6 @@ p {
    position: absolute;
    left: 100px;
    top: 8px;
-   
 }
 
 .zone-selector select, .zone-selector-2 select{
