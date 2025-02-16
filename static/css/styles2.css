@@ -44,6 +44,7 @@ html, body {
    box-shadow: 1px 10px 10px 2px black;
 }
 
+
 #center-container {
    height: 100%;
    width: 125%;
@@ -60,7 +61,6 @@ html, body {
    cursor: pointer;
    transform : translate(99%, 0);
    box-shadow: 1px 10px 10px 2px black;
-   
 }
 
 #notification{
@@ -212,7 +212,6 @@ p {
    background: #0080FF;
    border-radius: 5px;
    box-shadow: 1px 10px 10px 2px black;
-   color: #0080FF;
    transition: all 0.3s;
 }
 
@@ -226,19 +225,16 @@ p {
    background: #0080FF;
    border-radius: 5px;
    box-shadow: 1px 10px 10px 2px black;
-   color: #0080FF;
    transition: all 0.3s;
 
 }
 
 .pinned_left{
    transform : translate(475px, 0);
-   opacity: 0.8;
 
 }
 .pinned_right{
    transform : translate(-475px, 0);
-   opacity: 0.8;
 }
 
 @keyframes horizontal-shaking {

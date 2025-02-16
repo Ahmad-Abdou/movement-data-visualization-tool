@@ -206,7 +206,7 @@ function displayselectedZone() {
                         const x = d.normalizedX;
                         const y = d.normalizedY;
                         const pointZone = getZoneForPoint(x, y);
-                        return pointZone === zoneB ? 'red' : 'grey';
+                        return pointZone === zoneB ? '#DC143C80' : 'grey';
                     });
                 }
             } catch (error) {
