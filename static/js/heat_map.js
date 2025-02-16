@@ -114,7 +114,7 @@ class Heatmap {
         
     this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
-        .attr('fill', '#0080FF').attr('opacity', 0.5);
+        .attr('fill', '#DC143C').attr('opacity', 0.5);
         current_selected_combination = combination
   }
 
@@ -133,9 +133,7 @@ class Heatmap {
     }
     axesPlot.svg.selectAll('path.axes-zone').remove();
     axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
-    
-    // Send data to Python
-    // await sendDataToPython(d.combination, d.zone);
+  
     displayselectedZone()
 
   }
