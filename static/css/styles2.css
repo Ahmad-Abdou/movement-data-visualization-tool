@@ -63,7 +63,25 @@ html, body {
    
 }
 
-
+#notification{
+   position: absolute;
+   left: 38%;
+   top: 0;
+   height: 80px;
+   width: 500px;
+   border-bottom: 4px solid black;
+   background-color:indianred;
+   color: white;
+   box-shadow: 1px 1px 5px 1px black;
+   transition: all 0.5s;
+   transform: translate(0, -290px);
+   z-index: 10000;
+   text-align: center;
+   font-size: 25px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
 #feature-importance-container, #trajectory-features-detailed-container{
    width: 100%;
 } 

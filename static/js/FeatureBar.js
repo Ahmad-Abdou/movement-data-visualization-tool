@@ -147,17 +147,18 @@ class FeatureBar {
     .attr('fill', 'black')
     .attr('x', 385)
     .attr('y', 12)
-    .attr('font-weight', 700)
+    .attr('font-weight', 700)    
+    const notification = document.getElementById('notification')
 
     geoRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
       const features = featureDetail.drawQuantile(e.target.id)
-      featureDetail.timeConverter(features, e.target.id)
+       featureDetail.timeConverter(features, e.target.id)
     })
     kinRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
       const features = featureDetail.drawQuantile(e.target.id)
-      featureDetail.timeConverter(features, e.target.id)
+       featureDetail.timeConverter(features, e.target.id)
     })
   }
 }
