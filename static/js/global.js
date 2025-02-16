@@ -197,6 +197,9 @@ function displayselectedZone() {
                 );
                 
                 if (result.status === 'success') {
+                    const right_container = document.getElementById('right-container')
+                    right_container.style.transform = 'translate(0px, 0)'
+
                     displayFeatureImportance(result.data);
                     axesPlot.svg.selectAll('circle')
                     .attr('fill', function(d) {
@@ -225,3 +228,11 @@ function getZoneForPoint(x, y) {
         return 3;
     }
 }
+
+function notifyMessage (text) {
+    notification.textContent = text
+    notification.style.transform = 'translate(0, 50px)'
+    setTimeout(() => {
+      notification.style.transform = 'translate(0, -290px)'
+      }, 2000)
+  }

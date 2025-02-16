@@ -60,6 +60,9 @@ class FeatureDetail {
     }
     const result = [];
     const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory}&stats=${name}`);
+    if(!selectedTrajectory) {
+      notifyMessage('Please select a trajectory first')
+    }
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -117,8 +120,6 @@ async timeConverter(features, y_lablel) {
         .attr("d", line);
       const circleXScale = d3.scaleLinear()
       .domain([d3.min(data, d => d.feature), d3.max(data, d => d.feature)])
-
-      console.log(circleXScale(this.operation))
 
       let splitted = y_lablel.split("_").splice(1).join("_"); 
         if (splitted === 'quant_median' || splitted === 'mean'|| splitted === 'mad' || splitted === "meanse") {
