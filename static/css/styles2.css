@@ -201,3 +201,50 @@ p {
     border: none;
     opacity: 0.5;
 }
+
+#pin-left{
+   width: 20px;
+   position: absolute;
+   top: 45%;
+   left: 5px;
+   height: 160px;
+   z-index: 1000;
+   background: #0080FF;
+   border-radius: 5px;
+   box-shadow: 1px 10px 10px 2px black;
+   color: #0080FF;
+   transition: all 0.3s;
+}
+
+#pin-right{
+   width: 20px;
+   position: absolute;
+   top: 45%;
+   right: 5px;
+   height: 160px;
+   z-index: 1000;
+   background: #0080FF;
+   border-radius: 5px;
+   box-shadow: 1px 10px 10px 2px black;
+   color: #0080FF;
+   transition: all 0.3s;
+
+}
+
+.pinned_left{
+   transform : translate(475px, 0);
+   opacity: 0.8;
+
+}
+.pinned_right{
+   transform : translate(-475px, 0);
+   opacity: 0.8;
+}
+
+@keyframes horizontal-shaking {
+   0% { transform: translateX(0) }
+   25% { transform: translateX(5px) }
+   50% { transform: translateX(-5px) }
+   75% { transform: translateX(5px) }
+   100% { transform: translateX(0) }
+  }
