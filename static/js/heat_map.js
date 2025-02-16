@@ -1,5 +1,5 @@
 class Heatmap {
-  constructor(containerId, width, height, margin, data, colorRange = ['#ffffb2', '#e31a1c']) {
+  constructor(containerId, width, height, margin, data, colorRange = ['#eff3ff', '#08519c']) { //['#ffffb2', '#e31a1c']
     this.containerId = containerId;
     this.width = width;
     this.height = height;

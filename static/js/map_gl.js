@@ -84,10 +84,9 @@ class MapGl {
   
         };
         await updateLayer()
-      // const initialPathData = await this.pathConverter(trajectories, id);
       
-      let centerLon = 0;
-      let centerLat = 0;
+      let centerLon = 25.0;
+      let centerLat = 50.0;
       
       if (pathData && pathData.length > 0) {
         const bounds = {
@@ -132,11 +131,11 @@ class MapGl {
             type: 'raster',
             source: 'osm',
             minzoom: 0,
-            maxzoom: 8
+            maxzoom: 12
           }]
         },
         center: [centerLon, centerLat],
-        zoom: 3,
+        zoom: 5,
         pitch: 60,
         bearing: 30,
         antialias: true
@@ -157,9 +156,6 @@ class MapGl {
       });
       map.addControl(this.deckOverlay);
   
-
-      // await this.showTrajIdAsOption(trajectories, updateLayer);
-
     } catch (error) {
       console.error('Error initializing map:', error);
     }

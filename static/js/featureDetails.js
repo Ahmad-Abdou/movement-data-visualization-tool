@@ -19,7 +19,7 @@ class FeatureDetail {
 
     this.gy = this.svg.append('g').attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
     this.axisLineGenerator = d3.line().x(d=> this.xScale(d)).y(d=> this.yScale(d))
-
+    this.operation = null
     this.drawAxis(this.gx, this.gy)
   }
 
@@ -48,44 +48,42 @@ class FeatureDetail {
         .text(y_title)
         .attr('font-size', 20)
         .attr('x', 40)
-        .attr('y', (this.svgHeight / 2) - 70)
+        .attr('y', (this.svgHeight / 2) - 80)
         .attr('text-anchor', 'middle')
         .attr('transform', `rotate(-90, 40, ${this.svgHeight / 2})`)
   }
 
   async drawQuantile(name) {
-    console.log(selectedTrajectory)
     let splitted = name.split("_")[0]; 
     if (splitted === 'angles') {
       splitted = 'angle'
     }
     const result = [];
-    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory}`);
+    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory}&stats=${name}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    if (!data || data.length === 0) {
+    const responseData = await response.json();
+    if (!responseData || responseData.length === 0) {
         throw new Error('No data received');
     }
-
+    const data = responseData.data
+    this.operation = responseData.operation
     data.forEach((row) => {
         if (row[splitted] !== undefined) { 
             result.push({
               time: row.time,
-              feature: row[splitted]
-              
+              feature: row[splitted],
             });
         }
     });
-
     return result
 }
 
-async timeConverter(features) {
+async timeConverter(features, y_lablel) {
   try {
-    const data = await features;
-    
+
+    const data = await features
     this.svg.selectAll(".chart-content").remove();
 
     const chartGroup = this.svg.append("g")
@@ -96,6 +94,7 @@ async timeConverter(features) {
         d.time = timeParsed(d.time);
         d.feature = +d.feature;
     });
+
 
     const xScale = d3.scaleTime()
         .domain(d3.extent(data, d => d.time))
@@ -116,7 +115,31 @@ async timeConverter(features) {
         .attr("stroke", "steelblue")
         .attr("stroke-width", 2)
         .attr("d", line);
+      const circleXScale = d3.scaleLinear()
+      .domain([d3.min(data, d => d.feature), d3.max(data, d => d.feature)])
 
+      console.log(circleXScale(this.operation))
+
+      let splitted = y_lablel.split("_").splice(1).join("_"); 
+        if (splitted === 'quant_median' || splitted === 'mean'|| splitted === 'mad' || splitted === "meanse") {
+          chartGroup.append("line")
+          .attr("class", "stat-line")
+          .attr("x1", 0)                          
+          .attr("x2", this.width - 100)           
+          .attr("y1", yScale(this.operation))     
+          .attr("y2", yScale(this.operation))     
+          .attr("stroke", "red")
+          .attr("stroke-width", 4)
+        } else {
+          chartGroup.append('circle')
+          .attr('class', 'stat-circle')
+          .attr('r', 15)
+          .attr('cx', yScale(this.operation))
+          .attr('cy', 100)
+          .attr('fill', 'red')
+          .attr('stroke', 'darkred')
+
+        }
     const xAxis = d3.axisBottom(xScale)
         .ticks(5)
         // .tickFormat(d3.timeFormat("%H:%M:%S"));

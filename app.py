@@ -5,10 +5,9 @@ import os
 import traceback
 import feature_importance
 from database import Database
-
+from featureDetailsCalc import stats_calc
 app = Flask(__name__)
 db = Database()
-
 def get_absolute_path(relative_path):
     base_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_dir, relative_path)
@@ -61,20 +60,40 @@ def data_map():
         return jsonify({"error": "Server error"}), 500
 
 @app.route('/api/feats/quantile', methods=['GET'])
-
 def data_quantile():
     tid = request.args.get('tid') 
-
+    stats = request.args.get('stats')
     try:
         data = db.get_data_for_quantile(tid)
+        operation = stats_calc(stats, data)
         if data and len(data) > 0:
-            return jsonify(data)
+            return jsonify({
+        'data': data,
+        'operation': operation
+    })
         else:
             return jsonify({"error": "No data found"}), 404
             
     except Exception as e:
         print(f'Error: {str(e)}')
         return jsonify({"error": "Server error"}), 500
+    
+# @app.route('/api/feats/quantile/stats', methods=['POST'])
+# def fetchStatsForFeatureDetails():
+#     try:
+#         stats = request.get_json()["stats"]
+#         print(trajectory_feature_details)
+#         print(stats)
+#         if not stats:
+#             print('No data was sent BROTHEH')
+#         return jsonify({
+#             'status': 'success',
+#             'data': {
+#                 'stats' : stats
+#             }
+#         })
+#     except:
+#         print('Didnt recieve')
 
 @app.route('/api/data', methods=['POST'])
 def process_data():
