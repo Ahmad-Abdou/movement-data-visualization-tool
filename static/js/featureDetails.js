@@ -11,23 +11,8 @@ class FeatureDetail {
     this.offsetX = (this.availableWidth - this.svgWidth) / 2  - margin.right;
     this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top ;
     this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
-    this.xScale = d3.scaleLinear().domain([0,1]).range([0, this.svgWidth])
-    this.yScale = d3.scaleLinear().domain([0,1]).range([this.svgHeight, 0])
-    this.xAxis = d3.axisBottom(this.xScale)
-    this.gx = this.svg.append('g').attr('transform', `translate(${this.margin.left},${this.svgHeight + this.margin.top})`);
-    this.yAxis = d3.axisLeft(this.yScale)
-
-    this.gy = this.svg.append('g').attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
-    this.axisLineGenerator = d3.line().x(d=> this.xScale(d)).y(d=> this.yScale(d))
     this.operation = null
-    this.drawAxis(this.gx, this.gy)
   }
-
-  drawAxis(gx, gy) {
-    // this.xAxis(gx)
-    // this.yAxis(gy)
-  }
-
   drawAxisLabels(y_title) {
     this.svg.selectAll('.axis-label').remove();
 
@@ -83,7 +68,7 @@ class FeatureDetail {
     return result
 }
 
-async timeConverter(features, y_lablel) {
+async showPercentile(features, y_lablel) {
   try {
 
     const data = await features
@@ -104,7 +89,7 @@ async timeConverter(features, y_lablel) {
         .range([0, this.width - 100]);
 
     const yScale = d3.scaleLinear()
-        .domain([0, d3.max(data, d => d.feature)])
+        .domain([d3.min(data, d => d.feature), d3.max(data, d => d.feature)])
         .range([this.height - 150, 0]);
 
     const line = d3.line()
@@ -118,10 +103,26 @@ async timeConverter(features, y_lablel) {
         .attr("stroke", "steelblue")
         .attr("stroke-width", 2)
         .attr("d", line);
-      const circleXScale = d3.scaleLinear()
-      .domain([d3.min(data, d => d.feature), d3.max(data, d => d.feature)])
+    
+      chartGroup.append('text')
+      .text(this.operation.toString().slice(0,6))
+      .attr('x', 140)
+      .attr('y', -40)
+      .attr('font-size', 20)
+      .attr('font-weight', 700)
+
+      // chartGroup.append('text')
+      // .text(y_lablel.toUpperCase())
+      // .attr('x', 0)
+      // .attr('y', -40)
+      // .attr('font-size', 12)
+      // .attr('font-weight', 700)
 
       let splitted = y_lablel.split("_").splice(1).join("_"); 
+        if (splitted.includes('geometry')) {
+          notifyMessage("Ask Amilcar!!!!")
+          return
+        }
         if (splitted === 'quant_median' || splitted === 'mean'|| splitted === 'mad' || splitted === "meanse") {
           chartGroup.append("line")
           .attr("class", "stat-line")
@@ -129,16 +130,15 @@ async timeConverter(features, y_lablel) {
           .attr("x2", this.width - 100)           
           .attr("y1", yScale(this.operation))     
           .attr("y2", yScale(this.operation))     
-          .attr("stroke", "red")
+          .attr("stroke", "#DC143C")
           .attr("stroke-width", 4)
         } else {
           chartGroup.append('circle')
           .attr('class', 'stat-circle')
-          .attr('r', 15)
+          .attr('r', 5)
           .attr('cx', yScale(this.operation))
           .attr('cy', 100)
-          .attr('fill', 'red')
-          .attr('stroke', 'darkred')
+          .attr('fill', '#DC143C')
 
         }
     const xAxis = d3.axisBottom(xScale)

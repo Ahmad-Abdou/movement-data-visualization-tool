@@ -103,7 +103,7 @@ class AxesPlot {
 
     colorZone(zone_number, all_data) {
         this.svg.selectAll('path.axes-zone').remove();
-        const zoneColor = '#0080FF';
+        const zoneColor = '#DC143C';
         const zoneOpacity = 0.5; 
         let zoneShape;
         

@@ -12,7 +12,6 @@ def stats_calc(stats, data):
     numeric_data = [d[feature_name] for d in data]
 
     sorted_num = sorted(numeric_data)
-
     match operation:
         case 'quant_05':
             result = np.percentile(sorted_num, 5)
@@ -52,6 +51,36 @@ def stats_calc(stats, data):
             result = np.median(sorted_num) 
         case 'iqr':
             result = np.percentile(sorted_num, 75) - np.percentile(sorted_num, 25)
+        case 'geometry_1_1':
+            result = 0
+        case 'geometry_2_1':
+            result = 0
+        case 'geometry_2_2':
+            result = 0
+        case 'geometry_3_1':
+            result = 0
+        case 'geometry_3_2':
+            result = 0
+        case 'geometry_3_3':
+            result = 0
+        case 'geometry_4_1':
+            result = 0
+        case 'geometry_4_2':
+            result = 0
+        case 'geometry_4_3':
+            result = 0
+        case 'geometry_4_4':
+            result = 0
+        case 'geometry_5_1':
+            result = 0
+        case 'geometry_5_2':
+            result = 0
+        case 'geometry_5_3':
+            result = 0
+        case 'geometry_5_4':
+            result = 0
+        case 'geometry_5_5':
+            result = 0
         case _:
             raise ValueError("Unknown stats parameter")           
     if isinstance(result, (np.float64, np.int64)):
