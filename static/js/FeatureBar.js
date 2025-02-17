@@ -103,7 +103,7 @@ class FeatureBar {
   .text(d=> d.toString().substring(0,7))
   .attr('fill', 'black')
   .attr('y', (d, i)=> 15 * i +34)
-  .attr('font-size', 8)
+  .attr('font-size', 10)
   .attr('x', 450)
   .attr('font-weight', 700)
 
@@ -113,12 +113,12 @@ class FeatureBar {
   .text(d=> d.toString().substring(0,7))
   .attr('fill', 'black')
   .attr('y', (d, i)=> 15 * i +34)
-  .attr('font-size', 8)
+  .attr('font-size', 10)
   .attr('font-weight', 700)
   .attr('x', 220)
 
     this.svg.append('rect')
-    .attr('width' , 220)
+    .attr('width' , 225)
     .attr('height' , 20)
     .attr('fill' , '#0080FF')
     .attr('opacity', 0.5)
@@ -126,10 +126,10 @@ class FeatureBar {
 
 
     this.svg.append('rect')
-    .attr('width' , 220)
+    .attr('width' , 210)
     .attr('height' , 20)
     .attr('fill' , '#DC143C')
-    .attr('x' , 300)
+    .attr('x' , 305)
     .attr('opacity', 0.5)
 
 
@@ -148,17 +148,16 @@ class FeatureBar {
     .attr('x', 385)
     .attr('y', 12)
     .attr('font-weight', 700)    
-    const notification = document.getElementById('notification')
 
     geoRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
       const features = featureDetail.drawQuantile(e.target.id)
-       featureDetail.timeConverter(features, e.target.id)
+       featureDetail.showPercentile(features, e.target.id)
     })
     kinRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
       const features = featureDetail.drawQuantile(e.target.id)
-       featureDetail.timeConverter(features, e.target.id)
+       featureDetail.showPercentile(features, e.target.id)
     })
   }
 }
