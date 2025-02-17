@@ -65,11 +65,12 @@ def data_quantile():
     stats = request.args.get('stats')
     try:
         data = db.get_data_for_quantile(tid)
-        operation = stats_calc(stats, data)
+        operation, get_40_rows = stats_calc(stats, data)
         if data and len(data) > 0:
             return jsonify({
         'data': data,
-        'operation': operation
+        'operation': operation,
+        'rows': get_40_rows
     })
         else:
             return jsonify({"error": "No data found"}), 404

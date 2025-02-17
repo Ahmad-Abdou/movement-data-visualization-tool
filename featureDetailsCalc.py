@@ -84,8 +84,27 @@ def stats_calc(stats, data):
         case _:
             raise ValueError("Unknown stats parameter")           
     if isinstance(result, (np.float64, np.int64)):
-        return result.item()
-    return result
+        nearest_index_row = find_nearest(numeric_data, result, data)
+        get_40_rows = find_40_closest(nearest_index_row, data)
+        return result.item(), get_40_rows
+
+    # return result
+
+def find_nearest(array, value, data):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+def find_40_closest(index, data):
+    # min_index = 0
+    # max_index = len(data) - 1
+    # if index - 20 >= 0:
+    #     min_index = index - 20
+    # if max_index <= (len(data) - 1) + 20:
+    #     max_index = index 
+    min_index = index - 10
+    max_index = index + 11
+    return data[min_index:max_index]
 # def calc_0s(data):
 #     return np.sum(data)
 

@@ -12,6 +12,8 @@ class FeatureDetail {
     this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top ;
     this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
     this.operation = null
+    this.sub_trajectory = []
+    this.data_without_filtering = null
   }
   drawAxisLabels(y_title) {
     this.svg.selectAll('.axis-label').remove();
@@ -57,6 +59,14 @@ class FeatureDetail {
     }
     const data = responseData.data
     this.operation = responseData.operation
+    this.data_without_filtering = responseData.rows
+    this.sub_trajectory = responseData.rows
+    .filter(row => row && row[splitted] !== undefined && row.time)
+    .map(row => ({
+      time: row.time,
+      feature: row[splitted]
+    }))
+
     data.forEach((row) => {
         if (row[splitted] !== undefined) { 
             result.push({
@@ -71,33 +81,37 @@ class FeatureDetail {
 async showPercentile(features, y_lablel) {
   try {
 
-    const data = await features
+    // const data = await features
     this.svg.selectAll(".chart-content").remove();
 
     const chartGroup = this.svg.append("g")
         .attr("class", "chart-content");
 
     const timeParsed = d3.timeParse("%Y-%m-%d %H:%M:%S");
-    data.forEach(d => {
-        d.time = timeParsed(d.time);
-        d.feature = +d.feature;
-    });
+    // data.forEach(d => {
+    //     d.time = timeParsed(d.time);
+    //     d.feature = +d.feature;
+    // });
 
-
+    this.sub_trajectory.forEach(d => {
+      d.time = timeParsed(d.time);
+      d.feature = +d.feature;
+  });
     const xScale = d3.scaleTime()
-        .domain(d3.extent(data, d => d.time))
+        .domain(d3.extent(this.sub_trajectory, d => d.time))
         .range([0, this.width - 100]);
 
     const yScale = d3.scaleLinear()
-        .domain([d3.min(data, d => d.feature), d3.max(data, d => d.feature)])
+        .domain([d3.min(this.sub_trajectory, d => d.feature), d3.max(this.sub_trajectory, d => d.feature)])
         .range([this.height - 150, 0]);
 
     const line = d3.line()
+        .defined(d => !isNaN(d.feature))
         .x(d => xScale(d.time))
         .y(d => yScale(d.feature));
-
+    
     chartGroup.append("path")
-        .datum(data)
+        .datum(this.sub_trajectory)
         .attr("class", "line")
         .attr("fill", "none")
         .attr("stroke", "#0080FF")
@@ -137,7 +151,7 @@ async showPercentile(features, y_lablel) {
         }
     const xAxis = d3.axisBottom(xScale)
         .ticks(5)
-        // .tickFormat(d3.timeFormat("%H:%M:%S"));
+        .tickFormat(d3.timeFormat("%b:%d"));
 
     const yAxis = d3.axisLeft(yScale)
         .ticks(5);
@@ -150,7 +164,7 @@ async showPercentile(features, y_lablel) {
     chartGroup.append("g")
         .attr("class", "y-axis")
         .call(yAxis);
-
+    await mapGl.traject(this.data_without_filtering, selectedTrajectory);
   } catch (error) {
     console.error("Error drawing line chart:", error);
   }
