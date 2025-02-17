@@ -100,23 +100,16 @@ async showPercentile(features, y_lablel) {
         .datum(data)
         .attr("class", "line")
         .attr("fill", "none")
-        .attr("stroke", "steelblue")
+        .attr("stroke", "#0080FF")
         .attr("stroke-width", 2)
         .attr("d", line);
     
       chartGroup.append('text')
-      .text(this.operation.toString().slice(0,6))
-      .attr('x', 140)
+      .text(this.operation)
+      .attr('x', 130)
       .attr('y', -40)
-      .attr('font-size', 20)
-      .attr('font-weight', 700)
-
-      // chartGroup.append('text')
-      // .text(y_lablel.toUpperCase())
-      // .attr('x', 0)
-      // .attr('y', -40)
-      // .attr('font-size', 12)
-      // .attr('font-weight', 700)
+      .attr('font-size', 15)
+      .attr('font-weight', 500)
 
       let splitted = y_lablel.split("_").splice(1).join("_"); 
         if (splitted.includes('geometry')) {
@@ -132,6 +125,7 @@ async showPercentile(features, y_lablel) {
           .attr("y2", yScale(this.operation))     
           .attr("stroke", "#DC143C")
           .attr("stroke-width", 4)
+          .style('stroke-dasharray', 15)
         } else {
           chartGroup.append('circle')
           .attr('class', 'stat-circle')
