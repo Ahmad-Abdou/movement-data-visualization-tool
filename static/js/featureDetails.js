@@ -109,15 +109,16 @@ async showPercentile(features, y_lablel) {
         .defined(d => !isNaN(d.feature))
         .x(d => xScale(d.time))
         .y(d => yScale(d.feature));
-    
-    chartGroup.append("path")
-        .datum(this.sub_trajectory)
-        .attr("class", "line")
-        .attr("fill", "none")
-        .attr("stroke", "#0080FF")
-        .attr("stroke-width", 2)
-        .attr("d", line);
-    
+
+    if(this.sub_trajectory.length != 0) {
+      chartGroup.append("path")
+      .datum(this.sub_trajectory)
+      .attr("class", "line")
+      .attr("fill", "none")
+      .attr("stroke", "#0080FF")
+      .attr("stroke-width", 2)
+      .attr("d", line);
+
       chartGroup.append('text')
       .text(this.operation)
       .attr('x', 130)
@@ -164,7 +165,13 @@ async showPercentile(features, y_lablel) {
     chartGroup.append("g")
         .attr("class", "y-axis")
         .call(yAxis);
+
+        
     await mapGl.traject(this.data_without_filtering, selectedTrajectory);
+    }
+
+
+        
   } catch (error) {
     console.error("Error drawing line chart:", error);
   }

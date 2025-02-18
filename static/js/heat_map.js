@@ -108,14 +108,14 @@ class Heatmap {
       });    
   }
 
-  highlightRow(combination) {
+  async highlightRow(combination) {
     this.heatmapGroup.selectAll('rect')
         .attr('fill', d => this.colorScale(d.value));
         
     this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
         .attr('fill', '#DC143C').attr('opacity', 0.5);
-        current_selected_combination = combination
+        current_selected_combination = await combination
   }
 
   async onCellClick(d) {
@@ -128,13 +128,13 @@ class Heatmap {
         tree.selectedRects.forEach(rect => rect.element.attr('fill', 'white'));
         tree.selectedRects = [];
         
-        tree.toggleColor(firstBox, combinationList[0]);
-        tree.toggleColor(secondBox, combinationList[1]);
+        await tree.toggleColor(firstBox, combinationList[0]);
+        await tree.toggleColor(secondBox, combinationList[1]);
     }
     axesPlot.svg.selectAll('path.axes-zone').remove();
-    axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
+    await axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
   
-    displayselectedZone()
+    await displayselectedZone()
 
   }
 }
