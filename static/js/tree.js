@@ -171,14 +171,14 @@ class Tree {
             const yText = this.selectedRects[1].text;
             showData(xText, yText);
             
-            setTimeout(() => {
+            setTimeout(async () => {
                 if (heatmap) {
                     // Sorting combination before passing it to highlighting.
-                    list_combination = [xText, yText].sort();
-                    sorted_combination = list_combination.join(" ");
+                     list_combination = [xText, yText].sort();
+                    sorted_combination =  list_combination.join(" ");
                     heatmap.highlightRow(sorted_combination);
                 }
-            }, 100);
+            },900);
         }
     }
 }

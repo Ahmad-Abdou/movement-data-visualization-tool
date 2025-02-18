@@ -8,25 +8,25 @@ class MapGl {
     this.polygonLayerType = [{
       'speed':{
         'elevation': 25000,
-        'color': [146, 43, 33,255]
+        // 'color': [146, 43, 33,255]
       },
       'acceleration':{
         'elevation': 20000,
     
-        'color': [33, 47, 61,255]
+        // 'color': [33, 47, 61,255]
       },
       'distance':{
         'elevation': 15000,
-        'color': [98, 101, 103 ,255]
+        // 'color': [98, 101, 103 ,255]
       },
       'angle':{
         'elevation': 10000,
     
-        'color': [29, 131, 72 ,255]
+        // 'color': [29, 131, 72 ,255]
       },
       'bearing':{
         'elevation': 5000,
-        'color': [26, 82, 118,255]
+        // 'color': [26, 82, 118,255]
       },
     }]
 
@@ -135,7 +135,7 @@ class MapGl {
           }]
         },
         center: [centerLon, centerLat],
-        zoom: 5,
+        zoom: 6,
         pitch: 60,
         bearing: 30,
         antialias: true
@@ -168,31 +168,31 @@ class MapGl {
       const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
       const minSpeed = Math.min(...speeds);
       const maxSpeed = Math.max(...speeds);
-      colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[199,233,180], [29,145,192]]);
+      colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[239,243,255], [8,81,156]]);
 
     } else if (type === 'acceleration') {
       const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
       const minAcc = Math.min(...accelerations)
       const maxAcc = Math.max(...accelerations)
-      colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[199,233,180], [29,145,192]])
+      colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[239,243,255], [8,81,156]])
     }
     else if (type === 'distance') {
       const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
       const minDist = Math.min(...distances)
       const maxDist = Math.max(...distances)
-      colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[199,233,180], [29,145,192]])
+      colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[239,243,255], [8,81,156]])
     }
     else if (type === 'angle') {
       const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
       const minAngle= Math.min(...angles)
       const maxAngle = Math.max(...angles)
-      colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[199,233,180], [29,145,192]])
+      colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[239,243,255], [8,81,156]])
     }
     else if (type === 'bearing') {
       const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
       const minBearing = Math.min(...bearings)
       const maxBearing = Math.max(...bearings)
-      colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[199,233,180], [29,145,192]])
+      colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[239,243,255], [8,81,156]])
     }
     return colorScale
   }
@@ -234,13 +234,13 @@ class MapGl {
         }
       },
       getLineColor: [0, 0, 0],
-      getLineWidth: 2,
+      getLineWidth: 4,
       getElevation: category.elevation,
       material: {
-        ambient: 0.64,                     
-        diffuse: 0.6,
-        shininess: 32,
-        specularColor: [51, 51, 51]
+        ambient: 0.6,                     
+        diffuse: 0.4,
+        shininess: 100,
+        specularColor: [220, 220, 220]
       }
     });
     return layer

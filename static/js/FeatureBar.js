@@ -151,13 +151,13 @@ class FeatureBar {
 
     geoRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
-      const features = featureDetail.drawQuantile(e.target.id)
-       featureDetail.showPercentile(features, e.target.id)
+      const features = await featureDetail.drawQuantile(e.target.id)
+       await featureDetail.showPercentile(features, e.target.id)
     })
     kinRect.on('click', async function(e) {
       featureDetail.drawAxisLabels(e.target.id)
-      const features = featureDetail.drawQuantile(e.target.id)
-       featureDetail.showPercentile(features, e.target.id)
+      const features = await featureDetail.drawQuantile(e.target.id)
+       await featureDetail.showPercentile(features, e.target.id)
     })
   }
 }

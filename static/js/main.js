@@ -11,12 +11,13 @@ const axesPlot = new AxesPlot('#scatter-plot', 450, 350, margin_axes);
 
 const tree = new Tree('#taxonomy-element', 500, 300, 0);
 
-const  featureDetail = new FeatureDetail('#feature-detail',450, 400, margin_axes )
 
 const mapGl = new MapGl('#mapgl')
 const trajectories =  mapGl.generateMapGl('116')
 mapGl.traject(trajectories);
 
 const featureBar = new FeatureBar('.feature-importance-container', 600, 400, [])
-
 featureBar.render()
+const  featureDetail = new FeatureDetail('#feature-detail',450, 400, margin_axes )
+
+
