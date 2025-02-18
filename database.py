@@ -119,7 +119,6 @@ class Database:
             
             for row in self.cursor.fetchall():
                 results.append(dict(zip(columns, row)))
-                
             return results
             
         except Exception as e:
