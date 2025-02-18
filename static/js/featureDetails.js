@@ -50,6 +50,11 @@ class FeatureDetail {
     if(!selectedTrajectory) {
       notifyMessage('Please select a trajectory first')
     }
+    if (name.split("_")[1] == 'geometry') {
+      notifyMessage("Ask Amilcar!!!!")
+      return
+    }
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -127,10 +132,6 @@ async showPercentile(features, y_lablel) {
       .attr('font-weight', 500)
 
       let splitted = y_lablel.split("_").splice(1).join("_"); 
-        if (splitted.includes('geometry')) {
-          notifyMessage("Ask Amilcar!!!!")
-          return
-        }
         if (splitted === 'quant_median' || splitted === 'mean'|| splitted === 'mad' || splitted === "meanse") {
           chartGroup.append("line")
           .attr("class", "stat-line")
