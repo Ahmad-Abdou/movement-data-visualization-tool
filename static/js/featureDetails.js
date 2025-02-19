@@ -93,10 +93,6 @@ async showPercentile(features, y_lablel) {
         .attr("class", "chart-content");
 
     const timeParsed = d3.timeParse("%Y-%m-%d %H:%M:%S");
-    // data.forEach(d => {
-    //     d.time = timeParsed(d.time);
-    //     d.feature = +d.feature;
-    // });
 
     this.sub_trajectory.forEach(d => {
       d.time = timeParsed(d.time);
@@ -120,7 +116,7 @@ async showPercentile(features, y_lablel) {
       .datum(this.sub_trajectory)
       .attr("class", "line")
       .attr("fill", "none")
-      .attr("stroke", "#0080FF")
+      .attr("stroke", () => kinematic.includes(y_lablel) ? "#0080FF" : "#DC143C")
       .attr("stroke-width", 2)
       .attr("d", line);
 
@@ -139,7 +135,7 @@ async showPercentile(features, y_lablel) {
           .attr("x2", this.width - 100)           
           .attr("y1", yScale(this.operation))     
           .attr("y2", yScale(this.operation))     
-          .attr("stroke", "#DC143C")
+          .attr("stroke", kinematic.includes(y_lablel) ? "#DC143C" : "#0080FF")
           .attr("stroke-width", 4)
           .style('stroke-dasharray', 15)
         } else {
@@ -148,7 +144,7 @@ async showPercentile(features, y_lablel) {
           .attr('r', 5)
           .attr('cx', yScale(this.operation))
           .attr('cy', 100)
-          .attr('fill', '#DC143C')
+          .attr('fill', kinematic.includes(y_lablel) ? "#DC143C" : "#0080FF")
 
         }
     const xAxis = d3.axisBottom(xScale)

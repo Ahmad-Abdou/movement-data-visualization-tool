@@ -85,7 +85,7 @@ pin_right.addEventListener('click',() => {
 leftPanel.addEventListener('mouseover', ()=> {
     if(pin_left.className != 'pinned_left') {
         leftPanel.style.transform = 'translate(0px, 0)'
-        pin_left.style.transform = 'translate(475px, 0)'
+        pin_left.style.transform = 'translate(470px, 0)'
         pin_left.style.width = '60px'
         pin_left.style.height = '100px'
     }
@@ -103,7 +103,7 @@ leftPanel.addEventListener('mouseout', ()=> {
 pin_left.addEventListener('mouseover', ()=> {
     if(pin_left.className != 'pinned_left') {
         leftPanel.style.transform = 'translate(0px, 0)'
-        pin_left.style.transform = 'translate(475px, 0)'
+        pin_left.style.transform = 'translate(470px, 0)'
         pin_left.style.width = '60px'
         pin_left.style.height = '100px'
     }
