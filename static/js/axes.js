@@ -12,11 +12,9 @@ class AxesPlot {
         this.availableHeight = height;
         this.svgWidth = 0.7 * this.availableWidth;
         this.svgHeight = 0.7 * this.availableHeight;
-        
         this.offsetX = (this.availableWidth - this.svgWidth) / 2  - margin.right;
         this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top;
         this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
-
         this.xScale = d3.scaleLinear().domain([0, 1]).range([0, this.svgWidth]);
         this.yScale = d3.scaleLinear().domain([0, 1]).range([this.svgHeight, 0]);
         this.xAxis = d3.axisBottom(this.xScale);
@@ -24,11 +22,13 @@ class AxesPlot {
 
         this.yAxis = d3.axisLeft(this.yScale);
 
+
         this.gy = this.svg.append('g').attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
         this.axesLineGenerator = d3.line().x(d=>this.xScale(d[0] )).y(d=>this.yScale(d[1]))
         this.colorScale = d3.scaleOrdinal().domain([0, 1]).range(['#1f77b4', '#ff7f0e']);
         this.colorsList = []
- 
+        this.zones = this.svg.append('g').attr('class', 'zones')
+
         this.axesLines = [
           {points: [[0,0.5], [0.5, 1]]},
           {points: [[0,0.5], [0.5,0.5], [0.5,0]]},
@@ -100,8 +100,8 @@ class AxesPlot {
         axisGroup.raise();
     }
 
-    colorZone(zone_number, all_data) {
-        this.svg.selectAll('path.axes-zone').remove();
+    colorZone1(zone_number, all_data) {
+        this.zones.selectAll('.zone-1-group').remove();
         const zoneColor = '#DC143C';
         const zoneOpacity = 0.5; 
         let zoneShape;
@@ -113,8 +113,8 @@ class AxesPlot {
             case 3: zoneShape = this.axes_zone_3[0]; break;
             default: return;
         }
-        
-        this.svg.append('path')
+        this.firstZoneGroup = this.zones.append('g').attr('class', 'zone-1-group')
+        this.firstZoneGroup.append('path')
             .data([all_data])
             .attr('class', 'axes-zone')
             .attr('d', this.axesLineGenerator(zoneShape.points))
@@ -123,8 +123,37 @@ class AxesPlot {
             .attr('opacity', zoneOpacity);
 
         this.plotGroup.lower();
-        this.svg.selectAll('path.axes-zone').raise();
-        this.svg.select('.axis-group').raise();
+        this.firstZoneGroup.selectAll('.zone-1-group').raise();
+        this.firstZoneGroup.select('.axis-group').raise();
+        this.gx.raise();
+        this.gy.raise();
+    }
+    colorZone2(zone_number, all_data) {
+      this.zones.selectAll('.zone-2-group').remove();
+        const zoneColor = '#DC143C';
+        const zoneOpacity = 0.5; 
+        let zoneShape;
+        
+        switch(zone_number) {
+            case 0: zoneShape = this.axes_zone_0[0]; break;
+            case 1: zoneShape = this.axes_zone_1[0]; break;
+            case 2: zoneShape = this.axes_zone_2[0]; break;
+            case 3: zoneShape = this.axes_zone_3[0]; break;
+            default: return;
+        }
+        this.secondZoneGroup = this.zones.append('g').attr('class', 'zone-2-group')
+
+        this.secondZoneGroup.append('path')
+            .data([all_data])
+            .attr('class', 'axes-zone')
+            .attr('d', this.axesLineGenerator(zoneShape.points))
+            .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
+            .attr('fill', zoneColor)
+            .attr('opacity', zoneOpacity);
+
+        this.plotGroup.lower();
+        this.secondZoneGroup.selectAll('.zone-2-group').raise();
+        this.secondZoneGroup.select('.axis-group').raise();
         this.gx.raise();
         this.gy.raise();
     }
