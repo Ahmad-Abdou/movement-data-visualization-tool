@@ -83,10 +83,9 @@ class FeatureDetail {
     return result
 }
 
-async showPercentile(features, y_lablel) {
+async showPercentile(y_lablel) {
   try {
 
-    // const data = await features
     this.svg.selectAll(".chart-content").remove();
 
     const chartGroup = this.svg.append("g")
@@ -116,7 +115,7 @@ async showPercentile(features, y_lablel) {
       .datum(this.sub_trajectory)
       .attr("class", "line")
       .attr("fill", "none")
-      .attr("stroke", () => kinematic.includes(y_lablel) ? "#0080FF" : "#DC143C")
+      .attr("stroke", () => kinematic.includes(y_lablel) ? "#0080FF" : "#DC143C80")
       .attr("stroke-width", 2)
       .attr("d", line);
 
@@ -135,7 +134,7 @@ async showPercentile(features, y_lablel) {
           .attr("x2", this.width - 100)           
           .attr("y1", yScale(this.operation))     
           .attr("y2", yScale(this.operation))     
-          .attr("stroke", kinematic.includes(y_lablel) ? "#DC143C" : "#0080FF")
+          .attr("stroke", kinematic.includes(y_lablel) ? "#DC143C80" : "#0080FF")
           .attr("stroke-width", 4)
           .style('stroke-dasharray', 15)
         } else {
@@ -144,7 +143,7 @@ async showPercentile(features, y_lablel) {
           .attr('r', 5)
           .attr('cx', yScale(this.operation))
           .attr('cy', 100)
-          .attr('fill', kinematic.includes(y_lablel) ? "#DC143C" : "#0080FF")
+          .attr('fill', kinematic.includes(y_lablel) ? "#DC143C80" : "#0080FF")
 
         }
     const xAxis = d3.axisBottom(xScale)

@@ -76,8 +76,6 @@ class FeatureBar {
       return kinLabel[i]
     })
 
-    console.log(kinRectGroup)
-
     geoTextGroup.selectAll('text')
     .data(geoLabel)
     .join('text')
@@ -161,8 +159,8 @@ class FeatureBar {
       .attr('y', e.target.y.baseVal.value)
       
       featureDetail.drawAxisLabels(e.target.id)
-      const features = await featureDetail.drawQuantile(e.target.id)
-      await featureDetail.showPercentile(features, e.target.id)
+      await featureDetail.drawQuantile(e.target.id)
+      await featureDetail.showPercentile(e.target.id)
 
     })
     kinRectGroup.on('click', async (e) => {
@@ -172,16 +170,13 @@ class FeatureBar {
 
       highlightGroup.append('rect')
       .attr('fill', 'gold')
-      .attr('width', 105)
+      .attr('width', 120)
       .attr('height', 10)
       .attr('x', e.target.x.baseVal.value - 125)
       .attr('y', e.target.y.baseVal.value)
       featureDetail.drawAxisLabels(e.target.id)
-
-      const features = await featureDetail.drawQuantile(e.target.id)
-      await featureDetail.showPercentile(features, e.target.id)
-      
-
+      await featureDetail.drawQuantile(e.target.id)
+      await featureDetail.showPercentile(e.target.id)
     })
   }
 }
