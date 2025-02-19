@@ -119,6 +119,7 @@ class Heatmap {
   }
 
   async onCellClick(d) {
+    window.numOfZones = 0
     const combinationList = d.combination.split(" ");
 
     const firstBox = tree.treeGroup.select(`rect#${combinationList[0]}`);
@@ -132,7 +133,7 @@ class Heatmap {
         await tree.toggleColor(secondBox, combinationList[1]);
     }
     axesPlot.svg.selectAll('path.axes-zone').remove();
-    await axesPlot.colorZone(parseInt(d.zone.slice(5)), this.data);
+    await axesPlot.colorZone1(parseInt(d.zone.slice(5)), this.data);
   
     await displayselectedZone()
 

@@ -2,6 +2,8 @@ let current_selected_combination = null
 let current_selected_zone = null
 let current_selectec_data = null
 let selectedTrajectory = null
+window.numOfZones = 0
+
 // default
 let outlier_dataset_name = 'data_combination_foxes';
 let trajectory_dataset_name = 'fox_trajectories.csv';
@@ -183,10 +185,11 @@ function displayselectedZone() {
     selector.addEventListener('change', async (e) => {
         current_selected_zone_1 = parseInt(e.target.value);
         zoneA = current_selected_zone_1
+        await axesPlot.colorZone1(zoneA, frequency_zone_combinations)
     });
     selector2.addEventListener('change', async (e) => {
         zoneB = parseInt(e.target.value);
-        
+        await axesPlot.colorZone2(zoneB, frequency_zone_combinations)
         if (zoneA !== undefined && zoneB !== undefined && current_selected_combination ) {
             try {
                 const result = await sendDataToPython(
