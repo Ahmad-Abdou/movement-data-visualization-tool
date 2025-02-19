@@ -6,13 +6,9 @@ class FeatureBar {
     this.data = data
     this.featureValue = this.data.map((item)=> item.Importance)
     this.featurelabel = this.data.map((item)=> item.Feature )
-    this.svg = d3.select(containerId)
-    .append('svg')
-    .attr('width', this.width)
-    .attr('height', this.height)
+    this.svg = d3.select(containerId).append('svg').attr('id', containerId).attr('width', this.width).attr('height', this.height)
 
     this.xScale = d3.scaleLinear().domain([0, d3.max(this.featureValue)]).range([1, 100])
-
   }
 
    render (){
@@ -47,12 +43,14 @@ class FeatureBar {
     })
 
     
-    const geoGroup = this.svg.append('g')
-    .attr('id', 'geo-group')
-    const kinGroup = this.svg.append('g')
-    .attr('id', 'kin-group')
+    const geoRectGroup = this.svg.append('g').attr('id', 'geo-rect-group')
+    const kinRectGroup = this.svg.append('g').attr('id', 'kin-rect-group')
 
-    const geoRect = geoGroup.selectAll('rect')
+    const geoTextGroup = this.svg.append('g').attr('id', 'geo-text-group')
+    const kinTextGroup = this.svg.append('g').attr('id', 'kin-text-group')
+    const headerGroup = this.svg.append('g').attr('id', 'header-group')
+
+    geoRectGroup.selectAll('rect')
     .data(geoValue)
     .join('rect')
     .attr('width', (d)=> this.xScale(d))
@@ -65,7 +63,7 @@ class FeatureBar {
       return geoLabel[i]
     })
 
-    const kinRect = kinGroup.selectAll('rect')
+    kinRectGroup.selectAll('rect')
     .data(kinValue)
     .join('rect')
     .attr('width', (d)=> this.xScale(d))
@@ -78,7 +76,9 @@ class FeatureBar {
       return kinLabel[i]
     })
 
-    geoGroup.selectAll('label')
+    console.log(kinRectGroup)
+
+    geoTextGroup.selectAll('text')
     .data(geoLabel)
     .join('text')
     .text(d=> d)
@@ -87,7 +87,7 @@ class FeatureBar {
     .attr('font-size', 10)
     .attr('x', 310)
 
-    kinGroup.selectAll('label')
+    kinTextGroup.selectAll('text')
     .data(kinLabel)
     .join('text')
     .text(d=> d)
@@ -97,27 +97,27 @@ class FeatureBar {
     .attr('x', 80)
 
 
-  geoGroup.selectAll('label')
-  .data(geoValue)
-  .join('text')
-  .text(d=> d.toString().substring(0,7))
-  .attr('fill', 'black')
-  .attr('y', (d, i)=> 15 * i +34)
-  .attr('font-size', 10)
-  .attr('x', 450)
-  .attr('font-weight', 700)
+    geoTextGroup.selectAll('.value-label')
+    .data(geoValue)
+    .join('text')
+    .text(d=> d.toString().substring(0,7))
+    .attr('fill', 'black')
+    .attr('y', (d, i)=> 15 * i +34)
+    .attr('font-size', 10)
+    .attr('x', 450)
+    .attr('font-weight', 700)
 
-  kinGroup.selectAll('label')
-  .data(kinValue)
-  .join('text')
-  .text(d=> d.toString().substring(0,7))
-  .attr('fill', 'black')
-  .attr('y', (d, i)=> 15 * i +34)
-  .attr('font-size', 10)
-  .attr('font-weight', 700)
-  .attr('x', 220)
+    kinTextGroup.selectAll('.value-label')
+    .data(kinValue)
+    .join('text')
+    .text(d=> d.toString().substring(0,7))
+    .attr('fill', 'black')
+    .attr('y', (d, i)=> 15 * i +34)
+    .attr('font-size', 10)
+    .attr('font-weight', 700)
+    .attr('x', 220)
 
-    this.svg.append('rect')
+    headerGroup.append('rect')
     .attr('width' , 225)
     .attr('height' , 20)
     .attr('fill' , '#0080FF')
@@ -125,7 +125,7 @@ class FeatureBar {
     .attr('x' , 80)
 
 
-    this.svg.append('rect')
+    headerGroup.append('rect')
     .attr('width' , 210)
     .attr('height' , 20)
     .attr('fill' , '#DC143C')
@@ -133,7 +133,7 @@ class FeatureBar {
     .attr('opacity', 0.5)
 
 
-    this.svg.append('text')
+    headerGroup.append('text')
     .text('Kinematic')
     .attr('font-size', 10)
     .attr('fill', 'black')
@@ -141,7 +141,7 @@ class FeatureBar {
     .attr('y', 12)
     .attr('font-weight', 700)
 
-    this.svg.append('text')
+    headerGroup.append('text')
     .text('Geometric')
     .attr('font-size', 10)
     .attr('fill', 'black')
@@ -149,15 +149,39 @@ class FeatureBar {
     .attr('y', 12)
     .attr('font-weight', 700)    
 
-    geoRect.on('click', async function(e) {
+    geoRectGroup.on('click', async (e) => {
+      this.svg.selectAll('.highlight-group-geo').remove()
+      const highlightGroup = this.svg.insert('g', '#geo-text-group').attr('class', 'highlight-group-geo')
+
+      highlightGroup.append('rect')
+      .attr('fill', 'gold')
+      .attr('width', 105)
+      .attr('height', 10)
+      .attr('x', e.target.x.baseVal.value - 105)
+      .attr('y', e.target.y.baseVal.value)
+      
       featureDetail.drawAxisLabels(e.target.id)
       const features = await featureDetail.drawQuantile(e.target.id)
-       await featureDetail.showPercentile(features, e.target.id)
+      await featureDetail.showPercentile(features, e.target.id)
+
     })
-    kinRect.on('click', async function(e) {
+    kinRectGroup.on('click', async (e) => {
+      this.svg.selectAll('.highlight-group-kin').remove()
+
+      const highlightGroup = this.svg.insert('g', '#kin-text-group').attr('class', 'highlight-group-kin')
+
+      highlightGroup.append('rect')
+      .attr('fill', 'gold')
+      .attr('width', 105)
+      .attr('height', 10)
+      .attr('x', e.target.x.baseVal.value - 125)
+      .attr('y', e.target.y.baseVal.value)
       featureDetail.drawAxisLabels(e.target.id)
+
       const features = await featureDetail.drawQuantile(e.target.id)
-       await featureDetail.showPercentile(features, e.target.id)
+      await featureDetail.showPercentile(features, e.target.id)
+      
+
     })
   }
 }

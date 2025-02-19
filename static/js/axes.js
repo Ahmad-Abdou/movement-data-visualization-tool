@@ -29,7 +29,6 @@ class AxesPlot {
         this.colorScale = d3.scaleOrdinal().domain([0, 1]).range(['#1f77b4', '#ff7f0e']);
         this.colorsList = []
  
-
         this.axesLines = [
           {points: [[0,0.5], [0.5, 1]]},
           {points: [[0,0.5], [0.5,0.5], [0.5,0]]},

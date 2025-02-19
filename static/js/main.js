@@ -16,7 +16,7 @@ const mapGl = new MapGl('#mapgl')
 const trajectories =  mapGl.generateMapGl('116')
 mapGl.traject(trajectories);
 
-const featureBar = new FeatureBar('.feature-importance-container', 600, 400, [])
+const featureBar = new FeatureBar('#feature-importance-container', 600, 400, [])
 featureBar.render()
 const  featureDetail = new FeatureDetail('#feature-detail',450, 400, margin_axes )
 
