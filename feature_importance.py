@@ -14,7 +14,7 @@ def getData(zone, combination_path, features_path):
         df_features['ID'] = df_features['ID'].astype(str)
         
         df_features["zone"] = 0
-
+        print(zone)
         for _, row in df_combination.iterrows():
             x, y = row['x'], row['y']
             row_ID = str(row['ID'])

@@ -114,7 +114,7 @@ class Heatmap {
         
     this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
-        .attr('fill', '#DC143C').attr('opacity', 0.5);
+        .attr('fill', geometricColor)
         current_selected_combination = await combination
   }
 

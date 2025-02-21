@@ -70,13 +70,13 @@ pin_right.addEventListener('mouseout', ()=> {
 
 pin_right.addEventListener('click',() => {
     if(pin_right.className == 'pinned_right') {
-        pin_right.style.backgroundColor = '#0080FF'
+        pin_right.style.backgroundColor = kinematicColor
         pin_right.className = ''
         rightPanel.style.animationName = ''
         rightPanel.style.animationDuration = '0s'
     } else {
         pin_right.className = 'pinned_right'
-        pin_right.style.backgroundColor = '#DC143C80'
+        pin_right.style.backgroundColor = geometricColor
         rightPanel.style.animationName = ' horizontal-shaking'
         rightPanel.style.animationDuration = '0.3s'
     }
@@ -120,13 +120,13 @@ pin_left.addEventListener('mouseout', ()=> {
 
 pin_left.addEventListener('click',() => {
     if(pin_left.className == 'pinned_left') {
-        pin_left.style.backgroundColor = '#0080FF'
+        pin_left.style.backgroundColor = kinematicColor
         pin_left.className = ''
         leftPanel.style.animationName = ''
         leftPanel.style.animationDuration = '0s'
     } else {
         pin_left.className = 'pinned_left'
-        pin_left.style.backgroundColor = '#DC143C80'
+        pin_left.style.backgroundColor = geometricColor
         leftPanel.style.animationName = ' horizontal-shaking'
         leftPanel.style.animationDuration = '0.3s'
     }
