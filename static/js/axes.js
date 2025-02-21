@@ -19,10 +19,7 @@ class AxesPlot {
         this.yScale = d3.scaleLinear().domain([0, 1]).range([this.svgHeight, 0]);
         this.xAxis = d3.axisBottom(this.xScale);
         this.gx = this.svg.append('g').attr('transform', `translate(${this.margin.left},${this.svgHeight + this.margin.top})`);
-
         this.yAxis = d3.axisLeft(this.yScale);
-
-
         this.gy = this.svg.append('g').attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
         this.axesLineGenerator = d3.line().x(d=>this.xScale(d[0] )).y(d=>this.yScale(d[1]))
         this.colorScale = d3.scaleOrdinal().domain([0, 1]).range(['#1f77b4', '#ff7f0e']);
@@ -102,10 +99,7 @@ class AxesPlot {
 
     colorZone1(zone_number, all_data) {
         this.zones.selectAll('.zone-1-group').remove();
-        const zoneColor = '#DC143C';
-        const zoneOpacity = 0.5; 
         let zoneShape;
-        
         switch(zone_number) {
             case 0: zoneShape = this.axes_zone_0[0]; break;
             case 1: zoneShape = this.axes_zone_1[0]; break;
@@ -119,8 +113,7 @@ class AxesPlot {
             .attr('class', 'axes-zone')
             .attr('d', this.axesLineGenerator(zoneShape.points))
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
-            .attr('fill', zoneColor)
-            .attr('opacity', zoneOpacity);
+            .attr('fill', kinematicColor)
 
         this.plotGroup.lower();
         this.firstZoneGroup.selectAll('.zone-1-group').raise();
@@ -130,10 +123,7 @@ class AxesPlot {
     }
     colorZone2(zone_number, all_data) {
       this.zones.selectAll('.zone-2-group').remove();
-        const zoneColor = '#DC143C';
-        const zoneOpacity = 0.5; 
         let zoneShape;
-        
         switch(zone_number) {
             case 0: zoneShape = this.axes_zone_0[0]; break;
             case 1: zoneShape = this.axes_zone_1[0]; break;
@@ -148,8 +138,7 @@ class AxesPlot {
             .attr('class', 'axes-zone')
             .attr('d', this.axesLineGenerator(zoneShape.points))
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
-            .attr('fill', zoneColor)
-            .attr('opacity', zoneOpacity);
+            .attr('fill', geometricColor)
 
         this.plotGroup.lower();
         this.secondZoneGroup.selectAll('.zone-2-group').raise();
@@ -261,7 +250,7 @@ class AxesPlot {
               previouslySelectedBlue = null;
             } else {
               selected_circle
-                .attr('fill', '#0080FF')
+                .attr('fill', kinematicColor)
                 .attr('r', 8);
               previouslySelectedBlue = selected_circle;
             }

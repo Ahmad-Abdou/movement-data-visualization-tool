@@ -156,13 +156,13 @@ class Tree {
        
         if (this.selectedRects.length < 2) {
             if (currentColor === "white") {
-                element.attr('fill', '#DC143C').attr('opacity', 0.5);
+                element.attr('fill', geometricColor)
                 this.selectedRects.push({ element: element, text: text });
             }
         } else if (currentColor === "white" && this.selectedRects.length === 2) {
             this.selectedRects[0].element.attr('fill', 'white');
             this.selectedRects.shift();
-            element.attr('fill', '#DC143C').attr('opacity', 0.5);
+            element.attr('fill', geometricColor)
             this.selectedRects.push({ element: element, text: text });
         }
 

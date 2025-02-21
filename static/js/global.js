@@ -2,6 +2,9 @@ let current_selected_combination = null
 let current_selected_zone = null
 let current_selectec_data = null
 let selectedTrajectory = null
+const kinematicColor = '#0080FF80'
+const geometricColor = '#DC143C80'
+
 window.numOfZones = 0
 
 // default
@@ -133,7 +136,6 @@ kinematic = ["speed_0s","speed_mean","speed_meanse","speed_quant_min","speed_qua
 async function sendDataToPython(path_combination, zoneA, zoneB ,df_path_with_id) {
     try {
         const cleanPath = path => path.replace('../static/', '');
-        
         const response = await fetch('/api/data', {
             method: 'POST',
             headers: {
@@ -146,11 +148,10 @@ async function sendDataToPython(path_combination, zoneA, zoneB ,df_path_with_id)
                 df_path_with_id: cleanPath(df_path_with_id)
             })
         });
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        }
+        // if (!response.ok) {
+        //     const errorData = await response.json();
+        //     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+        // }
         
         const result = await response.json();
 
@@ -181,14 +182,34 @@ resultasdas = []
 function displayselectedZone() {
     let selector = document.getElementById("zone-select-1")
     let selector2 = document.getElementById("zone-select-2")
-    let zoneA = null
+    let zoneA = null;
+    let zoneB = null;
     selector.addEventListener('change', async (e) => {
-        current_selected_zone_1 = parseInt(e.target.value);
-        zoneA = current_selected_zone_1
+        zoneA = parseInt(e.target.value);
+
+        Array.from(selector2.options).forEach((option) => {
+            option.disabled = false
+        })
+
+        Array.from(selector2.options).forEach((option) => {
+            if (parseInt(option.value) === zoneA) {
+                option.disabled = true
+            }
+        })
         await axesPlot.colorZone1(zoneA, frequency_zone_combinations)
     });
     selector2.addEventListener('change', async (e) => {
         zoneB = parseInt(e.target.value);
+
+        Array.from(selector.options).forEach((option) => {
+            option.disabled = false
+        })
+
+        Array.from(selector.options).forEach((option) => {
+            if (parseInt(option.value) === zoneB) {
+                option.disabled = true
+            }
+        })
         await axesPlot.colorZone2(zoneB, frequency_zone_combinations)
         if (zoneA !== undefined && zoneB !== undefined && current_selected_combination ) {
             try {
@@ -198,7 +219,6 @@ function displayselectedZone() {
                     zoneB,
                     file_mapping2[current_selectec_data]
                 );
-                
                 if (result.status === 'success') {
                     const right_container = document.getElementById('right-container')
                     right_container.style.transform = 'translate(0px, 0)'
@@ -209,7 +229,7 @@ function displayselectedZone() {
                         const x = d.normalizedX;
                         const y = d.normalizedY;
                         const pointZone = getZoneForPoint(x, y);
-                        return pointZone === zoneB ? '#DC143C80' : 'grey';
+                        return pointZone === zoneB ? geometricColor : 'grey';
                     });
                 }
             } catch (error) {

@@ -107,8 +107,13 @@ def process_data():
         zoneA = data.get('zoneA')
         zoneB = data.get('zoneB')
         features_path = data.get('df_path_with_id')
-        if not all([combination_path, features_path, zoneA, zoneB is not None]):
-            return jsonify({'status': 'error', 'message': 'Missing required parameters'}), 400
+        # if not all([combination_path, features_path, zoneA, zoneB is not None]):
+        #     print(combination_path)
+        #     print(features_path)
+        #     print(zoneA)
+        #     print(zoneB)
+
+        #     return jsonify({'status': 'error', 'message': 'Missing required parameters'}), 400
         
         abs_combination_path = get_absolute_path(f'static/{combination_path}')
         abs_features_path = get_absolute_path(f'static/{features_path}')

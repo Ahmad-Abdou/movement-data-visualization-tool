@@ -55,10 +55,9 @@ class FeatureBar {
     .join('rect')
     .attr('width', (d)=> this.xScale(d))
     .attr('height', 10)
-    .attr('fill', '#DC143C')
+    .attr('fill', geometricColor)
     .attr('y', (d, i)=> 15 * i +27)
     .attr('x', 415)
-    .attr('opacity', 0.5)
     .attr('id', (d,i) => {
       return geoLabel[i]
     })
@@ -68,10 +67,9 @@ class FeatureBar {
     .join('rect')
     .attr('width', (d)=> this.xScale(d))
     .attr('height', 10)
-    .attr('fill', '#0080FF')
+    .attr('fill', kinematicColor)
     .attr('y', (d, i)=> 15 * i +27)
     .attr('x', 205)
-    .attr('opacity', 0.5)
     .attr('id', (d,i) => {
       return kinLabel[i]
     })
@@ -118,17 +116,15 @@ class FeatureBar {
     headerGroup.append('rect')
     .attr('width' , 225)
     .attr('height' , 20)
-    .attr('fill' , '#0080FF')
-    .attr('opacity', 0.5)
+    .attr('fill' , kinematicColor)
     .attr('x' , 80)
 
 
     headerGroup.append('rect')
     .attr('width' , 210)
     .attr('height' , 20)
-    .attr('fill' , '#DC143C')
+    .attr('fill' , geometricColor)
     .attr('x' , 305)
-    .attr('opacity', 0.5)
 
 
     headerGroup.append('text')
