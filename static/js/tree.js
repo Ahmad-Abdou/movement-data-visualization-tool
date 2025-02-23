@@ -35,7 +35,9 @@ class Tree {
             .attr('x', this.centeredCircle - this.boxWidth/2)
             .attr('y', 0)
             .attr('fill', 'none')
-            .attr('stroke', 'black');
+            .attr('stroke', 'black')
+            .attr('rx', 20)
+            .attr('ry', 20)
 
         this.treeGroup.append('text')
             .attr('text-anchor', 'middle')
@@ -74,9 +76,9 @@ class Tree {
 
         let treeSubLines = [
             {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.36]]},
-            {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset + this.width * 0.15, this.height * 0.36]]},
+            {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset + this.width * 0.10, this.height * 0.36]]},
             {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.36]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset + this.width * 0.15, this.height * 0.36]]}
+            {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset + this.width * 0.12, this.height * 0.36]]}
         ];
 
         treeSubLines.forEach((shape, index) => {
@@ -91,12 +93,12 @@ class Tree {
 
     drawLabels() {
         let treeLabels = [
-            {text: "Geometric", position: [this.centeredCircle + this.offset, this.height * 0.4]},
-            {text: "Kinematic", position: [this.centeredCircle - this.offset, this.height * 0.4]},
+            {text: "Geometric", position: [this.centeredCircle + this.offset + 10, this.height * 0.4]},
+            {text: "Kinematic", position: [this.centeredCircle - this.offset + 10, this.height * 0.4]},
         ];
 
         let treeSubLabels = [
-            {text: "Speed", position: [this.centeredCircle - this.offset - this.width * 0.13, this.height * 0.7]},
+            {text: "Speed", position: [this.centeredCircle - this.offset - this.width * 0.12, this.height * 0.7]},
             {text: "Acceleration", position: [this.centeredCircle - this.offset + this.width * 0.12, this.height * 0.7]},
             {text: "Curvature", position: [this.centeredCircle + this.offset - this.width * 0.12, this.height * 0.7]},
             {text: "Indentation", position: [this.centeredCircle + this.offset + this.width * 0.13, this.height * 0.7]},
@@ -111,13 +113,15 @@ class Tree {
                 .attr('y', label.position[1])
                 .attr('fill', 'white')
                 .attr('stroke', 'black')
+                .attr('rx', 20)
+                .attr('ry', 20)
                 .on("click", () => {
                     this.toggleColor(d3.select(rect.node()), label.text);
                 });
 
             this.treeGroup.append('text')
                 .attr('x', label.position[0])
-                .attr('y', label.position[1] + this.boxHeight/2)
+                .attr('y', (label.position[1] + this.boxHeight/2) + 5)
                 .text(label.text)
                 .attr('font-size', '14')
                 .attr('text-anchor', 'middle')
@@ -135,13 +139,15 @@ class Tree {
                 .attr('y', label.position[1])
                 .attr('fill', 'white')
                 .attr('stroke', 'black')
+                .attr('rx', 20)
+                .attr('ry', 20)
                 .on("click", () => {
                     this.toggleColor(d3.select(rect.node()), label.text);
                 });
 
             this.treeGroup.append('text')
                 .attr('x', label.position[0])
-                .attr('y', label.position[1] + this.boxHeight/2)
+                .attr('y', (label.position[1] + this.boxHeight/2) + 5)
                 .text(label.text)
                 .attr('font-size', '14')
                 .attr('text-anchor', 'middle')
