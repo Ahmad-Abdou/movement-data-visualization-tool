@@ -10,11 +10,11 @@ class AxesPlot {
         this.allPlots = null
         this.availableWidth = width;
         this.availableHeight = height;
-        this.svgWidth = 0.7 * this.availableWidth;
-        this.svgHeight = 0.7 * this.availableHeight;
+        this.svgWidth = 0.7 * this.availableWidth -20;
+        this.svgHeight = 0.7 * this.availableHeight -20;
         this.offsetX = (this.availableWidth - this.svgWidth) / 2  - margin.right;
         this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top;
-        this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
+        this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY + 10})`);
         this.xScale = d3.scaleLinear().domain([0, 1]).range([0, this.svgWidth]);
         this.yScale = d3.scaleLinear().domain([0, 1]).range([this.svgHeight, 0]);
         this.xAxis = d3.axisBottom(this.xScale);
@@ -25,7 +25,7 @@ class AxesPlot {
         this.colorScale = d3.scaleOrdinal().domain([0, 1]).range(['#1f77b4', '#ff7f0e']);
         this.colorsList = []
         this.zones = this.svg.append('g').attr('class', 'zones')
-
+        this.trajectoryToCompare = false
         this.axesLines = [
           {points: [[0,0.5], [0.5, 1]]},
           {points: [[0,0.5], [0.5,0.5], [0.5,0]]},
@@ -233,6 +233,15 @@ class AxesPlot {
           const selected_circle = d3.select(this);
           const id = event.target.__data__.entity_id;
           selectedTrajectory = id
+          const compare_btn = document.querySelector('.compare-btn')
+          compare_btn.addEventListener('click',() => {
+            compare_btn.style.backgroundColor = 'red'
+            this.trajectoryToCompare = true
+          })
+          if(this.trajectoryToCompare) {
+            const trajectories2 = await mapGl.generateMapGl(id)
+            await mapGl.traject(trajectories2, id);
+          }
           const trajectories = await mapGl.generateMapGl(id)
           await mapGl.traject(trajectories, id);
 
