@@ -267,12 +267,12 @@ async fetchMultipleData(id, id2) {
 
     const data = await trajectories;
 
-    const filtered = await data.filter((t)=>{
-      return t.tid === id
-    })
+    // const filtered = await data.filter((t)=>{
+    //   return t.tid === id
+    // })
 
     const groupedByTraj = {};
-    filtered.forEach(row => {
+    data.forEach(row => {
       if (!groupedByTraj[row.tid]) {
         groupedByTraj[row.tid] = [];
       }

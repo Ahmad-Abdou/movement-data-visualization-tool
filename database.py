@@ -92,7 +92,6 @@ class Database:
             return None
 
     def get_data_for_map(self, tid):
-        print(tid)
         try:
             tid_list = tid.split(',') if isinstance(tid, str) and ',' in tid else [tid]
             
