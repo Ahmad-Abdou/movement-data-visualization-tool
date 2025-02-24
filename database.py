@@ -7,7 +7,8 @@ class Database:
             host="localhost",
             user="root",
             password="root",
-            database="spatio_temporal"
+            database="spatio_temporal",
+            ssl_disabled =  True
         )
         self.cursor = self.connection.cursor()
 
@@ -91,10 +92,17 @@ class Database:
             return None
 
     def get_data_for_map(self, tid):
+        print(tid)
         try:
-            self.cursor.execute("""
-                SELECT * FROM point_features WHERE tid = %s
-            """, (tid,))
+            tid_list = tid.split(',') if isinstance(tid, str) and ',' in tid else [tid]
+            
+            ids = ','.join(['%s'] * len(tid_list))
+            
+            query = f"""
+                SELECT * FROM point_features WHERE tid IN ({ids})
+            """
+            
+            self.cursor.execute(query, tuple(tid_list))
             
             columns = [desc[0] for desc in self.cursor.description]
             results = []
@@ -105,7 +113,7 @@ class Database:
             return results
             
         except Exception as e:
-            print(f"Database error for trajectory {tid}: {e}")
+            print(f"Database error for trajectories {tid}: {e}")
             return None
 
     def get_data_for_quantile(self, tid):
