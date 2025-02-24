@@ -26,6 +26,7 @@ class AxesPlot {
         this.colorsList = []
         this.zones = this.svg.append('g').attr('class', 'zones')
         this.trajectoryToCompare = false
+        this.trajectoriesList = []
         this.axesLines = [
           {points: [[0,0.5], [0.5, 1]]},
           {points: [[0,0.5], [0.5,0.5], [0.5,0]]},
@@ -172,7 +173,8 @@ class AxesPlot {
     showPlots(data) {
         this.plotGroup.selectAll("*").remove();
         this.svg.selectAll("#rectangles").remove();
-      
+        const self = this
+
         data.forEach((d)=>{
           d.x = +d.x;
           d.y = +d.y
@@ -227,24 +229,29 @@ class AxesPlot {
             .attr('class', 'tooltip-text')
             .attr('fill', 'white')
             .attr('font-size', '12px');
-
-            this.allPlots
+        this.allPlots
         .on('click', async function(event) {
           const selected_circle = d3.select(this);
           const id = event.target.__data__.entity_id;
           selectedTrajectory = id
           const compare_btn = document.querySelector('.compare-btn')
+          if(self.trajectoriesList.length == 2) {
+            self.trajectoriesList.pop()
+          }
+          self.trajectoriesList.push(id)
           compare_btn.addEventListener('click',() => {
             compare_btn.style.backgroundColor = 'red'
-            this.trajectoryToCompare = true
+            self.trajectoryToCompare = true
           })
-          if(this.trajectoryToCompare) {
-            const trajectories2 = await mapGl.generateMapGl(id)
-            await mapGl.traject(trajectories2, id);
-          }
-          const trajectories = await mapGl.generateMapGl(id)
-          await mapGl.traject(trajectories, id);
 
+          if(self.trajectoryToCompare) {
+            const multipleTrajectories = mapGl.fetchMultipleData(self.trajectoriesList[0], self.trajectoriesList [1])
+
+            await mapGl.traject(multipleTrajectories, self.trajectoriesList);
+          } else {
+            const trajectories = await mapGl.generateMapGl(id, this.trajectoryToCompare)
+            await mapGl.traject(trajectories, id);
+          }
           if (!isChecked) { 
             if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
               previouslySelectedBlue

@@ -50,6 +50,26 @@ class MapGl {
     }
 }
 
+async fetchMultipleData(id, id2) {
+  try {
+      const response = await fetch(`/api/feats/map?tid=${id},${id2}`);
+
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+
+      if (!data || data.length === 0) {
+          throw new Error('No data received');
+      }
+      return data;
+  } catch (error) {
+      console.error('Error fetching data:', error);
+      return [];
+  }
+}
+
   async filteringTrajectories (trajectories, id) {
     try {
       const data = await trajectories
@@ -79,9 +99,6 @@ class MapGl {
             layers: updatedLayers
           });
         }
-
-        
-  
         };
         await updateLayer()
       
