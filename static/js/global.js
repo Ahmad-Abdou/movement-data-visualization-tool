@@ -259,3 +259,13 @@ function notifyMessage (text) {
       notification.style.transform = 'translate(0, -290px)'
       }, 2000)
   }
+
+  function notifyMessageAlwaysdisplayed (text, isTrue) {
+    if(isTrue) {
+        notification.textContent = text
+        notification.style.transform = 'translate(0, 50px)'
+    }
+    else {
+        notification.style.transform = 'translate(0, -290px)'
+    }
+  }
