@@ -34,6 +34,9 @@ class MapGl {
   
   async fetchData(id) {
     try {
+      if(id === '') {
+        return
+      } else{
         const response = await fetch(`/api/feats/map?tid=${id}`);
         
         if (!response.ok) {
@@ -44,8 +47,9 @@ class MapGl {
             throw new Error('No data received');
         }
         return data;
+      }
     } catch (error) {
-        console.error('Error fetching data:', error);
+        console.log('Error fetching data:', error);
         return [];
     }
 }
@@ -179,39 +183,42 @@ async fetchMultipleData(id, id2) {
   }
 
   colorizing (type, initialPathData) {
-    let colorScale;
+    if(initialPathData) {
+      let colorScale;
 
-    if (type === 'speed') {
-      const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
-      const minSpeed = Math.min(...speeds);
-      const maxSpeed = Math.max(...speeds);
-      colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[239,243,255], [8,81,156]]);
+      if (type === 'speed') {
+        const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
+        const minSpeed = Math.min(...speeds);
+        const maxSpeed = Math.max(...speeds);
+        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[239,243,255], [8,81,156]]);
+  
+      } else if (type === 'acceleration') {
+        const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
+        const minAcc = Math.min(...accelerations)
+        const maxAcc = Math.max(...accelerations)
+        colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[239,243,255], [8,81,156]])
+      }
+      else if (type === 'distance') {
+        const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
+        const minDist = Math.min(...distances)
+        const maxDist = Math.max(...distances)
+        colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[239,243,255], [8,81,156]])
+      }
+      else if (type === 'angle') {
+        const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
+        const minAngle= Math.min(...angles)
+        const maxAngle = Math.max(...angles)
+        colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[239,243,255], [8,81,156]])
+      }
+      else if (type === 'bearing') {
+        const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
+        const minBearing = Math.min(...bearings)
+        const maxBearing = Math.max(...bearings)
+        colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[239,243,255], [8,81,156]])
+      }
+      return colorScale
+    }
 
-    } else if (type === 'acceleration') {
-      const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
-      const minAcc = Math.min(...accelerations)
-      const maxAcc = Math.max(...accelerations)
-      colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[239,243,255], [8,81,156]])
-    }
-    else if (type === 'distance') {
-      const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
-      const minDist = Math.min(...distances)
-      const maxDist = Math.max(...distances)
-      colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[239,243,255], [8,81,156]])
-    }
-    else if (type === 'angle') {
-      const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
-      const minAngle= Math.min(...angles)
-      const maxAngle = Math.max(...angles)
-      colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[239,243,255], [8,81,156]])
-    }
-    else if (type === 'bearing') {
-      const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
-      const minBearing = Math.min(...bearings)
-      const maxBearing = Math.max(...bearings)
-      colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[239,243,255], [8,81,156]])
-    }
-    return colorScale
   }
 
   polygonGenerator(type, initialPathData, category) {
@@ -270,26 +277,28 @@ async fetchMultipleData(id, id2) {
     // const filtered = await data.filter((t)=>{
     //   return t.tid === id
     // })
+    if(data) {
+      const groupedByTraj = {};
+      data.forEach(row => {
+        if (!groupedByTraj[row.tid]) {
+          groupedByTraj[row.tid] = [];
+        }
+        const point = [parseFloat(row.lon), parseFloat(row.lat)];
+        if (!isNaN(point[0]) && !isNaN(point[1])) {
+          groupedByTraj[row.tid].push({
+            coordinates: point,
+            speed: parseFloat(row.speed),
+            acceleration: parseFloat(row.acceleration),
+            distance: parseFloat(row.distance),
+            angle: parseFloat(row.angle),
+            bearing: parseFloat(row.bearing),
+          });
+        }
+      });
+      const theWall = await this.generateWall(groupedByTraj);
+      return theWall;
+    }
 
-    const groupedByTraj = {};
-    data.forEach(row => {
-      if (!groupedByTraj[row.tid]) {
-        groupedByTraj[row.tid] = [];
-      }
-      const point = [parseFloat(row.lon), parseFloat(row.lat)];
-      if (!isNaN(point[0]) && !isNaN(point[1])) {
-        groupedByTraj[row.tid].push({
-          coordinates: point,
-          speed: parseFloat(row.speed),
-          acceleration: parseFloat(row.acceleration),
-          distance: parseFloat(row.distance),
-          angle: parseFloat(row.angle),
-          bearing: parseFloat(row.bearing),
-        });
-      }
-    });
-    const theWall = await this.generateWall(groupedByTraj);
-    return theWall;
   };
   async generateWall (groupedByTraj) {
     const wall = Object.keys(groupedByTraj).map(tid => {

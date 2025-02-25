@@ -229,68 +229,78 @@ class AxesPlot {
             .attr('class', 'tooltip-text')
             .attr('fill', 'white')
             .attr('font-size', '12px');
+
+        const compare_btn = document.querySelector('.compare-btn')
+
+        compare_btn.addEventListener('click',() => {
+          this.trajectoryToCompare = !this.trajectoryToCompare
+          notifyMessageAlwaysdisplayed("Select a trajectory to compare!", this.trajectoryToCompare)
+          compare_btn.style.backgroundColor = this.trajectoryToCompare ? geometricColor : kinematicColor
+        })
+
+
         this.allPlots
-        .on('click', async function(event) {
-          const selected_circle = d3.select(this);
-          const id = event.target.__data__.entity_id;
-          selectedTrajectory = id
-          const compare_btn = document.querySelector('.compare-btn')
-          if(self.trajectoriesList.length == 2) {
-            self.trajectoriesList.pop()
-          }
-          self.trajectoriesList.push(id)
-          compare_btn.addEventListener('click',() => {
-            compare_btn.style.backgroundColor = 'red'
-            self.trajectoryToCompare = true
-          })
+.on('click', async function(event) {
+    const selected_circle = d3.select(this);
+    const id = event.target.__data__.entity_id;
+    selectedTrajectory = id;
 
-          if(self.trajectoryToCompare) {
-            const multipleTrajectories = mapGl.fetchMultipleData(self.trajectoriesList[0], self.trajectoriesList [1])
+    if(self.trajectoriesList.length === 2) {
+        self.trajectoriesList.pop();
+    }
+    self.trajectoriesList.push(id);
 
-            await mapGl.traject(multipleTrajectories, self.trajectoriesList);
-          } else {
-            const trajectories = await mapGl.generateMapGl(id, this.trajectoryToCompare)
-            await mapGl.traject(trajectories, id);
-          }
-          if (!isChecked) { 
-            if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
-              previouslySelectedBlue
-                .attr('fill', 'grey')
-                .attr('r', 4);
-            }
-            
-            if (previouslySelectedBlue === selected_circle) {
-              selected_circle
-                .attr('fill', 'grey')
-                .attr('r', 4);
-              previouslySelectedBlue = null;
-            } else {
-              selected_circle
+    if(self.trajectoryToCompare && self.trajectoriesList.length === 1) {
+        if(previouslySelectedBlue) {
+            previouslySelectedBlue.attr('fill', 'grey').attr('r', 4);
+            previouslySelectedBlue = null;
+        }
+        if(previouslySelectedGreen) {
+            previouslySelectedGreen.attr('fill', 'grey').attr('r', 4);
+            previouslySelectedGreen = null;
+        }
+    }
+
+    if(self.trajectoryToCompare) {
+        if(self.trajectoriesList.length === 1) {
+            selected_circle
                 .attr('fill', kinematicColor)
                 .attr('r', 8);
-              previouslySelectedBlue = selected_circle;
+            previouslySelectedBlue = selected_circle;
+        }
+        else if(self.trajectoriesList.length === 2) {
+            if(previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
+                previouslySelectedGreen.attr('fill', 'grey').attr('r', 4);
             }
-          } else {
-            if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
-              previouslySelectedGreen
-                .attr('fill', 'grey')
-                .attr('r', 4);
-            }
-            
-            if (previouslySelectedGreen === selected_circle) {
-              selected_circle
-                .attr('fill', 'grey')
-                .attr('r', 4);
-              previouslySelectedGreen = null;
-            } else {
-              selected_circle
-                .attr('fill', '#ff8282')
+            selected_circle
+                .attr('fill', geometricColor)
                 .attr('r', 8);
-              previouslySelectedGreen = selected_circle;
-            }
-          }
-        })
-        .on('mouseover', function() {
+            previouslySelectedGreen = selected_circle;
+        }
+    } else {
+        if(previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
+            previouslySelectedBlue.attr('fill', 'grey').attr('r', 4);
+        }
+        if(previouslySelectedBlue === selected_circle) {
+            selected_circle.attr('fill', 'grey').attr('r', 4);
+            previouslySelectedBlue = null;
+        } else {
+            selected_circle
+                .attr('fill', kinematicColor)
+                .attr('r', 8);
+            previouslySelectedBlue = selected_circle;
+        }
+    } if(self.trajectoryToCompare && self.trajectoriesList.length === 2) {
+        const multipleTrajectories = await mapGl.fetchMultipleData(
+            self.trajectoriesList[0], 
+            self.trajectoriesList[1]
+        );
+        await mapGl.traject(multipleTrajectories, self.trajectoriesList);
+    } else {
+        const trajectories = await mapGl.generateMapGl(id);
+        await mapGl.traject(trajectories, id);
+    }
+    }).on('mouseover', function() {
             const selected_circle = d3.select(this);
             if (!selected_circle.classed('selected')) {
                 selected_circle.attr('r', 8);
