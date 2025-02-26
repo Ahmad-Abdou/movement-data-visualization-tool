@@ -1,6 +1,6 @@
 class MapGl {
-  constructor(id) {
-    this.id = id
+  constructor(containerId) {
+    this.containerId = containerId
     this.allTrajBox = document.getElementById('trajSelect')
     this.groupedByTraj = null
     this.counter = 0
@@ -54,25 +54,25 @@ class MapGl {
     }
 }
 
-async fetchMultipleData(id, id2) {
-  try {
-      const response = await fetch(`/api/feats/map?tid=${id},${id2}`);
+// async fetchMultipleData(id, id2) {
+//   try {
+//       const response = await fetch(`/api/feats/map?tid=${id},${id2}`);
 
 
-      if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
+//       if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//       }
+//       const data = await response.json();
 
-      if (!data || data.length === 0) {
-          throw new Error('No data received');
-      }
-      return data;
-  } catch (error) {
-      console.error('Error fetching data:', error);
-      return [];
-  }
-}
+//       if (!data || data.length === 0) {
+//           throw new Error('No data received');
+//       }
+//       return data;
+//   } catch (error) {
+//       console.error('Error fetching data:', error);
+//       return [];
+//   }
+// }
 
   async filteringTrajectories (trajectories, id) {
     try {
@@ -89,96 +89,99 @@ async fetchMultipleData(id, id2) {
   }
   
 
-  async traject (trajectories, id) {
+  async traject(trajectories, id) {
     try {
-      let pathData = null
+      let pathData = null;
+      
+      // Reuse existing map instance if available
+      if (!this.map) {
+        // Initialize map only once
+        this.map = new maplibregl.Map({
+          container: this.containerId.replace('#', ''),
+          style: {
+            version: 8,
+            sources: {
+              'osm': {
+                type: 'raster',
+                tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+                tileSize: 256
+              }
+            },
+            layers: [{
+              id: 'osm',
+              type: 'raster',
+              source: 'osm',
+              minzoom: 0,
+              maxzoom: 12
+            }]
+          },
+          center: [25.0, 50.0], // Default center
+          zoom: 6,
+          pitch: 60,
+          bearing: 30,
+          antialias: true
+        });
+  
+        // Initialize deck overlay once
+        this.deckOverlay = new deck.MapboxOverlay({
+          layers: [],
+          getTooltip: ({object}) => object && 
+            `Trajectory ${object.tid} \n Speed: ${object.speed}\n Acceleration: ${object.acceleration}\n Angle: ${object.angle}\n Distance: ${object.distance}\n Bearing: ${object.bearing}`
+      })
+        
+        this.map.addControl(this.deckOverlay);
+        await new Promise(resolve => this.map.on('load', resolve));
+      }
+  
+      // Update layers with new data
       const updateLayer = async () => {
         pathData = await this.pathConverter(trajectories, id);
-        const updatedLayers = Object.keys(this.polygonLayerType[0]).map((type) => {
-          const category = this.polygonLayerType[0][type];
-          this.polygonGenerator(type, pathData, category);
-        });
-        if(this.deckOverlay) {
-          this.deckOverlay.setProps({
-            layers: updatedLayers
+        
+        // Calculate new center if we have data
+        if (pathData && pathData.length > 0) {
+          const bounds = {
+            minLon: Infinity,
+            maxLon: -Infinity,
+            minLat: Infinity,
+            maxLat: -Infinity
+          };
+  
+          pathData.forEach(poly => {
+            poly.polygon.forEach(point => {
+              bounds.minLon = Math.min(bounds.minLon, point[0]);
+              bounds.maxLon = Math.max(bounds.maxLon, point[0]);
+              bounds.minLat = Math.min(bounds.minLat, point[1]);
+              bounds.maxLat = Math.max(bounds.maxLat, point[1]);
+            });
+          });
+  
+          const newCenter = [
+            (bounds.minLon + bounds.maxLon) / 2,
+            (bounds.minLat + bounds.maxLat) / 2
+          ];
+  
+          // Smoothly transition to new center
+          this.map.easeTo({
+            center: newCenter,
+            duration: 1000
           });
         }
-        };
-        await updateLayer()
-      
-      let centerLon = 25.0;
-      let centerLat = 50.0;
-      
-      if (pathData && pathData.length > 0) {
-        const bounds = {
-          minLon: Infinity,
-          maxLon: -Infinity,
-          minLat: Infinity,
-          maxLat: -Infinity
-        };
   
-        pathData.forEach(poly => {
-          poly.polygon.forEach(point => {
-            bounds.minLon = Math.min(bounds.minLon, point[0]);
-            bounds.maxLon = Math.max(bounds.maxLon, point[0]);
-            bounds.minLat = Math.min(bounds.minLat, point[1]);
-            bounds.maxLat = Math.max(bounds.maxLat, point[1]);
-          });
+        // Update deck.gl layers
+        const updatedLayers = Object.keys(this.polygonLayerType[0]).map((type) => {
+          const category = this.polygonLayerType[0][type];
+          return this.polygonGenerator(type, pathData, category);
         });
   
-        centerLon = (bounds.minLon + bounds.maxLon) / 2;
-        centerLat = (bounds.minLat + bounds.maxLat) / 2;
-      }
+        this.deckOverlay.setProps({
+          layers: updatedLayers
+        });
+      };
   
-      if (isNaN(centerLon) || isNaN(centerLat)) {
-        console.warn('Invalid coordinates, using default center');
-        centerLon = 0;
-        centerLat = 0;
-      }
-  
-      const map = new maplibregl.Map({
-        container: 'map',
-        style: {
-          version: 8,
-          sources: {
-            'osm': {
-              type: 'raster',
-              tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
-              tileSize: 256
-            }
-          },
-          layers: [{
-            id: 'osm',
-            type: 'raster',
-            source: 'osm',
-            minzoom: 0,
-            maxzoom: 12
-          }]
-        },
-        center: [centerLon, centerLat],
-        zoom: 6,
-        pitch: 60,
-        bearing: 30,
-        antialias: true
-      });
-  
-      await new Promise(resolve => map.on('load', resolve));
-  
-  
-      const layers = Object.keys(this.polygonLayerType[0]).map((type) => {
-        const category = this.polygonLayerType[0][type];
-         return this.polygonGenerator(type, pathData, category);
-      });
-  
-      
-      this.deckOverlay = new deck.MapboxOverlay({
-        layers: [layers],
-        getTooltip: ({object}) => object && `Trajectory ${object.tid} \n Speed: ${object.speed}\n Acceleration: ${object.acceleration}\n Angle: ${object.angle}\n Distance: ${object.distance}\n Bearing: ${object.bearing}`
-      });
-      map.addControl(this.deckOverlay);
+      await updateLayer();
   
     } catch (error) {
-      console.error('Error initializing map:', error);
+      console.error('Error updating trajectory:', error);
     }
   }
 
@@ -274,29 +277,31 @@ async fetchMultipleData(id, id2) {
 
     const data = await trajectories;
 
-    // const filtered = await data.filter((t)=>{
-    //   return t.tid === id
-    // })
+    // const filtered = await data.filter((t)=>{ return t.tid === id })
     if(data) {
-      const groupedByTraj = {};
-      data.forEach(row => {
-        if (!groupedByTraj[row.tid]) {
-          groupedByTraj[row.tid] = [];
-        }
-        const point = [parseFloat(row.lon), parseFloat(row.lat)];
-        if (!isNaN(point[0]) && !isNaN(point[1])) {
-          groupedByTraj[row.tid].push({
-            coordinates: point,
-            speed: parseFloat(row.speed),
-            acceleration: parseFloat(row.acceleration),
-            distance: parseFloat(row.distance),
-            angle: parseFloat(row.angle),
-            bearing: parseFloat(row.bearing),
-          });
-        }
-      });
-      const theWall = await this.generateWall(groupedByTraj);
-      return theWall;
+      const filtered = data.filter((row) => String(row.tid) === String(id));
+      if (filtered.length > 0) {
+        const groupedByTraj = {};
+        filtered.forEach(row => {
+          if (!groupedByTraj[row.tid]) {
+            groupedByTraj[row.tid] = [];
+          }
+          const point = [parseFloat(row.lon), parseFloat(row.lat)];
+          if (!isNaN(point[0]) && !isNaN(point[1])) {
+            groupedByTraj[row.tid].push({
+              coordinates: point,
+              speed: parseFloat(row.speed),
+              acceleration: parseFloat(row.acceleration),
+              distance: parseFloat(row.distance),
+              angle: parseFloat(row.angle),
+              bearing: parseFloat(row.bearing),
+            });
+          }
+        });
+        const theWall = await this.generateWall(groupedByTraj);
+        return theWall;
+      }
+      return [];
     }
 
   };

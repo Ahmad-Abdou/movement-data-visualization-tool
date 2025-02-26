@@ -101,6 +101,6 @@ def find_40_closest(index, data):
     #     min_index = index - 20
     # if max_index <= (len(data) - 1) + 20:
     #     max_index = index 
-    min_index = index - 10
-    max_index = index + 11
+    min_index = index - 5
+    max_index = index + 6
     return data[min_index:max_index]

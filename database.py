@@ -116,11 +116,14 @@ class Database:
             return None
 
     def get_data_for_quantile(self, tid):
-        try:
-            self.cursor.execute("""
-                SELECT * FROM point_features where tid = %s
-            """, (tid,))
+        tid_list = tid.split(',') if isinstance(tid, str) and ',' in tid else [tid]
             
+        ids = ','.join(['%s'] * len(tid_list))
+        try:
+            query  = f"""
+                SELECT * FROM point_features WHERE tid IN ({ids})
+            """
+            self.cursor.execute(query, tuple(tid_list))
             columns = [desc[0] for desc in self.cursor.description]
             results = []
             
