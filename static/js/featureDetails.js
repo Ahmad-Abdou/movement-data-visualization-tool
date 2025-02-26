@@ -46,8 +46,10 @@ class FeatureDetail {
       splitted = 'angle'
     }
     const result = [];
-    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory}&stats=${name}`);
-    if(!selectedTrajectory) {
+
+    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory1},${selectedTrajectory2}&stats=${name}`);
+    
+    if(!selectedTrajectory1) {
       notifyMessage('Please select a trajectory first')
     }
     if (name.split("_")[1] == 'geometry') {
@@ -161,9 +163,9 @@ async showPercentile(y_lablel) {
     chartGroup.append("g")
         .attr("class", "y-axis")
         .call(yAxis);
+          await mapGl.traject(this.data_without_filtering, selectedTrajectory1);
+          await mapGl2.traject(this.data_without_filtering, selectedTrajectory2);
 
-        
-    await mapGl.traject(this.data_without_filtering, selectedTrajectory);
     }
 
 

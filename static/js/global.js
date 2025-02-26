@@ -1,9 +1,13 @@
 let current_selected_combination = null
 let current_selected_zone = null
 let current_selectec_data = null
-let selectedTrajectory = null
+let selectedTrajectory1 = null
+let selectedTrajectory2 = null
+
 const kinematicColor = '#0080FF80'
 const geometricColor = '#DC143C80'
+let selectingTrajectoryOne = false
+let selectingTrajectoryTwo = false
 
 window.numOfZones = 0
 

@@ -1,4 +1,3 @@
-
 class AxesPlot {
 
     constructor(containerId, width, height, margin) {
@@ -234,8 +233,15 @@ class AxesPlot {
 
         compare_btn.addEventListener('click',() => {
           this.trajectoryToCompare = !this.trajectoryToCompare
-          notifyMessageAlwaysdisplayed("Select a trajectory to compare!", this.trajectoryToCompare)
+          notifyMessageAlwaysdisplayed("Selecting the second trajectory", this.trajectoryToCompare)
           compare_btn.style.backgroundColor = this.trajectoryToCompare ? geometricColor : kinematicColor
+          if(selectingTrajectoryTwo) {
+            selectingTrajectoryOne = true
+            selectingTrajectoryTwo = false
+          } else {
+            selectingTrajectoryOne = false
+            selectingTrajectoryTwo = true
+          }
         })
 
 
@@ -243,7 +249,11 @@ class AxesPlot {
 .on('click', async function(event) {
     const selected_circle = d3.select(this);
     const id = event.target.__data__.entity_id;
-    selectedTrajectory = id;
+    if(selectingTrajectoryTwo) {
+        selectedTrajectory2 = id
+      } else {
+        selectedTrajectory1 = id
+      }
 
     if(self.trajectoriesList.length === 2) {
         self.trajectoriesList.pop();
@@ -267,6 +277,8 @@ class AxesPlot {
                 .attr('fill', kinematicColor)
                 .attr('r', 8);
             previouslySelectedBlue = selected_circle;
+            const trajectories1 = await mapGl.generateMapGl(selectedTrajectory1);
+            await mapGl.traject(trajectories1, selectedTrajectory1);
         }
         else if(self.trajectoriesList.length === 2) {
             if(previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
@@ -276,6 +288,8 @@ class AxesPlot {
                 .attr('fill', geometricColor)
                 .attr('r', 8);
             previouslySelectedGreen = selected_circle;
+            const trajectories2 = await mapGl2.generateMapGl(selectedTrajectory2);
+            await mapGl2.traject(trajectories2, selectedTrajectory2);
         }
     } else {
         if(previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
@@ -290,17 +304,10 @@ class AxesPlot {
                 .attr('r', 8);
             previouslySelectedBlue = selected_circle;
         }
-    } if(self.trajectoryToCompare && self.trajectoriesList.length === 2) {
-        const multipleTrajectories = await mapGl.fetchMultipleData(
-            self.trajectoriesList[0], 
-            self.trajectoriesList[1]
-        );
-        await mapGl.traject(multipleTrajectories, self.trajectoriesList);
-    } else {
-        const trajectories = await mapGl.generateMapGl(id);
-        await mapGl.traject(trajectories, id);
-    }
-    }).on('mouseover', function() {
+        const trajectories = await mapGl.generateMapGl(selectedTrajectory1);
+        await mapGl.traject(trajectories, selectedTrajectory1);
+    } 
+}).on('mouseover', function() {
             const selected_circle = d3.select(this);
             if (!selected_circle.classed('selected')) {
                 selected_circle.attr('r', 8);
