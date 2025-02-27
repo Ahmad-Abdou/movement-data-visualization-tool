@@ -90,7 +90,6 @@ class MapGl {
   
 
   async traject(trajectories, id) {
-    // console.log(trajectories)
     try {
       let pathData = null;
       
@@ -166,12 +165,12 @@ class MapGl {
           const category = this.polygonLayerType[0][type];
           return this.polygonGenerator(type, pathData, category);
         });
-  
+
         this.deckOverlay.setProps({
           layers: updatedLayers
         });
       };
-  
+
       await updateLayer();
   
     } catch (error) {
@@ -270,7 +269,6 @@ class MapGl {
   async pathConverter (trajectories, id) {
 
     const data = await trajectories;
-
     // const filtered = await data.filter((t)=>{ return t.tid === id })
     if(data) {
       const filtered = data.filter((row) => String(row.tid) === String(id));
@@ -292,7 +290,9 @@ class MapGl {
             });
           }
         });
+
         const theWall = await this.generateWall(groupedByTraj);
+
         return theWall;
       }
       return [];

@@ -2,7 +2,7 @@ class FeatureDetail {
   constructor(containerId, width, height, margin){
     this.containerId = containerId
     this.width = width
-    this.height = height
+    this.height = height 
     this.margin = margin
     this.availableWidth = width;
     this.availableHeight = height;
@@ -13,7 +13,9 @@ class FeatureDetail {
     this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY-20})`);
     this.operation = null
     this.sub_trajectory = []
-    this.data_without_filtering = null
+    this.data_without_filtering1 = null
+    this.data_without_filtering2 = null
+
     this.select_row_time = null
   }
   drawAxisLabels(y_title) {
@@ -67,15 +69,15 @@ class FeatureDetail {
     this.select_row_time = responseData.results[0].selected_row.time
     if(selectedTrajectory1) {
       this.operation = responseData.results[0].operation
-      this.data_without_filtering = responseData.results[0].rows
+      this.data_without_filtering1 = responseData.results[0].rows
       this.sub_trajectory = responseData.results[0].rows
       .map(row => ({
         time: row.time,
         feature: row[splitted]
       }))
-    } else if (selectedTrajectory2) {
+    } if (selectedTrajectory2) {
       this.operation = responseData.results[1].operation
-      this.data_without_filtering = responseData.results[1].rows
+      this.data_without_filtering2 = responseData.results[1].rows
       this.sub_trajectory = responseData.results[1].rows
       .map(row => ({
         time: row.time,
@@ -162,8 +164,11 @@ async showPercentile(y_lablel) {
     chartGroup.append("g")
         .attr("class", "y-axis")
         .call(yAxis);
-          await mapGl.traject(this.data_without_filtering, selectedTrajectory1);
-          await mapGl2.traject(this.data_without_filtering, selectedTrajectory2);
+        // console.log(this.data_without_filtering1)
+        // console.log(this.data_without_filtering2)
+
+          await mapGl.traject(this.data_without_filtering1, selectedTrajectory1);
+          await mapGl2.traject(this.data_without_filtering2, selectedTrajectory2);
     }    
   } catch (error) {
     console.error("Error drawing line chart:", error);
