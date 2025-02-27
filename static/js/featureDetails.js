@@ -14,6 +14,7 @@ class FeatureDetail {
     this.operation = null
     this.sub_trajectory = []
     this.data_without_filtering = null
+    this.select_row_time = null
   }
   drawAxisLabels(y_title) {
     this.svg.selectAll('.axis-label').remove();
@@ -45,7 +46,6 @@ class FeatureDetail {
     if (splitted === 'angles') {
       splitted = 'angle'
     }
-    const result = [];
 
     const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory1},${selectedTrajectory2}&stats=${name}`);
     
@@ -64,7 +64,7 @@ class FeatureDetail {
     if (!responseData || responseData.length === 0) {
         throw new Error('No data received');
     }
-    const data = responseData.data
+    this.select_row_time = responseData.results[0].selected_row.time
     if(selectedTrajectory1) {
       this.operation = responseData.results[0].operation
       this.data_without_filtering = responseData.results[0].rows
@@ -119,7 +119,6 @@ async showPercentile(y_lablel) {
       .attr("stroke", () => kinematic.includes(y_lablel) ? "#0080FF" : "#DC143C80")
       .attr("stroke-width", 2)
       .attr("d", line);
-  console.log(this.operation)
 
       chartGroup.append('text')
       .text(this.operation)
@@ -143,8 +142,8 @@ async showPercentile(y_lablel) {
           chartGroup.append('circle')
           .attr('class', 'stat-circle')
           .attr('r', 5)
-          .attr('cx', yScale(this.operation))
-          .attr('cy', 100)
+          .attr('cx', xScale(timeParsed(this.select_row_time) ))
+          .attr('cy', yScale(this.operation))
           .attr('fill', kinematic.includes(y_lablel) ? "#DC143C80" : "#0080FF")
 
         }

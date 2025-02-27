@@ -91,7 +91,7 @@ def stats_calc(stats, data):
                 raise ValueError("Unknown stats parameter")           
         nearest_index = find_nearest(numeric_data, res)
         closest_rows = find_40_closest(nearest_index, data)
-        results.append({'tid': tid, 'rows': closest_rows, 'operation': res})
+        results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': data[nearest_index]})
     return results
 
 def find_nearest(array, value):
