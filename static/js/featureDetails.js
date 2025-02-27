@@ -65,24 +65,23 @@ class FeatureDetail {
         throw new Error('No data received');
     }
     const data = responseData.data
-    this.operation = responseData.operation
-    this.data_without_filtering = responseData.rows
-    this.sub_trajectory = responseData.rows
-    .filter(row => row && row[splitted] !== undefined && row.time)
-    .map(row => ({
-      time: row.time,
-      feature: row[splitted]
-    }))
-
-    data.forEach((row) => {
-        if (row[splitted] !== undefined) { 
-            result.push({
-              time: row.time,
-              feature: row[splitted],
-            });
-        }
-    });
-    return result
+    if(selectedTrajectory1) {
+      this.operation = responseData.results[0].operation
+      this.data_without_filtering = responseData.results[0].rows
+      this.sub_trajectory = responseData.results[0].rows
+      .map(row => ({
+        time: row.time,
+        feature: row[splitted]
+      }))
+    } else if (selectedTrajectory2) {
+      this.operation = responseData.results[1].operation
+      this.data_without_filtering = responseData.results[1].rows
+      this.sub_trajectory = responseData.results[1].rows
+      .map(row => ({
+        time: row.time,
+        feature: row[splitted]
+      }))
+    }
 }
 
 async showPercentile(y_lablel) {
@@ -120,6 +119,7 @@ async showPercentile(y_lablel) {
       .attr("stroke", () => kinematic.includes(y_lablel) ? "#0080FF" : "#DC143C80")
       .attr("stroke-width", 2)
       .attr("d", line);
+  console.log(this.operation)
 
       chartGroup.append('text')
       .text(this.operation)
@@ -165,11 +165,7 @@ async showPercentile(y_lablel) {
         .call(yAxis);
           await mapGl.traject(this.data_without_filtering, selectedTrajectory1);
           await mapGl2.traject(this.data_without_filtering, selectedTrajectory2);
-
-    }
-
-
-        
+    }    
   } catch (error) {
     console.error("Error drawing line chart:", error);
   }

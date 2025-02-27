@@ -90,12 +90,11 @@ class MapGl {
   
 
   async traject(trajectories, id) {
+    // console.log(trajectories)
     try {
       let pathData = null;
       
-      // Reuse existing map instance if available
       if (!this.map) {
-        // Initialize map only once
         this.map = new maplibregl.Map({
           container: this.containerId.replace('#', ''),
           style: {
@@ -115,14 +114,13 @@ class MapGl {
               maxzoom: 12
             }]
           },
-          center: [25.0, 50.0], // Default center
+          center: [25.0, 50.0],
           zoom: 6,
           pitch: 60,
           bearing: 30,
           antialias: true
         });
   
-        // Initialize deck overlay once
         this.deckOverlay = new deck.MapboxOverlay({
           layers: [],
           getTooltip: ({object}) => object && 
@@ -133,11 +131,9 @@ class MapGl {
         await new Promise(resolve => this.map.on('load', resolve));
       }
   
-      // Update layers with new data
       const updateLayer = async () => {
         pathData = await this.pathConverter(trajectories, id);
         
-        // Calculate new center if we have data
         if (pathData && pathData.length > 0) {
           const bounds = {
             minLon: Infinity,
@@ -160,14 +156,12 @@ class MapGl {
             (bounds.minLat + bounds.maxLat) / 2
           ];
   
-          // Smoothly transition to new center
           this.map.easeTo({
             center: newCenter,
             duration: 1000
           });
         }
   
-        // Update deck.gl layers
         const updatedLayers = Object.keys(this.polygonLayerType[0]).map((type) => {
           const category = this.polygonLayerType[0][type];
           return this.polygonGenerator(type, pathData, category);
