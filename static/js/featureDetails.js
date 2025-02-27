@@ -76,13 +76,13 @@ class FeatureDetail {
         feature: row[splitted]
       }))
     } if (selectedTrajectory2) {
-      this.operation = responseData.results[1].operation
+      // this.operation = responseData.results[1].operation
       this.data_without_filtering2 = responseData.results[1].rows
-      this.sub_trajectory = responseData.results[1].rows
-      .map(row => ({
-        time: row.time,
-        feature: row[splitted]
-      }))
+      // this.sub_trajectory = responseData.results[1].rows
+      // .map(row => ({
+      //   time: row.time,
+      //   feature: row[splitted]
+      // }))
     }
 }
 
@@ -147,9 +147,8 @@ async showPercentile(y_lablel) {
           .attr('cx', xScale(timeParsed(this.select_row_time) ))
           .attr('cy', yScale(this.operation))
           .attr('fill', kinematic.includes(y_lablel) ? "#DC143C80" : "#0080FF")
-
         }
-    const xAxis = d3.axisBottom(xScale)
+        const xAxis = d3.axisBottom(xScale)
         .ticks(5)
         .tickFormat(d3.timeFormat("%b:%d"));
 
@@ -164,9 +163,6 @@ async showPercentile(y_lablel) {
     chartGroup.append("g")
         .attr("class", "y-axis")
         .call(yAxis);
-        // console.log(this.data_without_filtering1)
-        // console.log(this.data_without_filtering2)
-
           await mapGl.traject(this.data_without_filtering1, selectedTrajectory1);
           await mapGl2.traject(this.data_without_filtering2, selectedTrajectory2);
     }    
