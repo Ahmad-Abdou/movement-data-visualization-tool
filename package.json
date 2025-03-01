@@ -14,7 +14,8 @@
     "@deck.gl/layers": "8.9.36",
     "@deck.gl/mapbox": "8.9.36",
     "d3": "^7.9.0",
-    "d3-dsv": "^3.0.1"
+    "d3-dsv": "^3.0.1",
+    "deckgl-example-pure-js-basic": "file:"
   },
   "devDependencies": {
     "vite": "^4.0.0"
