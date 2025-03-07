@@ -221,8 +221,9 @@ async showPercentile(y_lablel) {
     chartGroup.append("g")
         .attr("class", "y-axis")
         .call(yAxis);
-          await mapGl.traject(this.data_without_filtering1, selectedTrajectory1);
-          await mapGl2.traject(this.data_without_filtering2, selectedTrajectory2);
+        const selectedFeature = y_lablel
+          await mapGl.traject(this.data_without_filtering1, selectedTrajectory1, selectedFeature);
+          await mapGl2.traject(this.data_without_filtering2, selectedTrajectory2, selectedFeature);
     }    
   } catch (error) {
     console.error("Error drawing line chart:", error);

@@ -89,7 +89,7 @@ class MapGl {
   }
   
 
-  async traject(trajectories, id) {
+  async traject(trajectories, id, selectedFeature) {
     try {
       let pathData = null;
       
@@ -163,7 +163,7 @@ class MapGl {
   
         const updatedLayers = Object.keys(this.polygonLayerType[0]).map((type) => {
           const category = this.polygonLayerType[0][type];
-          return this.polygonGenerator(type, pathData, category);
+          return this.polygonGenerator(type, pathData, category, selectedFeature);
         });
 
         this.deckOverlay.setProps({
@@ -186,90 +186,140 @@ class MapGl {
         const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
         const minSpeed = Math.min(...speeds);
         const maxSpeed = Math.max(...speeds);
-        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[239,243,255], [8,81,156]]);
+        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]]);
   
       } else if (type === 'acceleration') {
         const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
         const minAcc = Math.min(...accelerations)
         const maxAcc = Math.max(...accelerations)
-        colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[239,243,255], [8,81,156]])
+        colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[254,229,217], [165,15,21]])
       }
       else if (type === 'distance') {
         const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
         const minDist = Math.min(...distances)
         const maxDist = Math.max(...distances)
-        colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[239,243,255], [8,81,156]])
+        colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[254,229,217], [165,15,21]])
       }
       else if (type === 'angle') {
         const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
         const minAngle= Math.min(...angles)
         const maxAngle = Math.max(...angles)
-        colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[239,243,255], [8,81,156]])
+        colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[254,229,217], [165,15,21]])
       }
       else if (type === 'bearing') {
         const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
         const minBearing = Math.min(...bearings)
         const maxBearing = Math.max(...bearings)
-        colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[239,243,255], [8,81,156]])
+        colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[254,229,217], [165,15,21]])
       }
       return colorScale
     }
 
   }
 
-  polygonGenerator(type, initialPathData, category) {
+  polygonGenerator(type, initialPathData, category, selectedFeature) {
     const colorScale = this.colorizing(type, initialPathData)
-    const layer = new deck.PolygonLayer({
-      id: `PolygonLayer${type}`,
-      data: initialPathData,
-      pickable: true,
-      stroked: true,
-      filled: true,
-      extruded: true,
-      wireframe: true,
-      getPolygon: d => d.polygon,
-      getFillColor: d => {
-        if (type === 'speed' && colorScale) {
-          const color = colorScale(d.speed);
-          return [...color, 255];
-  
-        } else if(type === 'acceleration') {
-          const color = colorScale(d.acceleration)
-          return [...color, 255];
-  
-        } else if(type === 'distance') {
-          const color = colorScale(d.distance)
-          return [...color, 255];
-  
+
+    if (selectedFeature) {
+      const layer = new deck.PolygonLayer({
+        id: `PolygonLayer${type}`,
+        data: initialPathData,
+        pickable: true,
+        stroked: true,
+        filled: true,
+        extruded: true,
+        wireframe: true,
+        getPolygon: d => d.polygon,
+        getFillColor: d => {
+          if (type === 'speed') {
+            const color = colorScale(d.speed);
+            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]  ;
+    
+          } else if(type === 'acceleration') {
+            const color = colorScale(d.acceleration)
+            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
+
+    
+          } else if(type === 'distance') {
+            const color = colorScale(d.distance)
+            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
+
+    
+          }
+          else if(type === 'angle') {
+            const color = colorScale(d.angle)
+            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
+
+    
+          }
+          else if(type === 'bearing') {
+            const color = colorScale(d.bearing)
+            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
+          } 
+        },
+        getLineWidth: 8,
+        getElevation: category.elevation,
+        material: {
+          ambient: 0.6,                     
+          diffuse: 0.4,
+          shininess: 100,
+          specularColor: [220, 220, 220]
         }
-        else if(type === 'angle') {
-          const color = colorScale(d.angle)
-          return [...color, 255];
-  
+      });
+      return layer
+    } else {
+      const layer = new deck.PolygonLayer({
+        id: `PolygonLayer${type}`,
+        data: initialPathData,
+        pickable: true,
+        stroked: true,
+        filled: true,
+        extruded: true,
+        wireframe: true,
+        getPolygon: d => d.polygon,
+        getFillColor: d => {
+          if (type === 'speed' && colorScale) {
+            const color = colorScale(d.speed);
+            return [...color, 255];
+    
+          } else if(type === 'acceleration') {
+            const color = colorScale(d.acceleration)
+            return [...color, 255];
+    
+          } else if(type === 'distance') {
+            const color = colorScale(d.distance)
+            return [...color, 255];
+    
+          }
+          else if(type === 'angle') {
+            const color = colorScale(d.angle)
+            return [...color, 255];
+    
+          }
+          else if(type === 'bearing') {
+            const color = colorScale(d.bearing)
+            return [...color, 255];
+    
+          } 
+        },
+        getLineColor: [0, 0, 0],
+        getLineWidth: 8,
+        getElevation: category.elevation,
+        material: {
+          ambient: 0.6,                     
+          diffuse: 0.4,
+          shininess: 100,
+          specularColor: [220, 220, 220]
         }
-        else if(type === 'bearing') {
-          const color = colorScale(d.bearing)
-          return [...color, 255];
-  
-        }
-      },
-      getLineColor: [0, 0, 0],
-      getLineWidth: 4,
-      getElevation: category.elevation,
-      material: {
-        ambient: 0.6,                     
-        diffuse: 0.4,
-        shininess: 100,
-        specularColor: [220, 220, 220]
-      }
-    });
-    return layer
+      });
+      return layer
+    }
+    
   }
 
   async pathConverter (trajectories, id) {
 
     const data = await trajectories;
-    // const filtered = await data.filter((t)=>{ return t.tid === id })
     if(data) {
       const filtered = data.filter((row) => String(row.tid) === String(id));
       if (filtered.length > 0) {

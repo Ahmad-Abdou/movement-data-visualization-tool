@@ -278,7 +278,7 @@ class AxesPlot {
                 .attr('r', 8);
             previouslySelectedBlue = selected_circle;
             const trajectories1 = await mapGl.generateMapGl(selectedTrajectory1);
-            await mapGl.traject(trajectories1, selectedTrajectory1);
+            await mapGl.traject(trajectories1, selectedTrajectory1, null);
         }
         else if(self.trajectoriesList.length === 2) {
             if(previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
@@ -289,7 +289,7 @@ class AxesPlot {
                 .attr('r', 8);
             previouslySelectedGreen = selected_circle;
             const trajectories2 = await mapGl2.generateMapGl(selectedTrajectory2);
-            await mapGl2.traject(trajectories2, selectedTrajectory2);
+            await mapGl2.traject(trajectories2, selectedTrajectory2, null);
         }
     } else {
         if(previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
@@ -305,7 +305,7 @@ class AxesPlot {
             previouslySelectedBlue = selected_circle;
         }
         const trajectories = await mapGl.generateMapGl(selectedTrajectory1);
-        await mapGl.traject(trajectories, selectedTrajectory1);
+        await mapGl.traject(trajectories, selectedTrajectory1, null);
     } 
 }).on('mouseover', function() {
             const selected_circle = d3.select(this);
