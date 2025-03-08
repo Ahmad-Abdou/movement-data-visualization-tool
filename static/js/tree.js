@@ -157,7 +157,7 @@ class Tree {
         });
     }
 
-    toggleColor(element, text) {
+  toggleColor(element, text) {
         const currentColor = element.attr('fill');
        
         if (this.selectedRects.length < 2) {
@@ -177,14 +177,12 @@ class Tree {
             const yText = this.selectedRects[1].text;
             showData(xText, yText);
             
-            setTimeout(async () => {
-                if (heatmap) {
-                    // Sorting combination before passing it to highlighting.
-                     list_combination = [xText, yText].sort();
-                    sorted_combination =  list_combination.join(" ");
-                    heatmap.highlightRow(sorted_combination);
-                }
-            },900);
+            if (heatmap) {
+                list_combination = [xText, yText].sort();
+                unsorted_combination =   list_combination.join(" ");
+                heatmap.highlightRow(unsorted_combination);
+                
+            }
         }
     }
 }
@@ -195,8 +193,8 @@ let unsorted_combination = "";
 
 async function showData(xAxis, yAxis) {    
     list_combination = [xAxis, yAxis].sort();
-    sorted_combination = list_combination.join(" ");
-    let combinedString = sorted_combination;
+    unsorted_combination = list_combination.join(" ");
+    let combinedString = unsorted_combination;
     axesPlot.setAxisTitles(xAxis, yAxis);
     let combinationToBeSent = `${xAxis.toLowerCase()}_${yAxis.toLowerCase()}`
     if (file_mapping.hasOwnProperty(combinedString)) {        
@@ -206,7 +204,7 @@ async function showData(xAxis, yAxis) {
             if(response.status === 200) {
                 axesPlot.showPlots(result);
                 combination = combinedString;
-                heatmap.render(file_mapping);
+                // heatmap.render(file_mapping);
             }
 
         } catch (error) {
