@@ -90,7 +90,7 @@ class Heatmap {
         .attr('fill', d => this.colorScale(d.value))
         .on('click', (e, d) => this.onCellClick(d));
 
-      this.heatmapGroup.selectAll('text')
+        this.heatmapGroup.selectAll('text')
         .data(heatmapData)
         .join('text')
         .attr('x', d => this.xScale(d.zone) + this.xScale.bandwidth() / 2)
@@ -99,7 +99,8 @@ class Heatmap {
         .attr('dominant-baseline', 'middle')
         .attr('fill', 'black')
         .attr('font-size', 15)
-        .text(d => `${d.value}`);
+        .text(d => `${d.value}`)
+        .on('click', (e, d) => this.onCellClick(d));
 
       this.heatmapGroup.append('g').call(d3.axisLeft(this.yScale));
       this.heatmapGroup.append('g').call(d3.axisTop(this.xScale));
@@ -109,12 +110,18 @@ class Heatmap {
   }
 
   async highlightRow(combination) {
+    this.heatmapGroup.selectAll('rect').attr('stroke-width', 0);
     this.heatmapGroup.selectAll('rect')
         .attr('fill', d => this.colorScale(d.value));
         
-    this.heatmapGroup.selectAll('rect')
+        this.heatmapGroup.selectAll('rect')
         .filter(d => d.combination === combination)
-        .attr('fill', geometricColor)
+        .transition()
+        .attr('stroke',  kinematicColor)
+        .attr('stroke-width', 3)
+        .attr('rx', 2)
+        .attr('ry', 2)
+
         current_selected_combination = await combination
   }
 

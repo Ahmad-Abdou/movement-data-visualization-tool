@@ -154,23 +154,34 @@ class MapGl {
   createOutlineLayer(type, initialPathData, category) {
     const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep;
     
-    return new deck.PolygonLayer({
+    return new deck.PathLayer({
       id: `OutlineLayer${type}`,
-      data: initialPathData,
-      pickable: false,
-      stroked: true,
-      filled: false,
-      extruded: true,
-      wireframe: true,
-      getPolygon: d => d.polygon.map(point => [point[0], point[1], point[2] + zOffset]),
-      getLineWidth: 500,
-      lineWidthScale: 200,
-      lineWidthMinPixels: 150,
-      lineWidthMaxPixels: 1000,
-      getLineColor: [0, 255, 0, 255],
+      data: initialPathData.map(d => ({
+        path: [
+          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset],
+          [d.polygon[1][0], d.polygon[1][1], d.polygon[1][2] + zOffset],
+          [d.polygon[2][0], d.polygon[2][1], d.polygon[2][2] + zOffset],
+          [d.polygon[3][0], d.polygon[3][1], d.polygon[3][2] + zOffset],
+          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset],
+          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset + category.elevation],
+          [d.polygon[1][0], d.polygon[1][1], d.polygon[1][2] + zOffset + category.elevation],
+          [d.polygon[2][0], d.polygon[2][1], d.polygon[2][2] + zOffset + category.elevation],
+          [d.polygon[3][0], d.polygon[3][1], d.polygon[3][2] + zOffset + category.elevation],
+          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset + category.elevation],
+        ],
+        color: [255, 215, 0]
+      })),
+      getPath: d => d.path,
+      getColor: d => d.color,
+      getWidth: 5,
+      widthScale: 1,
+      widthMinPixels: 10,
+      widthMaxPixels: 15,
       parameters: {
         depthTest: false
-      }
+      },
+      capRounded: true,
+      jointRounded: true
     });
   }
 
@@ -221,7 +232,7 @@ class MapGl {
       id: `PolygonLayer${type}`,
       data: initialPathData,
       pickable: true,
-      stroked: false,  // Remove default stroke
+      stroked: false,
       filled: true,
       extruded: true,
       wireframe: true,

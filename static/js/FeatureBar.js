@@ -41,13 +41,15 @@ class FeatureBar {
 
       }
     })
+    const geoGroup = this.svg.append('g').attr('id', 'geo-group')
+    const kinGroup = this.svg.append('g').attr('id', 'kin-group')
 
     
-    const geoRectGroup = this.svg.append('g').attr('id', 'geo-rect-group')
-    const kinRectGroup = this.svg.append('g').attr('id', 'kin-rect-group')
+    const geoRectGroup = geoGroup.append('g').attr('id', 'geo-rect-group')
+    const kinRectGroup = kinGroup.append('g').attr('id', 'kin-rect-group')
 
-    const geoTextGroup = this.svg.append('g').attr('id', 'geo-text-group')
-    const kinTextGroup = this.svg.append('g').attr('id', 'kin-text-group')
+    const geoTextGroup = geoGroup.append('g').attr('id', 'geo-text-group')
+    const kinTextGroup = kinGroup.append('g').attr('id', 'kin-text-group')
     const headerGroup = this.svg.append('g').attr('id', 'header-group')
 
     geoRectGroup.selectAll('rect')
@@ -82,6 +84,8 @@ class FeatureBar {
     .attr('y', (d, i)=> 15 * i +34)
     .attr('font-size', 10)
     .attr('x', 310)
+    .attr('id', d => d)
+    .attr('class', 'clickable-text')
 
     kinTextGroup.selectAll('text')
     .data(kinLabel)
@@ -91,7 +95,8 @@ class FeatureBar {
     .attr('y', (d, i)=> 15 * i +34)
     .attr('font-size', 10)
     .attr('x', 80)
-
+    .attr('id', d => d)
+    .attr('class', 'clickable-text')
 
     geoTextGroup.selectAll('.value-label')
     .data(geoValue)
@@ -102,6 +107,8 @@ class FeatureBar {
     .attr('font-size', 10)
     .attr('x', 450)
     .attr('font-weight', 700)
+    .attr('class', 'value-label clickable-value')
+    .attr('id', (d, i) => geoLabel[i])
 
     kinTextGroup.selectAll('.value-label')
     .data(kinValue)
@@ -112,6 +119,8 @@ class FeatureBar {
     .attr('font-size', 10)
     .attr('font-weight', 700)
     .attr('x', 220)
+    .attr('class', 'value-label clickable-value')
+    .attr('id', (d, i) => kinLabel[i])
 
     headerGroup.append('rect')
     .attr('width' , 225)
@@ -143,36 +152,64 @@ class FeatureBar {
     .attr('y', 12)
     .attr('font-weight', 700)    
 
-    geoRectGroup.on('click', async (e) => {
-      this.svg.selectAll('.highlight-group-geo').remove()
-      const highlightGroup = this.svg.insert('g', '#geo-text-group').attr('class', 'highlight-group-geo')
-
-      highlightGroup.append('rect')
-      .attr('fill', 'gold')
-      .attr('width', 105)
-      .attr('height', 10)
-      .attr('x', e.target.x.baseVal.value - 105)
-      .attr('y', e.target.y.baseVal.value)
+    geoRectGroup.selectAll('rect').on('click', async function(e) {
+      handleGeoClick(e.target.id, e.target.y.baseVal.value);
+    });
+    
+    geoTextGroup.selectAll('.clickable-text').on('click', async function(e) {
+      const rectY = d3.select(`rect#${e.target.id}`).attr('y');
+      handleGeoClick(e.target.id, parseInt(rectY));
+    });
+    
+    geoTextGroup.selectAll('.clickable-value').on('click', async function(e) {
+      const rectY = d3.select(`rect#${e.target.id}`).attr('y');
+      handleGeoClick(e.target.id, parseInt(rectY));
+    });
+    
+    kinRectGroup.selectAll('rect').on('click', async function(e) {
+      handleKinClick(e.target.id, e.target.y.baseVal.value);
+    });
+    
+    kinTextGroup.selectAll('.clickable-text').on('click', async function(e) {
+      const rectY = d3.select(`rect#${e.target.id}`).attr('y');
+      handleKinClick(e.target.id, parseInt(rectY));
+    });
+    
+    kinTextGroup.selectAll('.clickable-value').on('click', async function(e) {
+      const rectY = d3.select(`rect#${e.target.id}`).attr('y');
+      handleKinClick(e.target.id, parseInt(rectY));
+    });
+    
+    const handleGeoClick = async (id, yPosition) => {
+      geoGroup.selectAll('.highlight-group-geo').remove();
+      const highlightGroup = geoGroup.insert('g', '#geo-text-group').attr('class', 'highlight-group-geo');
       
-      featureDetail.drawAxisLabels(e.target.id)
-      await featureDetail.drawQuantile(e.target.id)
-      await featureDetail.showPercentile(e.target.id)
-
-    })
-    kinRectGroup.on('click', async (e) => {
-      this.svg.selectAll('.highlight-group-kin').remove()
-
-      const highlightGroup = this.svg.insert('g', '#kin-text-group').attr('class', 'highlight-group-kin')
-
       highlightGroup.append('rect')
-      .attr('fill', 'gold')
-      .attr('width', 120)
-      .attr('height', 10)
-      .attr('x', e.target.x.baseVal.value - 125)
-      .attr('y', e.target.y.baseVal.value)
-      featureDetail.drawAxisLabels(e.target.id)
-      await featureDetail.drawQuantile(e.target.id)
-      await featureDetail.showPercentile(e.target.id)
-    })
+        .attr('fill', 'gold')
+        .attr('width', 105)
+        .attr('height', 10)
+        .attr('x', 310)
+        .attr('y', yPosition);
+      
+      featureDetail.drawAxisLabels(id);
+      await featureDetail.drawQuantile(id);
+      await featureDetail.showPercentile(id);
+    };
+    
+    const handleKinClick = async (id, yPosition) => {
+      kinGroup.selectAll('.highlight-group-kin').remove();
+      const highlightGroup = kinGroup.insert('g', '#kin-text-group').attr('class', 'highlight-group-kin');
+      
+      highlightGroup.append('rect')
+        .attr('fill', 'gold')
+        .attr('width', 120)
+        .attr('height', 10)
+        .attr('x', 80)
+        .attr('y', yPosition);
+      
+      featureDetail.drawAxisLabels(id);
+      await featureDetail.drawQuantile(id);
+      await featureDetail.showPercentile(id);
+    };
   }
 }

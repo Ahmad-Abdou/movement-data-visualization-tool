@@ -115,11 +115,11 @@ class AxesPlot {
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
             .attr('fill', kinematicColor)
 
-        this.plotGroup.lower();
-        this.firstZoneGroup.selectAll('.zone-1-group').raise();
-        this.firstZoneGroup.select('.axis-group').raise();
-        this.gx.raise();
-        this.gy.raise();
+        // this.plotGroup.lower();
+        // this.firstZoneGroup.selectAll('.zone-1-group').raise();
+        // this.firstZoneGroup.select('.axis-group').raise();
+        // this.gx.raise();
+        // this.gy.raise();
     }
     colorZone2(zone_number, all_data) {
       this.zones.selectAll('.zone-2-group').remove();
@@ -140,11 +140,11 @@ class AxesPlot {
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
             .attr('fill', geometricColor)
 
-        this.plotGroup.lower();
-        this.secondZoneGroup.selectAll('.zone-2-group').raise();
-        this.secondZoneGroup.select('.axis-group').raise();
-        this.gx.raise();
-        this.gy.raise();
+        // this.plotGroup.lower();
+        // this.secondZoneGroup.selectAll('.zone-2-group').raise();
+        // this.secondZoneGroup.select('.axis-group').raise();
+        // this.gx.raise();
+        // this.gy.raise();
     }
 
     setAxisTitles(x_title, y_title) {
