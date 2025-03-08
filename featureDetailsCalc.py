@@ -3,21 +3,21 @@ import numpy as np
 import pandas as pd
 
 def stats_calc(stats, data):
+
     feature_name = stats.split('_')[0]
     if feature_name == "angles":
         feature_name = "angle"
     splitted = stats.split('_', 1)[1:]
     operation = "_".join(splitted)
 
-    # Group data by trajectory ID
     df = pd.DataFrame(data)
-    trajectories = df['tid'].unique()
-    
+    grouped_by_feature = df.groupby('tid')[feature_name].apply(list).reset_index()
+
     results = []
-    for tid in trajectories:
-        trajectory_data = df[df['tid'] == tid][feature_name].tolist()
-        sorted_num = sorted(trajectory_data)
-        
+    for _, row in grouped_by_feature.iterrows():
+        tid = row['tid']
+        numeric_data = row[feature_name]
+        sorted_num = sorted(numeric_data)
         match operation:
             case 'quant_05':
                 res = np.percentile(sorted_num, 5)
@@ -89,32 +89,9 @@ def stats_calc(stats, data):
                 res = (0,0)
             case _:
                 raise ValueError("Unknown stats parameter")           
-        
-        # Convert any NumPy types to native Python types
-        if isinstance(res, (np.int64, np.int32, np.int16, np.int8)):
-            res = int(res)
-        elif isinstance(res, (np.float64, np.float32, np.float16)):
-            res = float(res)
-            
-        trajectory_rows = df[df['tid'] == tid].to_dict('records')
-        # Convert NumPy types in trajectory_rows
-        for row in trajectory_rows:
-            for key, value in row.items():
-                if isinstance(value, (np.int64, np.int32, np.int16, np.int8)):
-                    row[key] = int(value)
-                elif isinstance(value, (np.float64, np.float32, np.float16)):
-                    row[key] = float(value)
-                    
-        nearest_index = find_nearest(trajectory_data, res)
-        closest_rows = find_40_closest(nearest_index, trajectory_rows)
-        
-        results.append({
-            'tid': int(tid) if isinstance(tid, (np.int64, np.int32)) else tid,
-            'rows': closest_rows,
-            'operation': res,
-            'selected_row': trajectory_rows[nearest_index]
-        })
-    
+        nearest_index = find_nearest(numeric_data, res)
+        closest_rows = find_40_closest(nearest_index, data)
+        results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': data[nearest_index]})
     return results
 
 def find_nearest(array, value):
