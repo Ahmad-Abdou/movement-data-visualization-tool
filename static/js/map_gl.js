@@ -1,35 +1,19 @@
 class MapGl {
   constructor(containerId) {
-    this.containerId = containerId
-    this.allTrajBox = document.getElementById('trajSelect')
-    this.groupedByTraj = null
-    this.counter = 0
-    this.deckOverlay = null
+    this.containerId = containerId;
+    this.allTrajBox = document.getElementById('trajSelect');
+    this.groupedByTraj = null;
+    this.counter = 0;
+    this.deckOverlay = null;
+    this.layerOrder = ['speed', 'acceleration', 'distance', 'angle', 'bearing'];
+    this.zOffsetStep = 1010;
     this.polygonLayerType = [{
-      'speed':{
-        'elevation': 25000,
-        // 'color': [146, 43, 33,255]
-      },
-      'acceleration':{
-        'elevation': 20000,
-    
-        // 'color': [33, 47, 61,255]
-      },
-      'distance':{
-        'elevation': 15000,
-        // 'color': [98, 101, 103 ,255]
-      },
-      'angle':{
-        'elevation': 10000,
-    
-        // 'color': [29, 131, 72 ,255]
-      },
-      'bearing':{
-        'elevation': 5000,
-        // 'color': [26, 82, 118,255]
-      },
-    }]
-
+      'speed': { elevation: 1000 },
+      'acceleration': { elevation: 1000 },
+      'distance': { elevation: 1000 },
+      'angle': { elevation: 1000 },
+      'bearing': { elevation: 1000 },
+    }];
   }
   
   async fetchData(id) {
@@ -53,26 +37,6 @@ class MapGl {
         return [];
     }
 }
-
-// async fetchMultipleData(id, id2) {
-//   try {
-//       const response = await fetch(`/api/feats/map?tid=${id},${id2}`);
-
-
-//       if (!response.ok) {
-//           throw new Error(`HTTP error! status: ${response.status}`);
-//       }
-//       const data = await response.json();
-
-//       if (!data || data.length === 0) {
-//           throw new Error('No data received');
-//       }
-//       return data;
-//   } catch (error) {
-//       console.error('Error fetching data:', error);
-//       return [];
-//   }
-// }
 
   async filteringTrajectories (trajectories, id) {
     try {
@@ -117,7 +81,8 @@ class MapGl {
           zoom: 6,
           pitch: 60,
           bearing: 30,
-          antialias: true
+          antialias: true,
+          preserveDrawingBuffer: true
         });
   
         this.deckOverlay = new deck.MapboxOverlay({
@@ -161,21 +126,52 @@ class MapGl {
           });
         }
   
-        const updatedLayers = Object.keys(this.polygonLayerType[0]).map((type) => {
+        const layers = [];
+        Object.keys(this.polygonLayerType[0]).forEach((type) => {
           const category = this.polygonLayerType[0][type];
-          return this.polygonGenerator(type, pathData, category, selectedFeature);
+          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature);
+          layers.push(mainLayer);
+          
+          // Add outline layer for selected feature
+          if (selectedFeature?.includes(type)) {
+            const outlineLayer = this.createOutlineLayer(type, pathData, category);
+            layers.push(outlineLayer);
+          }
         });
 
         this.deckOverlay.setProps({
-          layers: updatedLayers
+          layers: layers
         });
       };
 
       await updateLayer();
-  
+      
     } catch (error) {
       console.error('Error updating trajectory:', error);
     }
+  }
+
+  createOutlineLayer(type, initialPathData, category) {
+    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep;
+    
+    return new deck.PolygonLayer({
+      id: `OutlineLayer${type}`,
+      data: initialPathData,
+      pickable: false,
+      stroked: true,
+      filled: false,
+      extruded: true,
+      wireframe: true,
+      getPolygon: d => d.polygon.map(point => [point[0], point[1], point[2] + zOffset]),
+      getLineWidth: 500,
+      lineWidthScale: 200,
+      lineWidthMinPixels: 150,
+      lineWidthMaxPixels: 1000,
+      getLineColor: [0, 255, 0, 255],
+      parameters: {
+        depthTest: false
+      }
+    });
   }
 
   colorizing (type, initialPathData) {
@@ -218,104 +214,47 @@ class MapGl {
   }
 
   polygonGenerator(type, initialPathData, category, selectedFeature) {
-    const colorScale = this.colorizing(type, initialPathData)
-
+    const colorScale = this.colorizing(type, initialPathData);
+    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep;
+  
+    const layerConfig = {
+      id: `PolygonLayer${type}`,
+      data: initialPathData,
+      pickable: true,
+      stroked: false,  // Remove default stroke
+      filled: true,
+      extruded: true,
+      wireframe: true,
+      getPolygon: d => d.polygon.map(point => [point[0], point[1], point[2] + zOffset]),
+      parameters: {
+        depthTest: false
+      },
+      getElevation: category.elevation,
+      material: {
+        ambient: 0.6,
+        diffuse: 0.4,
+        shininess: 100,
+        specularColor: [220, 220, 220]
+      }
+    };
+  
     if (selectedFeature) {
-      const layer = new deck.PolygonLayer({
-        id: `PolygonLayer${type}`,
-        data: initialPathData,
-        pickable: true,
-        stroked: true,
-        filled: true,
-        extruded: true,
-        wireframe: true,
-        getPolygon: d => d.polygon,
-        getFillColor: d => {
-          if (type === 'speed') {
-            const color = colorScale(d.speed);
-            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]  ;
-    
-          } else if(type === 'acceleration') {
-            const color = colorScale(d.acceleration)
-            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
-
-    
-          } else if(type === 'distance') {
-            const color = colorScale(d.distance)
-            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
-
-    
-          }
-          else if(type === 'angle') {
-            const color = colorScale(d.angle)
-            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
-
-    
-          }
-          else if(type === 'bearing') {
-            const color = colorScale(d.bearing)
-            return selectedFeature.includes(type)? [255, 255, 0, 255] : [...color, 255]
-          } 
-        },
-        getLineWidth: 8,
-        getElevation: category.elevation,
-        material: {
-          ambient: 0.6,                     
-          diffuse: 0.4,
-          shininess: 100,
-          specularColor: [220, 220, 220]
-        }
-      });
-      return layer
+      layerConfig.getFillColor = d => {
+        const value = d[type];
+        const color = colorScale ? colorScale(value) : [255, 255, 255];
+        return [...color, 255];
+      };
     } else {
-      const layer = new deck.PolygonLayer({
-        id: `PolygonLayer${type}`,
-        data: initialPathData,
-        pickable: true,
-        stroked: true,
-        filled: true,
-        extruded: true,
-        wireframe: true,
-        getPolygon: d => d.polygon,
-        getFillColor: d => {
-          if (type === 'speed' && colorScale) {
-            const color = colorScale(d.speed);
-            return [...color, 255];
-    
-          } else if(type === 'acceleration') {
-            const color = colorScale(d.acceleration)
-            return [...color, 255];
-    
-          } else if(type === 'distance') {
-            const color = colorScale(d.distance)
-            return [...color, 255];
-    
-          }
-          else if(type === 'angle') {
-            const color = colorScale(d.angle)
-            return [...color, 255];
-    
-          }
-          else if(type === 'bearing') {
-            const color = colorScale(d.bearing)
-            return [...color, 255];
-    
-          } 
-        },
-        getLineColor: [0, 0, 0],
-        getLineWidth: 8,
-        getElevation: category.elevation,
-        material: {
-          ambient: 0.6,                     
-          diffuse: 0.4,
-          shininess: 100,
-          specularColor: [220, 220, 220]
-        }
-      });
-      return layer
+      layerConfig.getFillColor = d => {
+        const value = d[type];
+        return colorScale ? [...colorScale(value), 255] : [255, 255, 255, 255];
+      };
     }
-    
+  
+    const layer = new deck.PolygonLayer(layerConfig);
+    return layer;
   }
+
 
   async pathConverter (trajectories, id) {
 
@@ -349,16 +288,15 @@ class MapGl {
     }
 
   };
-  async generateWall (groupedByTraj) {
+  async generateWall(groupedByTraj) {
     const wall = Object.keys(groupedByTraj).map(tid => {
-    const path = groupedByTraj[tid];
-
+      const path = groupedByTraj[tid];
       const polygons = [];
+      
       for (let i = 0; i < path.length - 1; i++) {
-
         const p1 = path[i];
         const p2 = path[i + 1];
-
+        
         polygons.push({
           tid: tid,
           speed: p2.speed,
@@ -368,9 +306,9 @@ class MapGl {
           bearing: p2.bearing,
           polygon: [
             [p1.coordinates[0], p1.coordinates[1], 0],
-            [p2.coordinates[0], p2.coordinates[1], 0],
-            [p2.coordinates[0], p2.coordinates[1], 5000],
-            [p1.coordinates[0], p1.coordinates[1], 5000]
+            [p2.coordinates[0], p2.coordinates[1], 0],     
+            [p2.coordinates[0], p2.coordinates[1], 1],
+            [p1.coordinates[0], p1.coordinates[1], 1] 
           ]
         });
       }
@@ -378,7 +316,6 @@ class MapGl {
     }).flat();
     return wall;
   };
-  
   
   async generateMapGl(id) {
     try {
