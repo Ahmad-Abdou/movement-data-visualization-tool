@@ -286,8 +286,8 @@ class AxesPlot {
             }
             selected_circle
                 .attr('fill', geometricColor)
-                .attr('r', 8);
-            previouslySelectedGreen = selected_circle;
+                .attr('r', 8)
+            previouslySelectedGreen = selected_circle
             const trajectories2 = await mapGl2.generateMapGl(selectedTrajectory2);
             await mapGl2.traject(trajectories2, selectedTrajectory2, null);
         }
