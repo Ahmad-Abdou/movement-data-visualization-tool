@@ -89,9 +89,14 @@ def stats_calc(stats, data):
                 res = (0,0)
             case _:
                 raise ValueError("Unknown stats parameter")           
+        
+        trajectory_data = [item for item in data if item['tid'] == tid]
+        
         nearest_index = find_nearest(numeric_data, res)
-        closest_rows = find_40_closest(nearest_index, data)
-        results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': data[nearest_index]})
+        
+        closest_rows = find_40_closest(nearest_index, trajectory_data)
+        
+        results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': trajectory_data[nearest_index]})
     return results
 
 def find_nearest(array, value):
