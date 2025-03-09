@@ -132,7 +132,6 @@ class MapGl {
           const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature);
           layers.push(mainLayer);
           
-          // Add outline layer for selected feature
           if (selectedFeature?.includes(type)) {
             const outlineLayer = this.createOutlineLayer(type, pathData, category);
             layers.push(outlineLayer);
@@ -175,13 +174,16 @@ class MapGl {
       getColor: d => d.color,
       getWidth: 5,
       widthScale: 1,
-      widthMinPixels: 10,
-      widthMaxPixels: 15,
+      widthMinPixels: 3,
+      widthMaxPixels: 8,
       parameters: {
-        depthTest: false
+        depthTest: true,
+        depthMask: true
       },
       capRounded: true,
-      jointRounded: true
+      jointRounded: true,
+      billboard: true,
+
     });
   }
 
@@ -238,7 +240,8 @@ class MapGl {
       wireframe: true,
       getPolygon: d => d.polygon.map(point => [point[0], point[1], point[2] + zOffset]),
       parameters: {
-        depthTest: false
+        depthTest: true,
+        depthMask: true
       },
       getElevation: category.elevation,
       material: {
