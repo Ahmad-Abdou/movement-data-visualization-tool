@@ -181,6 +181,7 @@ class FeatureBar {
     });
     
     const handleGeoClick = async (id, yPosition) => {
+      kinGroup.selectAll('.highlight-group-kin').remove();
       geoGroup.selectAll('.highlight-group-geo').remove();
       const highlightGroup = geoGroup.insert('g', '#geo-text-group').attr('class', 'highlight-group-geo');
       
@@ -198,6 +199,7 @@ class FeatureBar {
     
     const handleKinClick = async (id, yPosition) => {
       kinGroup.selectAll('.highlight-group-kin').remove();
+      geoGroup.selectAll('.highlight-group-geo').remove();
       const highlightGroup = kinGroup.insert('g', '#kin-text-group').attr('class', 'highlight-group-kin');
       
       highlightGroup.append('rect')
