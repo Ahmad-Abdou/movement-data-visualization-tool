@@ -11,6 +11,11 @@ const geometricColor = '#DC143C80'
 let selectingTrajectoryOne = false
 let selectingTrajectoryTwo = false
 
+let selector = document.getElementById("zone-select-1")
+let selector2 = document.getElementById("zone-select-2")
+let zoneA = null;
+let zoneB = null;
+
 window.numOfZones = 0
 
 // default
@@ -156,11 +161,6 @@ async function sendDataToPython(path_combination, zoneA, zoneB ,df_path_with_id)
                 y_axis: globalYAxis
             })
         });
-        // if (!response.ok) {
-        //     const errorData = await response.json();
-        //     throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-        // }
-        
         const result = await response.json();
 
         return result;
@@ -186,12 +186,8 @@ function displayFeatureImportance(data) {
     featureBar.render()
 }
 
-resultasdas = []
-function displayselectedZone() {
-    let selector = document.getElementById("zone-select-1")
-    let selector2 = document.getElementById("zone-select-2")
-    let zoneA = null;
-    let zoneB = null;
+async function displayselectedZone() {
+
     selector.addEventListener('change', async (e) => {
         zoneA = parseInt(e.target.value);
 
@@ -205,6 +201,9 @@ function displayselectedZone() {
             }
         })
         await axesPlot.colorZone1(zoneA, frequency_zone_combinations)
+        if(selector.value !== 'Zone A' && selector2.value !== 'Zone B' ) {
+            applyZoneSelection()
+            }
     });
     selector2.addEventListener('change', async (e) => {
         zoneB = parseInt(e.target.value);
@@ -219,34 +218,39 @@ function displayselectedZone() {
             }
         })
         await axesPlot.colorZone2(zoneB, frequency_zone_combinations)
-        if (zoneA !== undefined && zoneB !== undefined && current_selected_combination ) {
-            try {
-                const result = await sendDataToPython(
-                    file_mapping[current_selected_combination], 
-                    zoneA,
-                    zoneB,
-                    file_mapping2[current_selectec_data]
-                );
-                if (result.status === 'success') {
-                    const right_container = document.getElementById('right-container')
-                    right_container.style.transform = 'translate(0px, 0)'
-
-                    displayFeatureImportance(result.data);
-                    axesPlot.svg.selectAll('circle')
-                    .attr('fill', function(d) {
-                        const x = d.normalizedX;
-                        const y = d.normalizedY;
-                        const pointZone = getZoneForPoint(x, y);
-                        return pointZone === zoneB ? geometricColor : 'grey';
-                    });
-                }
-            } catch (error) {
-                console.error('Failed to process data:', error);
-            }
+        if(selector.value !== 'Zone A' && selector2.value !== 'Zone B' ) {
+        applyZoneSelection()
         }
-    });
+    })
 }
 
+async function applyZoneSelection() {
+    if (zoneA !== undefined && zoneB !== undefined && current_selected_combination ) {
+        try {
+            const result = await sendDataToPython(
+                file_mapping[current_selected_combination], 
+                zoneA,
+                zoneB,
+                file_mapping2[current_selectec_data]
+            );
+            if (result.status === 'success') {
+                const right_container = document.getElementById('right-container')
+                right_container.style.transform = 'translate(0px, 0)'
+
+                displayFeatureImportance(result.data);
+                axesPlot.svg.selectAll('circle')
+                .attr('fill', function(d) {
+                    const x = d.normalizedX;
+                    const y = d.normalizedY;
+                    const pointZone = getZoneForPoint(x, y);
+                    return pointZone === zoneB ? geometricColor : 'grey';
+                });
+            }
+        } catch (error) {
+            console.error('Failed to process data:', error);
+        }
+    }
+}
 
 function getZoneForPoint(x, y) {
     if (x < 0.5 && y < 0.5) {
