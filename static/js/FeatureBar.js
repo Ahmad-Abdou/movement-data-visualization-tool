@@ -21,24 +21,44 @@ class FeatureBar {
       return result
     })
 
-
     let geoValue = []
     let kinValue = []
     let geoLabel = []
     let kinLabel = []
+    let converterY = globalYAxis
+    let converterX = globalXAxis
 
+    if ( converterX === 'Geometric') {
+      converterY = 'Geometric'
+      converterX = 'Kinematic'
+    }
+    if(globalYAxis.toLowerCase() === 'curvature'){
+      converterY = 'angles'
+    } else if (globalYAxis.toLowerCase() === 'indentation'){
+      converterY = 'distance'
+    } 
     mapper.filter((obj) => {
-      if (geometric.includes(obj.name)) {
+      if (obj.name.toLowerCase().includes(converterY.toLowerCase())) {
+        geoValue.push(obj.value)
+        geoLabel.push(obj.name)
+      } else if (geometric.includes(obj.name) && converterY === 'Geometric'){
         geoValue.push(obj.value)
         geoLabel.push(obj.name)
       }
     })
 
+    if(globalXAxis.toLowerCase() === 'curvature'){
+      converterX = 'angles'
+    } else if (globalXAxis.toLowerCase() === 'indentation'){
+      converterX = 'distance'
+    }
     mapper.filter((obj) => {
-      if (kinematic.includes(obj.name)) {
+      if (obj.name.toLowerCase().includes(converterX.toLowerCase())) {
         kinValue.push(obj.value)
         kinLabel.push(obj.name)
-
+      } else if (kinematic.includes(obj.name)  && converterX === 'Kinematic'){
+        kinValue.push(obj.value)
+        kinLabel.push(obj.name)
       }
     })
     const geoGroup = this.svg.append('g').attr('id', 'geo-group')
@@ -137,7 +157,7 @@ class FeatureBar {
 
 
     headerGroup.append('text')
-    .text('Kinematic')
+    .text(globalXAxis === 'Geometric'? 'Kinematic': globalXAxis)
     .attr('font-size', 10)
     .attr('fill', 'black')
     .attr('x', 165)
@@ -145,7 +165,7 @@ class FeatureBar {
     .attr('font-weight', 700)
 
     headerGroup.append('text')
-    .text('Geometric')
+    .text(globalYAxis === 'Kinematic'? 'Geometric': globalYAxis)
     .attr('font-size', 10)
     .attr('fill', 'black')
     .attr('x', 385)

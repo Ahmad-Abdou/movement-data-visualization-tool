@@ -58,7 +58,20 @@ class AxesPlot {
         
         this.init(containerId);
         this.plotGroup = this.svg.append('g').attr('class', 'plot-group');
+        const compare_btn = document.querySelector('.compare-btn')
 
+        compare_btn.addEventListener('click',() => {
+          this.trajectoryToCompare = !this.trajectoryToCompare
+          notifyMessageAlwaysdisplayed("Selecting the second trajectory", this.trajectoryToCompare)
+          compare_btn.style.backgroundColor = this.trajectoryToCompare ? geometricColor : kinematicColor
+          if(selectingTrajectoryTwo) {
+            selectingTrajectoryOne = true
+            selectingTrajectoryTwo = false
+          } else {
+            selectingTrajectoryOne = false
+            selectingTrajectoryTwo = true
+          }
+        })
     }
 
     init() {
@@ -167,6 +180,8 @@ class AxesPlot {
             .attr('font-size', 20)
             .attr('transform', `rotate(-90, 13, ${this.svgHeight / 2})`)
             .attr('fill', 'black');
+            globalXAxis = x_title
+            globalYAxis = y_title
     }
 
     showPlots(data) {
@@ -228,22 +243,6 @@ class AxesPlot {
             .attr('class', 'tooltip-text')
             .attr('fill', 'white')
             .attr('font-size', '12px');
-
-        const compare_btn = document.querySelector('.compare-btn')
-
-        compare_btn.addEventListener('click',() => {
-          this.trajectoryToCompare = !this.trajectoryToCompare
-          notifyMessageAlwaysdisplayed("Selecting the second trajectory", this.trajectoryToCompare)
-          compare_btn.style.backgroundColor = this.trajectoryToCompare ? geometricColor : kinematicColor
-          if(selectingTrajectoryTwo) {
-            selectingTrajectoryOne = true
-            selectingTrajectoryTwo = false
-          } else {
-            selectingTrajectoryOne = false
-            selectingTrajectoryTwo = true
-          }
-        })
-
 
         this.allPlots
 .on('click', async function(event) {

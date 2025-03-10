@@ -3,6 +3,8 @@ let current_selected_zone = null
 let current_selectec_data = null
 let selectedTrajectory1 = null
 let selectedTrajectory2 = null
+let globalXAxis = null
+let globalYAxis = null
 
 const kinematicColor = '#0080FF80'
 const geometricColor = '#DC143C80'
@@ -149,7 +151,9 @@ async function sendDataToPython(path_combination, zoneA, zoneB ,df_path_with_id)
                 path_combination: cleanPath(path_combination),
                 zoneA: parseInt(zoneA),
                 zoneB: parseInt(zoneB),
-                df_path_with_id: cleanPath(df_path_with_id)
+                df_path_with_id: cleanPath(df_path_with_id),
+                x_axis: globalXAxis,
+                y_axis: globalYAxis
             })
         });
         // if (!response.ok) {
