@@ -105,6 +105,8 @@ def process_data():
         zoneA = data.get('zoneA')
         zoneB = data.get('zoneB')
         features_path = data.get('df_path_with_id')
+        x_axis = data.get('x_axis')
+        y_axis=  data.get('y_axis')
         # if not all([combination_path, features_path, zoneA, zoneB is not None]):
         #     print(combination_path)
         #     print(features_path)
@@ -112,14 +114,13 @@ def process_data():
         #     print(zoneB)
 
         #     return jsonify({'status': 'error', 'message': 'Missing required parameters'}), 400
-        
         abs_combination_path = get_absolute_path(f'static/{combination_path}')
         abs_features_path = get_absolute_path(f'static/{features_path}')
         
         if not os.path.exists(abs_combination_path) or not os.path.exists(abs_features_path):
             return jsonify({'status': 'error', 'message': 'Data files not found'}), 404
             
-        feature_importance_df, accuracy, f1_score = feature_importance.getDataTwoZonesComparison(zoneA, zoneB, abs_combination_path, abs_features_path)
+        feature_importance_df, accuracy, f1_score = feature_importance.getDataTwoZonesComparison(zoneA, zoneB, abs_combination_path, abs_features_path, x_axis, y_axis)
 
         
         feature_importance_data = feature_importance_df.to_dict('records')

@@ -80,11 +80,6 @@ class FeatureDetail {
         feature: row[splitted]
       }))
     }
-    console.log(responseData.results)
-    console.log(this.data_without_filtering1)
-
-    console.log(this.data_without_filtering2)
-
 }
 
 async showPercentile(y_lablel) {
