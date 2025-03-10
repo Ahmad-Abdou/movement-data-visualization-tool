@@ -143,6 +143,7 @@ class Heatmap {
     await axesPlot.colorZone1(parseInt(d.zone.slice(5)), this.data);
   
     await displayselectedZone()
-
+    selector.selectedIndex = 0
+    selector2.selectedIndex = 0
   }
 }
