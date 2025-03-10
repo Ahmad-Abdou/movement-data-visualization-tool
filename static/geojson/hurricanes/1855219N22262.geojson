@@ -1,0 +1,16 @@
+{
+    "type": "Feature",
+    "geometry": {
+        "type": "LineString",
+        "coordinates": [
+            [
+                -98.0,
+                22.2
+            ]
+        ]
+    },
+    "properties": {
+        "tid": "1855219N22262",
+        "label": NaN
+    }
+}
