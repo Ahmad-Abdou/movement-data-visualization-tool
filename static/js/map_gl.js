@@ -1,19 +1,19 @@
 class MapGl {
   constructor(containerId) {
-    this.containerId = containerId;
-    this.allTrajBox = document.getElementById('trajSelect');
-    this.groupedByTraj = null;
-    this.counter = 0;
-    this.deckOverlay = null;
-    this.layerOrder = ['speed', 'acceleration', 'distance', 'angle', 'bearing'];
-    this.zOffsetStep = 1010;
+    this.containerId = containerId
+    this.allTrajBox = document.getElementById('trajSelect')
+    this.groupedByTraj = null
+    this.counter = 0
+    this.deckOverlay = null
+    this.layerOrder = ['speed', 'acceleration', 'distance', 'angle', 'bearing']
+    this.zOffsetStep = 1010
     this.polygonLayerType = [{
       'speed': { elevation: 1000 },
       'acceleration': { elevation: 1000 },
       'distance': { elevation: 1000 },
       'angle': { elevation: 1000 },
       'bearing': { elevation: 1000 },
-    }];
+    }]
   }
   
   async fetchData(id) {
@@ -21,20 +21,20 @@ class MapGl {
       if(id === '') {
         return
       } else{
-        const response = await fetch(`/api/feats/map?tid=${id}`);
+        const response = await fetch(`/api/feats/map?tid=${id}`)
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`)
         }
-        const data = await response.json();
+        const data = await response.json()
         if (!data || data.length === 0) {
-            throw new Error('No data received');
+            throw new Error('No data received')
         }
-        return data;
+        return data
       }
     } catch (error) {
-        console.log('Error fetching data:', error);
-        return [];
+        console.log('Error fetching data:', error)
+        return []
     }
 }
 
@@ -55,7 +55,7 @@ class MapGl {
 
   async traject(trajectories, id, selectedFeature) {
     try {
-      let pathData = null;
+      let pathData = null
       
       if (!this.map) {
         this.map = new maplibregl.Map({
@@ -81,22 +81,23 @@ class MapGl {
           zoom: 6,
           pitch: 60,
           bearing: 30,
-          antialias: true,
+          antialias: true,          
+          maxPitch: 85,
           preserveDrawingBuffer: true
-        });
-  
+        })
+        
         this.deckOverlay = new deck.MapboxOverlay({
           layers: [],
           getTooltip: ({object}) => object && 
             `Trajectory ${object.tid} \n Speed: ${object.speed}\n Acceleration: ${object.acceleration}\n Angle: ${object.angle}\n Distance: ${object.distance}\n Bearing: ${object.bearing}`
       })
         
-        this.map.addControl(this.deckOverlay);
-        await new Promise(resolve => this.map.on('load', resolve));
+        this.map.addControl(this.deckOverlay)
+        await new Promise(resolve => this.map.on('load', resolve))
       }
   
       const updateLayer = async () => {
-        pathData = await this.pathConverter(trajectories, id);
+        pathData = await this.pathConverter(trajectories, id)
         
         if (pathData && pathData.length > 0) {
           const bounds = {
@@ -104,54 +105,54 @@ class MapGl {
             maxLon: -Infinity,
             minLat: Infinity,
             maxLat: -Infinity
-          };
+          }
   
           pathData.forEach(poly => {
             poly.polygon.forEach(point => {
-              bounds.minLon = Math.min(bounds.minLon, point[0]);
-              bounds.maxLon = Math.max(bounds.maxLon, point[0]);
-              bounds.minLat = Math.min(bounds.minLat, point[1]);
-              bounds.maxLat = Math.max(bounds.maxLat, point[1]);
-            });
-          });
+              bounds.minLon = Math.min(bounds.minLon, point[0])
+              bounds.maxLon = Math.max(bounds.maxLon, point[0])
+              bounds.minLat = Math.min(bounds.minLat, point[1])
+              bounds.maxLat = Math.max(bounds.maxLat, point[1])
+            })
+          })
   
           const newCenter = [
             (bounds.minLon + bounds.maxLon) / 2,
             (bounds.minLat + bounds.maxLat) / 2
-          ];
+          ]
   
           this.map.easeTo({
             center: newCenter,
             duration: 1000
-          });
+          })
         }
   
-        const layers = [];
+        const layers = []
         Object.keys(this.polygonLayerType[0]).forEach((type) => {
-          const category = this.polygonLayerType[0][type];
-          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature);
-          layers.push(mainLayer);
+          const category = this.polygonLayerType[0][type]
+          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature)
+          layers.push(mainLayer)
           
-          if (selectedFeature?.includes(type)) {
-            const outlineLayer = this.createOutlineLayer(type, pathData, category);
-            layers.push(outlineLayer);
-          }
-        });
+          // if (selectedFeature?.includes(type)) {
+          //   const outlineLayer = this.createOutlineLayer(type, pathData, category)
+          //   layers.push(outlineLayer)
+          // }
+        })
 
         this.deckOverlay.setProps({
           layers: layers
-        });
-      };
+        })
+      }
 
-      await updateLayer();
+      await updateLayer()
       
     } catch (error) {
-      console.error('Error updating trajectory:', error);
+      console.error('Error updating trajectory:', error)
     }
   }
 
   createOutlineLayer(type, initialPathData, category) {
-    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep;
+    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
     
     return new deck.PathLayer({
       id: `OutlineLayer${type}`,
@@ -184,18 +185,18 @@ class MapGl {
       jointRounded: true,
       billboard: true,
 
-    });
+    })
   }
 
   colorizing (type, initialPathData) {
     if(initialPathData) {
-      let colorScale;
+      let colorScale
 
       if (type === 'speed') {
-        const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v));
-        const minSpeed = Math.min(...speeds);
-        const maxSpeed = Math.max(...speeds);
-        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]]);
+        const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v))
+        const minSpeed = Math.min(...speeds)
+        const maxSpeed = Math.max(...speeds)
+        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]])
   
       } else if (type === 'acceleration') {
         const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
@@ -227,8 +228,8 @@ class MapGl {
   }
 
   polygonGenerator(type, initialPathData, category, selectedFeature) {
-    const colorScale = this.colorizing(type, initialPathData);
-    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep;
+    const colorScale = this.colorizing(type, initialPathData)
+    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
   
     const layerConfig = {
       id: `PolygonLayer${type}`,
@@ -250,38 +251,43 @@ class MapGl {
         shininess: 100,
         specularColor: [220, 220, 220]
       }
-    };
+    }
   
     if (selectedFeature) {
       layerConfig.getFillColor = d => {
-        const value = d[type];
-        const color = colorScale ? colorScale(value) : [255, 255, 255];
-        return [...color, 255];
-      };
+        if(selectedFeature?.includes(type)) {
+          const value = d[type]
+          const color = colorScale ? colorScale(value) : [255, 255, 255]
+          return [...color, 255]
+        } else {
+          return [211,211,211, 100]
+
+        }
+      }
     } else {
       layerConfig.getFillColor = d => {
-        const value = d[type];
-        return colorScale ? [...colorScale(value), 255] : [255, 255, 255, 255];
-      };
+        const value = d[type]
+        return colorScale ? [...colorScale(value), 255] : [255, 255, 255, 255]
+      }
     }
   
-    const layer = new deck.PolygonLayer(layerConfig);
-    return layer;
+    const layer = new deck.PolygonLayer(layerConfig)
+    return layer
   }
 
 
   async pathConverter (trajectories, id) {
 
-    const data = await trajectories;
+    const data = await trajectories
     if(data) {
-      const filtered = data.filter((row) => String(row.tid) === String(id));
+      const filtered = data.filter((row) => String(row.tid) === String(id))
       if (filtered.length > 0) {
-        const groupedByTraj = {};
+        const groupedByTraj = {}
         filtered.forEach(row => {
           if (!groupedByTraj[row.tid]) {
-            groupedByTraj[row.tid] = [];
+            groupedByTraj[row.tid] = []
           }
-          const point = [parseFloat(row.lon), parseFloat(row.lat)];
+          const point = [parseFloat(row.lon), parseFloat(row.lat)]
           if (!isNaN(point[0]) && !isNaN(point[1])) {
             groupedByTraj[row.tid].push({
               coordinates: point,
@@ -290,26 +296,26 @@ class MapGl {
               distance: parseFloat(row.distance),
               angle: parseFloat(row.angle),
               bearing: parseFloat(row.bearing),
-            });
+            })
           }
-        });
+        })
 
-        const theWall = await this.generateWall(groupedByTraj);
+        const theWall = await this.generateWall(groupedByTraj)
 
-        return theWall;
+        return theWall
       }
-      return [];
+      return []
     }
 
-  };
+  }
   async generateWall(groupedByTraj) {
     const wall = Object.keys(groupedByTraj).map(tid => {
-      const path = groupedByTraj[tid];
-      const polygons = [];
+      const path = groupedByTraj[tid]
+      const polygons = []
       
-      for (let i = 0; i < path.length - 1; i++) {
-        const p1 = path[i];
-        const p2 = path[i + 1];
+      for (let i = 0 ;i < path.length - 1 ;i++) {
+        const p1 = path[i]
+        const p2 = path[i + 1]
         
         polygons.push({
           tid: tid,
@@ -324,20 +330,20 @@ class MapGl {
             [p2.coordinates[0], p2.coordinates[1], 1],
             [p1.coordinates[0], p1.coordinates[1], 1] 
           ]
-        });
+        })
       }
-      return polygons;
-    }).flat();
-    return wall;
-  };
+      return polygons
+    }).flat()
+    return wall
+  }
   
   async generateMapGl(id) {
     try {
-      const trajectories = await this.fetchData(id);
+      const trajectories = await this.fetchData(id)
       return trajectories
 
     } catch (error) {
-      console.error('Error in main:', error);
+      console.error('Error in main:', error)
     }
   }
 
