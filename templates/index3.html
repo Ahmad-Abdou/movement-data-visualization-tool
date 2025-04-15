@@ -103,13 +103,20 @@
                 </div>
             </div>
             <div class="map">
-                <div id="map-container-1" class="map-container">
-                    <div id="map"></div>
+                <div id="view-3d" class="view-3d">
+                    <div id="map-container-1" class="map-container">
+                        <div id="map"></div>
+                    </div>
+                    <div id="map-container-2" class="map-container">
+                        <div id="map-2"></div>
+                    </div>
+                    <div id="heatmap-2d"></div>
+
                 </div>
-                
-                <div id="map-container-2" class="map-container">
-                    <div id="map-2"></div>
-                </div>
+            <select name="views" id="views">
+                <option value="3D">3D View</option>
+                <option value="2D">2D View</option>      
+            </select>
             </div>
 
             <div id="right-container" class="hidden">
@@ -136,6 +143,7 @@
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
         <script src="../static/js/heat_map.js"></script>
+        <script src="../static/js/views.js"></script>
         <script src="../static/js/global.js"></script>
         <script src="../static/js/tree.js"></script>
         <script src="../static/js/controller.js"></script>

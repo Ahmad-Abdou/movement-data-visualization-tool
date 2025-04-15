@@ -7,6 +7,9 @@ class MapGl {
     this.deckOverlay = null
     this.layerOrder = ['speed', 'acceleration', 'distance', 'angle', 'bearing']
     this.zOffsetStep = 1010
+    this.zoom = 6
+    this.pitch = 60
+    this.heatmapPositions = {}
     this.polygonLayerType = [{
       'speed': { elevation: 1000 },
       'acceleration': { elevation: 1000 },
@@ -78,8 +81,8 @@ class MapGl {
             }]
           },
           center: [25.0, 50.0],
-          zoom: 6,
-          pitch: 60,
+          zoom: this.zoom,
+          pitch: this.pitch,
           bearing: 30,
           antialias: true,          
           maxPitch: 85,
@@ -130,13 +133,9 @@ class MapGl {
         const layers = []
         Object.keys(this.polygonLayerType[0]).forEach((type) => {
           const category = this.polygonLayerType[0][type]
-          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature)
+          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature, id)
           layers.push(mainLayer)
           
-          // if (selectedFeature?.includes(type)) {
-          //   const outlineLayer = this.createOutlineLayer(type, pathData, category)
-          //   layers.push(outlineLayer)
-          // }
         })
 
         this.deckOverlay.setProps({
@@ -151,42 +150,6 @@ class MapGl {
     }
   }
 
-  createOutlineLayer(type, initialPathData, category) {
-    const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
-    
-    return new deck.PathLayer({
-      id: `OutlineLayer${type}`,
-      data: initialPathData.map(d => ({
-        path: [
-          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset],
-          [d.polygon[1][0], d.polygon[1][1], d.polygon[1][2] + zOffset],
-          [d.polygon[2][0], d.polygon[2][1], d.polygon[2][2] + zOffset],
-          [d.polygon[3][0], d.polygon[3][1], d.polygon[3][2] + zOffset],
-          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset],
-          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset + category.elevation],
-          [d.polygon[1][0], d.polygon[1][1], d.polygon[1][2] + zOffset + category.elevation],
-          [d.polygon[2][0], d.polygon[2][1], d.polygon[2][2] + zOffset + category.elevation],
-          [d.polygon[3][0], d.polygon[3][1], d.polygon[3][2] + zOffset + category.elevation],
-          [d.polygon[0][0], d.polygon[0][1], d.polygon[0][2] + zOffset + category.elevation],
-        ],
-        color: [255, 215, 0]
-      })),
-      getPath: d => d.path,
-      getColor: d => d.color,
-      getWidth: 5,
-      widthScale: 1,
-      widthMinPixels: 3,
-      widthMaxPixels: 8,
-      parameters: {
-        depthTest: true,
-        depthMask: true
-      },
-      capRounded: true,
-      jointRounded: true,
-      billboard: true,
-
-    })
-  }
 
   colorizing (type, initialPathData) {
     if(initialPathData) {
@@ -227,7 +190,7 @@ class MapGl {
 
   }
 
-  polygonGenerator(type, initialPathData, category, selectedFeature) {
+  polygonGenerator(type, initialPathData, category, selectedFeature, id) {
     const colorScale = this.colorizing(type, initialPathData)
     const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
   
@@ -258,6 +221,7 @@ class MapGl {
         if(selectedFeature?.includes(type)) {
           const value = d[type]
           const color = colorScale ? colorScale(value) : [255, 255, 255]
+          this.create_2d_heatmap(id,  color)
           return [...color, 255]
         } else {
           return [211,211,211, 100]
@@ -346,5 +310,56 @@ class MapGl {
       console.error('Error in main:', error)
     }
   }
+  updateView() {
+    if (this.deckOverlay && this.deckOverlay._map) {
+      const map = this.deckOverlay._map;
+      map.setZoom(this.zoom);
+      map.setPitch(this.pitch);
+    }
+  }
 
+  create_2d_heatmap(selectedTrajectory, color) {
+    if (typeof heatmap_2d === 'undefined') {
+      window.heatmap_2d = d3.select('#heatmap-2d');
+    }
+  
+    // Reset position counter when starting a new feature
+    if (!this.heatmapPositions[selectedTrajectory]) {
+      this.heatmapPositions[selectedTrajectory] = 0;
+      // Clear existing rectangles for this trajectory
+      heatmap_2d.select(`#rect-group-${selectedTrajectory}`).remove();
+    }
+    
+    const position = this.heatmapPositions[selectedTrajectory];
+    this.heatmapPositions[selectedTrajectory] += 120;
+    
+    let yPosition = 0;
+    if (selectedTrajectory1) {
+      yPosition = (selectedTrajectory === selectedTrajectory1) ? '30%' : '50%';
+    }
+    const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+  
+    let traj_group = heatmap_2d.select(`#rect-group-${selectedTrajectory}`);
+    if (traj_group.empty()) {
+      traj_group = heatmap_2d.append('g').attr('id', `rect-group-${selectedTrajectory}`);
+      
+      const labelY = selectedTrajectory === selectedTrajectory1 ? '25%' : '45%';
+      traj_group.append('text')
+        .attr('x', (window.innerWidth / 3) - 300)
+        .attr('y', labelY)
+        .attr('fill', 'black')
+        .style('font-size', '14px')
+        .text(`Trajectory ${selectedTrajectory === selectedTrajectory1 ? '1' : '2'}`)
+    }
+
+    const centerX = (window.innerWidth / 3) - 300 + position
+    
+    traj_group.append('rect')
+      .attr('id', `rect-${selectedTrajectory}-${position}`)
+      .attr('width', 120)
+      .attr('height', 50)
+      .attr('x', centerX)
+      .attr('y', yPosition)
+      .attr('fill', rgbColor);
+  }
 }
