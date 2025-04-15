@@ -5,7 +5,6 @@ let selectedTrajectory1 = null
 let selectedTrajectory2 = null
 let globalXAxis = null
 let globalYAxis = null
-
 const kinematicColor = '#0080FF80'
 const geometricColor = '#DC143C80'
 let selectingTrajectoryOne = false
@@ -18,7 +17,6 @@ let zoneB = null;
 
 window.numOfZones = 0
 
-// default
 let outlier_dataset_name = 'data_combination_foxes';
 let trajectory_dataset_name = 'fox_trajectories.csv';
 let df_with_id = 'fox-df.csv';

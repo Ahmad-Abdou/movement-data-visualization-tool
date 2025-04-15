@@ -10,6 +10,9 @@ const tree = new Tree('#taxonomy-element', 500, 300, 0);
 const mapGl = new MapGl('map')
 const mapGl2 = new MapGl('map-2')
 
+const heatmap_2d = d3.select('#heatmap-2d').attr('id', 'heatmap-2d').append('svg').attr("width", "100%").attr("height", "100%").style("background", "#f9f9f9")
+
+
 mapGl.generateMapGl('')
   .then(trajectories => {
     return mapGl.traject(trajectories);
