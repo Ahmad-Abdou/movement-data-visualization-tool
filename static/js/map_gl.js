@@ -17,6 +17,7 @@ class MapGl {
       'angle': { elevation: 1000 },
       'bearing': { elevation: 1000 },
     }]
+    this.counter = 0
   }
   
   async fetchData(id) {
@@ -190,7 +191,10 @@ class MapGl {
 
   }
 
-  polygonGenerator(type, initialPathData, category, selectedFeature, id) {
+  polygonGenerator(type, initialPathData, category, selectedFeature, selectedTrajectory) {
+    d3.select('#trajectory-parent-group').selectAll("*").remove()
+    const position = 0
+    this.heatmapPositions[selectedTrajectory] = 0;
     const colorScale = this.colorizing(type, initialPathData)
     const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
   
@@ -221,7 +225,7 @@ class MapGl {
         if(selectedFeature?.includes(type)) {
           const value = d[type]
           const color = colorScale ? colorScale(value) : [255, 255, 255]
-          this.create_2d_heatmap(id,  color)
+          this.create_2d_heatmap(selectedTrajectory,  color, position)
           return [...color, 255]
         } else {
           return [211,211,211, 100]
@@ -318,30 +322,25 @@ class MapGl {
     }
   }
 
-  create_2d_heatmap(selectedTrajectory, color) {
-    if (typeof heatmap_2d === 'undefined') {
-      window.heatmap_2d = d3.select('#heatmap-2d');
-    }
-  
-    // Reset position counter when starting a new feature
+  create_2d_heatmap(selectedTrajectory, color, position) {
+
     if (!this.heatmapPositions[selectedTrajectory]) {
       this.heatmapPositions[selectedTrajectory] = 0;
-      // Clear existing rectangles for this trajectory
-      heatmap_2d.select(`#rect-group-${selectedTrajectory}`).remove();
     }
     
-    const position = this.heatmapPositions[selectedTrajectory];
+    position = this.heatmapPositions[selectedTrajectory];
     this.heatmapPositions[selectedTrajectory] += 120;
-    
     let yPosition = 0;
     if (selectedTrajectory1) {
       yPosition = (selectedTrajectory === selectedTrajectory1) ? '30%' : '50%';
     }
     const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   
-    let traj_group = heatmap_2d.select(`#rect-group-${selectedTrajectory}`);
+    let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
+    const centerX = (window.innerWidth / 3) - 300 + position
+
     if (traj_group.empty()) {
-      traj_group = heatmap_2d.append('g').attr('id', `rect-group-${selectedTrajectory}`);
+      traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
       
       const labelY = selectedTrajectory === selectedTrajectory1 ? '25%' : '45%';
       traj_group.append('text')
@@ -352,7 +351,6 @@ class MapGl {
         .text(`Trajectory ${selectedTrajectory === selectedTrajectory1 ? '1' : '2'}`)
     }
 
-    const centerX = (window.innerWidth / 3) - 300 + position
     
     traj_group.append('rect')
       .attr('id', `rect-${selectedTrajectory}-${position}`)

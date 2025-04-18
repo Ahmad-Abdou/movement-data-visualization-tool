@@ -7,7 +7,7 @@ html, body {
 
 #views{
    position: absolute;
-   left: 49%;
+   left: 47%;
    top: 5px;
    padding: 5px;
    background-color: #0080FF;
@@ -17,7 +17,7 @@ html, body {
    box-shadow: 1px 1px 5px 1px black;
    outline: none;
    z-index: 10000;
-   transition: 1s;
+   width: 100px;
 }
 
 .view-3d{
@@ -309,6 +309,13 @@ p {
    background-color: white;
    transform: scale(1.01);
    border: 1px solid #0080FF80;
-
   }
 
+.trajectory-title{
+   z-index: 100;
+   opacity: 1;
+   position: absolute;
+   left: 50px;
+   font-weight: 700;
+   font-size: 20px;
+}
