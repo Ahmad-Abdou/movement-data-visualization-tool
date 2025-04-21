@@ -60,7 +60,6 @@ class MapGl {
   async traject(trajectories, id, selectedFeature) {
     try {
       let pathData = null
-      
       if (!this.map) {
         this.map = new maplibregl.Map({
           container: this.containerId.replace('#', ''),
@@ -89,7 +88,6 @@ class MapGl {
           maxPitch: 85,
           preserveDrawingBuffer: true
         })
-        
         this.deckOverlay = new deck.MapboxOverlay({
           layers: [],
           getTooltip: ({object}) => object && 
@@ -102,7 +100,6 @@ class MapGl {
   
       const updateLayer = async () => {
         pathData = await this.pathConverter(trajectories, id)
-        
         if (pathData && pathData.length > 0) {
           const bounds = {
             minLon: Infinity,
@@ -138,7 +135,6 @@ class MapGl {
           layers.push(mainLayer)
           
         })
-
         this.deckOverlay.setProps({
           layers: layers
         })
@@ -269,7 +265,6 @@ class MapGl {
         })
 
         const theWall = await this.generateWall(groupedByTraj)
-
         return theWall
       }
       return []

@@ -11,8 +11,7 @@ def stats_calc(stats, data):
     operation = "_".join(splitted)
 
     df = pd.DataFrame(data)
-    grouped_by_feature = df.groupby('tid')[feature_name].apply(list).reset_index()
-
+    grouped_by_feature = df.groupby('tid', sort=False)[feature_name].apply(list).reset_index()
     results = []
     for _, row in grouped_by_feature.iterrows():
         tid = row['tid']
@@ -89,13 +88,11 @@ def stats_calc(stats, data):
                 res = (0,0)
             case _:
                 raise ValueError("Unknown stats parameter")           
-        
         trajectory_data = [item for item in data if item['tid'] == tid]
         
         nearest_index = find_nearest(numeric_data, res)
         
         closest_rows = find_40_closest(nearest_index, trajectory_data)
-        
         results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': trajectory_data[nearest_index]})
     return results
 
