@@ -62,6 +62,8 @@ class FeatureDetail {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const responseData = await response.json();
+    console.log(responseData.results)
+
     if (!responseData || responseData.length === 0) {
         throw new Error('No data received');
     }
@@ -128,7 +130,6 @@ async showPercentile(y_lablel) {
     .attr('y', -38)
     .attr('font-size', 12)
     .attr('font-weight', 700)
-
     headerGroup.append('text')
     .text(this.operation2.toString().slice(0,7))
     .attr('x', 320)

@@ -125,10 +125,15 @@ class Database:
             """
             self.cursor.execute(query, tuple(tid_list))
             columns = [desc[0] for desc in self.cursor.description]
+            first_id = []
+            second_id = []
             results = []
-            
             for row in self.cursor.fetchall():
-                results.append(dict(zip(columns, row)))
+                if (int(row[2]) == int(tid_list[0])):
+                    first_id.append(dict(zip(columns, row)))
+                else:
+                    second_id.append(dict(zip(columns, row)))
+            results = first_id + second_id
             return results
             
         except Exception as e:
