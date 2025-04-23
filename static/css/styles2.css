@@ -71,7 +71,7 @@ html, body {
    transition: all 0.3s;
    overflow: hidden;
    cursor: pointer;
-   transform : translate(-99%, 0);
+   /* transform : translate(-99%, 0); */
    z-index: 1000;
    box-shadow: 1px 10px 10px 2px black;
 }
@@ -104,7 +104,7 @@ html, body {
    transition: all 0.3s;
    overflow: hidden;
    cursor: pointer;
-   transform : translate(99%, 0);
+   /* transform : translate(99%, 0); */
    box-shadow: 1px 10px 10px 2px black;
 }
 
@@ -247,7 +247,7 @@ p {
     opacity: 0.5;
 }
 
-#pin-left{
+/* #pin-left{
    width: 20px;
    position: absolute;
    top: 45%;
@@ -258,9 +258,9 @@ p {
    border-radius: 5px;
    box-shadow: 1px 10px 10px 2px black;
    transition: all 0.3s;
-}
+} */
 
-#pin-right{
+/* #pin-right{
    width: 20px;
    position: absolute;
    top: 45%;
@@ -280,7 +280,7 @@ p {
 }
 .pinned_right{
    transform : translate(-475px, 0);
-}
+} */
 
 @keyframes horizontal-shaking {
    0% { transform: translateX(0) }

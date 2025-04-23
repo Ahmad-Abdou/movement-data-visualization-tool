@@ -40,9 +40,9 @@
             <!-- This is the large container where all elements will be placed  -->
         <div id="container" class="container-fluid h-100">
             <div id="notification"></div>
-            <button id="pin-left" title="pin-left"></button>
+            <!-- <button id="pin-left" title="pin-left"></button>
 
-            <button id="pin-right" title="pin-right"></button>
+            <button id="pin-right" title="pin-right"></button> -->
             <!-- Left container composed with three subcontainers in the left side -->
             <div id="left-container" class="col-4 h-100">
 
@@ -73,34 +73,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="scatter-plot-container" class="h-100">
-                    <div class="card">
-                        <button class="compare-btn">Compare</button>
-                        <p class="card-header">Zone Explorer</p>
-                        <div class="zone-selector">
-                            <select id="zone-select-1">
-                            <option selected="selected" disabled>Zone A</option>
-                             <option  value="0">Zone 0</option>
-                             <option  value="1">Zone 1</option>
-                             <option  value="2">Zone 2</option>
-                             <option  value="3">Zone 3</option>
-                            </select>
-                         </div>
-                         <div class="zone-selector-2">
-                            <select id="zone-select-2">
-                            <option selected="selected"  disabled>Zone B</option>
-                            <option  value="0">Zone 0</option>
-                            <option  value="1">Zone 1</option>
-                            <option  value="2">Zone 2</option>
-                            <option  value="3">Zone 3</option>
-                            </select>
-                         </div>
-                        <div class="card-body">
-                            
-                            <div id="scatter-plot"></div>                            
-                        </div>
-                    </div>
-                </div>
+
             </div>
             <div class="map">
                 <div id="view-3d" class="view-3d">
@@ -122,22 +95,49 @@
             </div>
 
             <div id="right-container" class="hidden">
-                <div id="feature-importance-container" class="h-50">
-                    <div class="card">
-                        <p class="card-header">Feature Importance</p>
-                        <div class="card-body">      
-                        <div class="feature-importance-container"></div>                          
+                <!-- <div  id="trajectory-features-detailed-container" class="h-50"> -->
+                    <div id="scatter-plot-container" class="h-50">
+                        <div class="card">
+                            <button class="compare-btn">Compare</button>
+                            <p class="card-header">Zone Explorer</p>
+                            <div class="zone-selector">
+                                <select id="zone-select-1">
+                                <option selected="selected" disabled>Zone A</option>
+                                 <option  value="0">Zone 0</option>
+                                 <option  value="1">Zone 1</option>
+                                 <option  value="2">Zone 2</option>
+                                 <option  value="3">Zone 3</option>
+                                </select>
+                             </div>
+                             <div class="zone-selector-2">
+                                <select id="zone-select-2">
+                                <option selected="selected"  disabled>Zone B</option>
+                                <option  value="0">Zone 0</option>
+                                <option  value="1">Zone 1</option>
+                                <option  value="2">Zone 2</option>
+                                <option  value="3">Zone 3</option>
+                                </select>
+                             </div>
+                            <div class="card-body">
+                                <div id="scatter-plot"></div>                            
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div  id="trajectory-features-detailed-container" class="h-50">
-                    <div class="card">
-                        <p class="card-header">Trajectory Features Detailed</p>
+                    <div id="feature-importance-container" class="h-50">
+                        <div class="card">
+                            <p class="card-header">Feature Importance</p>
+                            <div class="card-body">      
+                            <div class="feature-importance-container"></div>                          
+                            </div>
+                        </div>
+                    </div>
+                    <!-- <div class="card">
+                        <p class="card-header">Trajectory Time series</p>
                         <div class="card-body">    
                             <div id="feature-detail"></div>                                                        
                         </div>
-                    </div>
-                </div>
+                    </div> -->
+                <!-- </div> -->
             </div>
         </div>
         <!-- Adding Scripts -->

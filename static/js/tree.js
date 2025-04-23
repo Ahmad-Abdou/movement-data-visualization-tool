@@ -46,7 +46,7 @@ class Tree {
             .enter()
             .append('tspan')
             .attr('x', this.centeredCircle)
-            .attr('y', d => 12 + (d === 'variables' ? 12 : 0))
+            .attr('y', d => 22 + (d === 'variables' ? 12 : 0))
             .text(d => d)
             .attr('font-size', 10);
     }
@@ -75,10 +75,10 @@ class Tree {
         });
 
         let treeSubLines = [
-            {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.36]]},
-            {points: [[this.centeredCircle - this.offset, this.height * 0.20], [this.centeredCircle - this.offset + this.width * 0.10, this.height * 0.36]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.36]]},
-            {points: [[this.centeredCircle + this.offset, this.height * 0.20], [this.centeredCircle + this.offset + this.width * 0.12, this.height * 0.36]]}
+            {points: [[this.centeredCircle - this.offset, this.height * 0.33], [this.centeredCircle - this.offset - this.width * 0.15, this.height * 0.5]]},
+            {points: [[this.centeredCircle - this.offset, this.height * 0.33], [this.centeredCircle - this.offset + this.width * 0.10, this.height * 0.5]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.33], [this.centeredCircle + this.offset - this.width * 0.15, this.height * 0.5]]},
+            {points: [[this.centeredCircle + this.offset, this.height * 0.33], [this.centeredCircle + this.offset + this.width * 0.12, this.height * 0.5]]}
         ];
 
         treeSubLines.forEach((shape, index) => {

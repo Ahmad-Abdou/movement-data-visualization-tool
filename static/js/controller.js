@@ -29,105 +29,105 @@ if (toggle_btn && trajectory && bar_chart) {
     });
 }
 
-const leftPanel = document.getElementById('left-container')
-const rightPanel = document.getElementById('right-container')
-const pin_right= document.getElementById('pin-right')
-const pin_left= document.getElementById('pin-left')
+// const leftPanel = document.getElementById('left-container')
+// const rightPanel = document.getElementById('right-container')
+// const pin_right= document.getElementById('pin-right')
+// const pin_left= document.getElementById('pin-left')
 
-rightPanel.addEventListener('mouseover', ()=> {
-    if(pin_right.className != 'pinned_right') {
-        rightPanel.style.transform = 'translate(0px, 0)'
-        pin_right.style.transform = 'translate(-475px, 0)'
-        pin_right.style.width = '60px'
-        pin_right.style.height = '100px'
-    }  
-})
-rightPanel.addEventListener('mouseout', ()=> {
-    if(pin_right.className != 'pinned_right') {
-        rightPanel.style.transform = 'translate(99%, 0)'
-        pin_right.style.transform = 'translate(0px, 0)'
-        pin_right.style.width = '20px'
-        pin_right.style.height = '160px'
-    }
-})
-pin_right.addEventListener('mouseover', ()=> {
-    if(pin_right.className != 'pinned_right') {
-        rightPanel.style.transform = 'translate(0px, 0)'
-        pin_right.style.transform = 'translate(-475px, 0)'
-        pin_right.style.width = '60px'
-        pin_right.style.height = '100px'
-    }
-})
+// rightPanel.addEventListener('mouseover', ()=> {
+//     if(pin_right.className != 'pinned_right') {
+//         rightPanel.style.transform = 'translate(0px, 0)'
+//         pin_right.style.transform = 'translate(-475px, 0)'
+//         pin_right.style.width = '60px'
+//         pin_right.style.height = '100px'
+//     }  
+// })
+// rightPanel.addEventListener('mouseout', ()=> {
+//     if(pin_right.className != 'pinned_right') {
+//         rightPanel.style.transform = 'translate(99%, 0)'
+//         pin_right.style.transform = 'translate(0px, 0)'
+//         pin_right.style.width = '20px'
+//         pin_right.style.height = '160px'
+//     }
+// })
+// pin_right.addEventListener('mouseover', ()=> {
+//     if(pin_right.className != 'pinned_right') {
+//         rightPanel.style.transform = 'translate(0px, 0)'
+//         pin_right.style.transform = 'translate(-475px, 0)'
+//         pin_right.style.width = '60px'
+//         pin_right.style.height = '100px'
+//     }
+// })
 
-pin_right.addEventListener('mouseout', ()=> {
-    if(pin_right.className != 'pinned_right') {
-        rightPanel.style.transform = 'translate(99%, 0)'
-        pin_right.style.transform = 'translate(0, 0)'
-        pin_right.style.width = '20px'
-        pin_right.style.height = '160px'
-    }
-})
+// pin_right.addEventListener('mouseout', ()=> {
+//     if(pin_right.className != 'pinned_right') {
+//         rightPanel.style.transform = 'translate(99%, 0)'
+//         pin_right.style.transform = 'translate(0, 0)'
+//         pin_right.style.width = '20px'
+//         pin_right.style.height = '160px'
+//     }
+// })
 
-pin_right.addEventListener('click',() => {
-    if(pin_right.className == 'pinned_right') {
-        pin_right.style.backgroundColor = kinematicColor
-        pin_right.className = ''
-        rightPanel.style.animationName = ''
-        rightPanel.style.animationDuration = '0s'
-    } else {
-        pin_right.className = 'pinned_right'
-        pin_right.style.backgroundColor = geometricColor
-        rightPanel.style.animationName = ' horizontal-shaking'
-        rightPanel.style.animationDuration = '0.3s'
-    }
-})
+// pin_right.addEventListener('click',() => {
+//     if(pin_right.className == 'pinned_right') {
+//         pin_right.style.backgroundColor = kinematicColor
+//         pin_right.className = ''
+//         rightPanel.style.animationName = ''
+//         rightPanel.style.animationDuration = '0s'
+//     } else {
+//         pin_right.className = 'pinned_right'
+//         pin_right.style.backgroundColor = geometricColor
+//         rightPanel.style.animationName = ' horizontal-shaking'
+//         rightPanel.style.animationDuration = '0.3s'
+//     }
+// })
 
-leftPanel.addEventListener('mouseover', ()=> {
-    if(pin_left.className != 'pinned_left') {
-        leftPanel.style.transform = 'translate(0px, 0)'
-        pin_left.style.transform = 'translate(470px, 0)'
-        pin_left.style.width = '60px'
-        pin_left.style.height = '100px'
-    }
-})
-leftPanel.addEventListener('mouseout', ()=> {
-    if(pin_left.className != 'pinned_left') {
-        leftPanel.style.transform = 'translate(-99%, 0)'
-        pin_left.style.transform = 'translate(0px, 0)'
-        pin_left.style.width = '20px'
-        pin_left.style.height = '160px'
-    }
+// leftPanel.addEventListener('mouseover', ()=> {
+//     if(pin_left.className != 'pinned_left') {
+//         leftPanel.style.transform = 'translate(0px, 0)'
+//         pin_left.style.transform = 'translate(470px, 0)'
+//         pin_left.style.width = '60px'
+//         pin_left.style.height = '100px'
+//     }
+// })
+// leftPanel.addEventListener('mouseout', ()=> {
+//     if(pin_left.className != 'pinned_left') {
+//         leftPanel.style.transform = 'translate(-99%, 0)'
+//         pin_left.style.transform = 'translate(0px, 0)'
+//         pin_left.style.width = '20px'
+//         pin_left.style.height = '160px'
+//     }
 
-})
+// })
 
-pin_left.addEventListener('mouseover', ()=> {
-    if(pin_left.className != 'pinned_left') {
-        leftPanel.style.transform = 'translate(0px, 0)'
-        pin_left.style.transform = 'translate(470px, 0)'
-        pin_left.style.width = '60px'
-        pin_left.style.height = '100px'
-    }
+// pin_left.addEventListener('mouseover', ()=> {
+//     if(pin_left.className != 'pinned_left') {
+//         leftPanel.style.transform = 'translate(0px, 0)'
+//         pin_left.style.transform = 'translate(470px, 0)'
+//         pin_left.style.width = '60px'
+//         pin_left.style.height = '100px'
+//     }
 
-})
-pin_left.addEventListener('mouseout', ()=> {
-    if(pin_left.className != 'pinned_left') {
-        leftPanel.style.transform = 'translate(-99%, 0)'
-        pin_left.style.transform = 'translate(0px, 0)'
-        pin_left.style.width = '20px'
-        pin_left.style.height = '160px'
-    }
-})
+// })
+// pin_left.addEventListener('mouseout', ()=> {
+//     if(pin_left.className != 'pinned_left') {
+//         leftPanel.style.transform = 'translate(-99%, 0)'
+//         pin_left.style.transform = 'translate(0px, 0)'
+//         pin_left.style.width = '20px'
+//         pin_left.style.height = '160px'
+//     }
+// })
 
-pin_left.addEventListener('click',() => {
-    if(pin_left.className == 'pinned_left') {
-        pin_left.style.backgroundColor = kinematicColor
-        pin_left.className = ''
-        leftPanel.style.animationName = ''
-        leftPanel.style.animationDuration = '0s'
-    } else {
-        pin_left.className = 'pinned_left'
-        pin_left.style.backgroundColor = geometricColor
-        leftPanel.style.animationName = ' horizontal-shaking'
-        leftPanel.style.animationDuration = '0.3s'
-    }
-})
+// pin_left.addEventListener('click',() => {
+//     if(pin_left.className == 'pinned_left') {
+//         pin_left.style.backgroundColor = kinematicColor
+//         pin_left.className = ''
+//         leftPanel.style.animationName = ''
+//         leftPanel.style.animationDuration = '0s'
+//     } else {
+//         pin_left.className = 'pinned_left'
+//         pin_left.style.backgroundColor = geometricColor
+//         leftPanel.style.animationName = ' horizontal-shaking'
+//         leftPanel.style.animationDuration = '0.3s'
+//     }
+// })

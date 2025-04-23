@@ -156,31 +156,31 @@ class MapGl {
         const speeds = initialPathData.map(d => d.speed).filter(v => !isNaN(v))
         const minSpeed = Math.min(...speeds)
         const maxSpeed = Math.max(...speeds)
-        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[254,229,217], [165,15,21]])
+        colorScale = d3.scaleLinear().domain([minSpeed, maxSpeed]).range([[255,255,204], [227,26,28]])
   
       } else if (type === 'acceleration') {
         const accelerations = initialPathData.map((d) => d.acceleration).filter(v => !isNaN(v))
         const minAcc = Math.min(...accelerations)
         const maxAcc = Math.max(...accelerations)
-        colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[254,229,217], [165,15,21]])
+        colorScale = d3.scaleLinear().domain([minAcc, maxAcc]).range([[255,255,204], [227,26,28]])
       }
       else if (type === 'distance') {
         const distances = initialPathData.map((d) => d.distance).filter(v => !isNaN(v))
         const minDist = Math.min(...distances)
         const maxDist = Math.max(...distances)
-        colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[254,229,217], [165,15,21]])
+        colorScale = d3.scaleLinear().domain([minDist, maxDist]).range([[255,255,204], [227,26,28]])
       }
       else if (type === 'angle') {
         const angles = initialPathData.map((d) => d.angle).filter(v => !isNaN(v))
         const minAngle= Math.min(...angles)
         const maxAngle = Math.max(...angles)
-        colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[254,229,217], [165,15,21]])
+        colorScale = d3.scaleLinear().domain([minAngle, maxAngle]).range([[255,255,204], [227,26,28]])
       }
       else if (type === 'bearing') {
         const bearings = initialPathData.map((d) => d.bearing).filter(v => !isNaN(v))
         const minBearing = Math.min(...bearings)
         const maxBearing = Math.max(...bearings)
-        colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[254,229,217], [165,15,21]])
+        colorScale = d3.scaleLinear().domain([minBearing, maxBearing]).range([[255,255,204], [227,26,28]])
       }
       return colorScale
     }
@@ -221,7 +221,7 @@ class MapGl {
         if(selectedFeature?.includes(type)) {
           const value = d[type]
           const color = colorScale ? colorScale(value) : [255, 255, 255]
-          this.create_2d_heatmap(selectedTrajectory,  color, position)
+          this.create_2d_heatmap(selectedTrajectory,  color, position, value, selectedFeature)
           return [...color, 255]
         } else {
           return [211,211,211, 100]
@@ -317,14 +317,13 @@ class MapGl {
     }
   }
 
-  create_2d_heatmap(selectedTrajectory, color, position) {
-
+  create_2d_heatmap(selectedTrajectory, color, position, value, selectedFeature) {
     if (!this.heatmapPositions[selectedTrajectory]) {
       this.heatmapPositions[selectedTrajectory] = 0;
     }
     
     position = this.heatmapPositions[selectedTrajectory];
-    this.heatmapPositions[selectedTrajectory] += 120;
+    this.heatmapPositions[selectedTrajectory] += 73;
     let yPosition = 0;
     if (selectedTrajectory1) {
       yPosition = (selectedTrajectory === selectedTrajectory1) ? '30%' : '50%';
@@ -332,27 +331,74 @@ class MapGl {
     const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
   
     let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
-    const centerX = (window.innerWidth / 3) - 300 + position
+    const centerX = (window.innerWidth / 3) + position -50
 
-    if (traj_group.empty()) {
-      traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
-      
-      const labelY = selectedTrajectory === selectedTrajectory1 ? '25%' : '45%';
-      traj_group.append('text')
-        .attr('x', (window.innerWidth / 3) - 300)
-        .attr('y', labelY)
-        .attr('fill', 'black')
-        .style('font-size', '14px')
-        .text(`Trajectory ${selectedTrajectory === selectedTrajectory1 ? '1' : '2'}`)
-    }
+    const labelY = selectedTrajectory === selectedTrajectory1 ? '40%' : '60%'
+    trajectory_parent_group.selectAll('#selectedFeature').remove()
+    trajectory_parent_group.append('text')
+    .attr('id', 'selectedFeature')
+    .attr('x', '45%')
+    .attr('y', '20%')
+    .text(`${selectedFeature.toUpperCase()}`)
+    .attr('font-size', 23)
 
-    
     traj_group.append('rect')
       .attr('id', `rect-${selectedTrajectory}-${position}`)
-      .attr('width', 120)
-      .attr('height', 50)
+      .attr('width', 71)
+      .attr('height', 90)
       .attr('x', centerX)
       .attr('y', yPosition)
-      .attr('fill', rgbColor);
+      .attr('fill', rgbColor)
+      .attr('stroke', 'white')
+      .attr('stroke-width', '2px')
+      .on('mouseover', (event) => {
+        const [x, y] = d3.pointer(event)
+        trajectory_parent_group.select(`#rect-${selectedTrajectory}-${position}`)
+        .attr('stroke',  kinematicColor)
+        .attr('stroke-width', '3px')
+
+        trajectory_parent_group.append('rect')
+        .attr('id', 'tooltips-rect')
+        .attr('width' , 200)
+        .attr('height' , 40)
+        .attr('x', x - 120)
+        .attr('y', y- 60)
+        .attr('opacity', 0.5)
+
+        trajectory_parent_group.append('text')
+        .attr('id', 'tooltips')
+        .attr('x', x - 110)
+        .attr('y', y- 40)
+        .text(`${value}`)
+        .attr('fill', 'white')
+
+      }).on('mousemove', (event) => {
+        const [x, y] = d3.pointer(event)
+        trajectory_parent_group.select(`#rect-${selectedTrajectory}-${position}`)
+        .attr('stroke',  kinematicColor)
+        .attr('stroke-width', '3px')
+
+        trajectory_parent_group.select('#tooltips-rect')
+        .attr('x', x - 120)
+        .attr('y', y- 60)
+
+        trajectory_parent_group.select('#tooltips')
+        .attr('x', x - 110)
+        .attr('y', y- 40)
+
+      }).on('mouseout', () => {
+        trajectory_parent_group.select(`#rect-${selectedTrajectory}-${position}`).attr('stroke', 'white').attr('stroke-width', '2px')
+
+        trajectory_parent_group.select('#tooltips').remove()
+        trajectory_parent_group.select('#tooltips-rect').remove()
+
+      })
+
+      traj_group.append('text')
+      .attr('x', (window.innerWidth / 3) - 125)
+      .attr('y', labelY)
+      .attr('fill', 'black')
+      .style('font-size', '14px')
+      .text(`Trajectory ${selectedTrajectory === selectedTrajectory1 ? '1' : '2'}`)
   }
 }

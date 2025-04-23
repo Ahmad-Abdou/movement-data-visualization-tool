@@ -76,23 +76,6 @@ def data_quantile():
     except Exception as e:
         print(f'Error: {str(e)}')
         return jsonify({"error": "Server error"}), 500
-    
-# @app.route('/api/feats/quantile/stats', methods=['POST'])
-# def fetchStatsForFeatureDetails():
-#     try:
-#         stats = request.get_json()["stats"]
-#         print(trajectory_feature_details)
-#         print(stats)
-#         if not stats:
-#             print('No data was sent BROTHEH')
-#         return jsonify({
-#             'status': 'success',
-#             'data': {
-#                 'stats' : stats
-#             }
-#         })
-#     except:
-#         print('Didnt recieve')
 
 @app.route('/api/data', methods=['POST'])
 def process_data():
@@ -107,13 +90,7 @@ def process_data():
         features_path = data.get('df_path_with_id')
         x_axis = data.get('x_axis')
         y_axis=  data.get('y_axis')
-        # if not all([combination_path, features_path, zoneA, zoneB is not None]):
-        #     print(combination_path)
-        #     print(features_path)
-        #     print(zoneA)
-        #     print(zoneB)
 
-        #     return jsonify({'status': 'error', 'message': 'Missing required parameters'}), 400
         abs_combination_path = get_absolute_path(f'static/{combination_path}')
         abs_features_path = get_absolute_path(f'static/{features_path}')
         
