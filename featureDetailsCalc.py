@@ -1,6 +1,7 @@
 from scipy.stats import skew, kurtosis
 import numpy as np
 import pandas as pd
+from geopy.distance import geodesic
 
 def stats_calc(stats, data):
 
@@ -56,36 +57,40 @@ def stats_calc(stats, data):
                 res = np.median(sorted_num) 
             case 'iqr':
                 res = np.percentile(sorted_num, 75) - np.percentile(sorted_num, 25)
-            case 'geometry_1_1':
-                res = (0,0)
-            case 'geometry_2_1':
-                res = (0,0)
-            case 'geometry_2_2':
-                res = (0,0)
-            case 'geometry_3_1':
-                res = (0,0)
-            case 'geometry_3_2':
-                res = (0,0)
-            case 'geometry_3_3':
-                res = (0,0)
-            case 'geometry_4_1':
-                res = (0,0)
-            case 'geometry_4_2':
-                res = (0,0)
-            case 'geometry_4_3':
-                res = (0,0)
-            case 'geometry_4_4':
-                res = (0,0)
-            case 'geometry_5_1':
-                res = (0,0)
-            case 'geometry_5_2':
-                res = (0,0)
-            case 'geometry_5_3':
-                res = (0,0)
-            case 'geometry_5_4':
-                res = (0,0)
-            case 'geometry_5_5':
-                res = (0,0)
+            case 'geometry_1_1' | 'geometry_2_1' | 'geometry_2_2' | 'geometry_3_1' | 'geometry_3_2' | 'geometry_3_3' | 'geometry_4_1' | 'geometry_4_2' | 'geometry_4_3' | 'geometry_4_4' | 'geometry_5_1' | 'geometry_5_2' | 'geometry_5_3' | 'geometry_5_4' | 'geometry_5_5':
+                # Parse level and segment number from operation string
+                parts = operation.split('_')
+                level = int(parts[1])
+                segment = int(parts[2])
+                
+                # Get trajectory data for current trajectory ID
+                trajectory_data = [item for item in data if item['tid'] == tid]
+                trajectory_data.sort(key=lambda x: x['time'])  # Sort by time
+                
+                # Calculate the segment size based on level
+                segment_size = len(trajectory_data) // level
+                
+                # Calculate start and end indices for this segment
+                start = (segment - 1) * segment_size
+                end = segment * segment_size if segment * segment_size < len(trajectory_data) else len(trajectory_data) - 1
+                
+                # Calculate direct distance between start and end points
+                start_point = (trajectory_data[start]['lat'], trajectory_data[start]['lon'])
+                end_point = (trajectory_data[end]['lat'], trajectory_data[end]['lon'])
+                direct_distance = geodesic(start_point, end_point).meters
+                
+                # Calculate sum of segment-wise distances
+                segment_distances = []
+                for i in range(start, end):
+                    if i + 1 < len(trajectory_data):
+                        p1 = (trajectory_data[i]['lat'], trajectory_data[i]['lon'])
+                        p2 = (trajectory_data[i+1]['lat'], trajectory_data[i+1]['lon'])
+                        segment_distances.append(geodesic(p1, p2).meters)
+                
+                # Calculate geometry feature (ratio of direct distance to sum of segment distances)
+                total_segment_distance = sum(segment_distances) if segment_distances else 1
+                res = direct_distance / total_segment_distance if total_segment_distance > 0 else 0
+                
             case _:
                 raise ValueError("Unknown stats parameter")           
         trajectory_data = [item for item in data if item['tid'] == tid]

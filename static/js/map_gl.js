@@ -135,6 +135,12 @@ class MapGl {
           layers.push(mainLayer)
           
         })
+
+        const directLineLayer = this.generateDirectLineLayer(pathData, id, selectedFeature)
+        if (directLineLayer) {
+          layers.push(directLineLayer)
+        }
+
         this.deckOverlay.setProps({
           layers: layers
         })
@@ -147,6 +153,78 @@ class MapGl {
     }
   }
 
+  generateDirectLineLayer(pathData, selectedTid, selectedFeature) {
+    if(selectedFeature) {
+      const path = []
+      path.push([pathData[0].polygon[0][0], pathData[0].polygon[0][1]])
+      pathData.forEach(segment => {
+        path.push([segment.polygon[1][0], segment.polygon[1][1]])
+      })
+      let displayPath = path
+  
+  
+      switch(selectedFeature) {
+        case 'distance_geometry_1_1':
+          displayPath = [ path[0],path[path.length - 1]]
+          break
+        case 'distance_geometry_2_1':
+          displayPath = path.slice(0, Math.floor(path.length / 2))
+          break
+        case 'distance_geometry_2_2':
+          displayPath = path.slice(Math.floor(path.length / 2), path.length)
+          break
+        case 'distance_geometry_3_1':
+          displayPath = path.slice(0, Math.floor(path.length / 3))
+          break
+        case 'distance_geometry_3_2':
+          displayPath = path.slice(Math.floor(path.length / 3), Math.floor(2 * path.length / 3))
+          break
+        case 'distance_geometry_3_3':
+          displayPath = path.slice(Math.floor(2 * path.length / 3), path.length)
+          break
+        case 'distance_geometry_4_1':
+          displayPath = path.slice(0, Math.floor(path.length / 4))
+          break
+        case 'distance_geometry_4_2':
+          displayPath = path.slice(Math.floor(path.length / 4), Math.floor(2 * path.length / 4))
+          break
+        case 'distance_geometry_4_3':
+          displayPath = path.slice(Math.floor(2 * path.length / 4), Math.floor(3 * path.length / 4));
+          break;
+        case 'distance_geometry_4_4':
+          displayPath = path.slice(Math.floor(3 * path.length / 4), path.length);
+          break;
+        case 'distance_geometry_5_1':
+          displayPath = path.slice(0, Math.floor(path.length / 5));
+          break;
+        case 'distance_geometry_5_2':
+          displayPath = path.slice(Math.floor(path.length / 5), Math.floor(2 * path.length / 5));
+          break;
+        case 'distance_geometry_5_3':
+          displayPath = path.slice(Math.floor(2 * path.length / 5), Math.floor(3 * path.length / 5));
+          break;
+        case 'distance_geometry_5_4':
+          displayPath = path.slice(Math.floor(3 * path.length / 5), Math.floor(4 * path.length / 5));
+          break;
+        case 'distance_geometry_5_5':
+          displayPath = path.slice(Math.floor(4 * path.length / 5), path.length);
+          break;
+        default:
+          displayPath = path
+      }
+      const data = [{ path: displayPath }];
+  
+      return new deck.PathLayer({
+        id: 'PathLayer',
+        data: data,
+        getPath: d => d.path,
+        getColor: [0, 0, 139, 255],
+        getWidth: 200,
+        pickable: false
+      })
+    }
+    
+  }
 
   colorizing (type, initialPathData) {
     if(initialPathData) {
