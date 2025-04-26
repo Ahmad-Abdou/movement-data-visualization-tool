@@ -19,7 +19,8 @@ def index():
 @app.route('/api/trajectories', methods=['GET'])
 def fetch_trajectories():
     try:
-        data = db.get_fox_data()
+        category_id = request.args.get('category_id', default=1, type=int)
+        data = db.get_trajectories_by_category(category_id)
         if data is not None:
             return jsonify(data)
         else:
@@ -31,8 +32,9 @@ def fetch_trajectories():
 @app.route('/api/scatter', methods=['GET'])
 def decision_scores():
     combination = request.args.get('combination')
+    category_id = request.args.get('category_id', default=1, type=int)
     try:
-        data = db.get_scatter_plot_data(combination)
+        data = db.get_scatter_plot_data(combination, category_id)
         if data is not None:
             return jsonify(data)
         else:
@@ -45,11 +47,12 @@ def decision_scores():
 @app.route('/api/feats/map', methods=['GET'])
 def data_map():
     tid = request.args.get('tid') 
+    category_id = request.args.get('category_id', default=1, type=int)
     try:
         if not tid:
             return jsonify({"error": "No trajectory ID provided"}), 400
             
-        data = db.get_data_for_map(tid)
+        data = db.get_data_for_map(tid, category_id)
         if data and len(data) > 0:
             return jsonify(data)
         else:
@@ -63,8 +66,9 @@ def data_map():
 def data_quantile():
     tid = request.args.get('tid') 
     stats = request.args.get('stats')
+    category_id = request.args.get('category_id', default=1, type=int)
     try:
-        data = db.get_data_for_quantile(tid)
+        data = db.get_data_for_quantile(tid, category_id)
         results = stats_calc(stats, data)
         if data and len(data) > 0:
             return jsonify({

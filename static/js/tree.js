@@ -199,7 +199,7 @@ async function showData(xAxis, yAxis) {
     let combinationToBeSent = `${xAxis.toLowerCase()}_${yAxis.toLowerCase()}`
     if (file_mapping.hasOwnProperty(combinedString)) {        
         try {
-            const response = await fetch(`/api/scatter?combination=${combinationToBeSent}`);
+            const response = await fetch(`/api/scatter?combination=${combinationToBeSent}&category_id=${current_category_id}`);
             const result = await response.json();
             if(response.status === 200) {
                 axesPlot.showPlots(result);

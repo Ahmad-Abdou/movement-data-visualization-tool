@@ -48,7 +48,7 @@ class FeatureDetail {
       splitted = 'angle'
     }
 
-    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory1},${selectedTrajectory2}&stats=${name}`);
+    const response = await fetch(`/api/feats/quantile?tid=${selectedTrajectory1},${selectedTrajectory2}&stats=${name}&category_id=${current_category_id}`);
     if(!selectedTrajectory1) {
       notifyMessage('Please select a trajectory first')
     }
