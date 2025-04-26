@@ -129,7 +129,7 @@ class Database:
             second_id = []
             results = []
             for row in self.cursor.fetchall():
-                if (int(row[2]) == int(tid_list[0])):
+                if (row[2] == tid_list[0]):
                     first_id.append(dict(zip(columns, row)))
                 else:
                     second_id.append(dict(zip(columns, row)))
