@@ -55,6 +55,7 @@ function setFileMapping(outlier_dataset_name){
 }
 file_mapping = setFileMapping(outlier_dataset_name)
 
+let current_category_id = 1
 
 function selectDataset() {
   document.getElementById("datasets").classList.toggle("show");
@@ -75,7 +76,8 @@ window.onclick = function(event) {
 
 async function selectFoxes(){
     try {
-        const response = await fetch('/api/trajectories');
+        current_category_id = 1;
+        const response = await fetch(`/api/trajectories?category_id=${current_category_id}`);
         const result = await response.json();
         if (response.status === 200) {
             outlier_dataset_name = 'data_combination_foxes';
@@ -92,6 +94,7 @@ async function selectFoxes(){
     }
 }
 async function selectHurricanes(){
+    current_category_id = 2;
     outlier_dataset_name = 'data_combination_hurricanes';
     trajectory_dataset_name = 'hurricanes_trajectories.csv';
     df_with_id = 'hurricanes-df.csv';
@@ -101,6 +104,7 @@ async function selectHurricanes(){
 
 }
 async function selectAIS(){
+    current_category_id = 3;
     outlier_dataset_name = 'data_combination_ais';
     trajectory_dataset_name = 'ais_trajectories.csv';
     file_mapping = setFileMapping(outlier_dataset_name)

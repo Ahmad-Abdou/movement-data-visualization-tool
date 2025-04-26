@@ -25,7 +25,7 @@ class MapGl {
       if(id === '') {
         return
       } else{
-        const response = await fetch(`/api/feats/map?tid=${id}`)
+        const response = await fetch(`/api/feats/map?tid=${id}&category_id=${current_category_id}`)
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
