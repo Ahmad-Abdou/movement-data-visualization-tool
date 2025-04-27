@@ -9,12 +9,10 @@ const kinematicColor = '#0080FF80'
 const geometricColor = '#DC143C80'
 let selectingTrajectoryOne = false
 let selectingTrajectoryTwo = false
-
 let selector = document.getElementById("zone-select-1")
 let selector2 = document.getElementById("zone-select-2")
 let zoneA = null;
 let zoneB = null;
-
 window.numOfZones = 0
 
 let outlier_dataset_name = 'data_combination_foxes';
@@ -73,13 +71,16 @@ window.onclick = function(event) {
     }
   }
 }
+const dataset_btn = document.getElementById('dataset-btn')
+dataset_btn.textContent = 'foxes'
 
 async function selectFoxes(){
     try {
         current_category_id = 1;
         const response = await fetch(`/api/trajectories?category_id=${current_category_id}`);
-        const result = await response.json();
+        const result = await response.json()
         if (response.status === 200) {
+            dataset_btn.textContent = 'foxes'
             outlier_dataset_name = 'data_combination_foxes';
             trajectory_dataset_name = 'fox_trajectories.csv';
             df_with_id = 'fox-df.csv';
@@ -94,16 +95,31 @@ async function selectFoxes(){
     }
 }
 async function selectHurricanes(){
+    dataset_btn.textContent = 'hurricanes'
     current_category_id = 2;
-    outlier_dataset_name = 'data_combination_hurricanes';
-    trajectory_dataset_name = 'hurricanes_trajectories.csv';
-    df_with_id = 'hurricanes-df.csv';
-    file_mapping = setFileMapping(outlier_dataset_name)
-    heatmap.render(file_mapping)
-    current_selectec_data = outlier_dataset_name
+    try {
+        const response = await fetch(`/api/trajectories?category_id=${current_category_id}`);
+        await response.json();
+        if (response.status === 200) {
+            outlier_dataset_name = 'data_combination_hurricanes';
+            trajectory_dataset_name = 'hurricanes_trajectories.csv';
+            df_with_id = 'hurricanes-df.csv';
+            file_mapping = setFileMapping(outlier_dataset_name)
+            heatmap.render(file_mapping)
+            current_selectec_data = outlier_dataset_name
+        } else {
+            console.error('Failed to fetch hurricanes data');
+        }
+    } catch (error) {
+        console.error('Error fetching hurricanes data:', error);
+
+    }
+
+ 
 
 }
 async function selectAIS(){
+    dataset_btn.textContent = 'AIS'
     current_category_id = 3;
     outlier_dataset_name = 'data_combination_ais';
     trajectory_dataset_name = 'ais_trajectories.csv';

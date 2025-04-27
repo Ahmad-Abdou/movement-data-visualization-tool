@@ -18,6 +18,7 @@ class MapGl {
       'bearing': { elevation: 1000 },
     }]
     this.counter = 0
+    this.views = document.getElementById('views')
   }
   
   async fetchData(id) {
@@ -128,7 +129,7 @@ class MapGl {
           })
         }
   
-        const layers = []
+        let layers = []
         Object.keys(this.polygonLayerType[0]).forEach((type) => {
           const category = this.polygonLayerType[0][type]
           const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature, id)
@@ -136,14 +137,14 @@ class MapGl {
           
         })
 
-        const directLineLayer = this.generateDirectLineLayer(pathData, id, selectedFeature)
+        const directLineLayer = this.generateDirectLineLayer(pathData, selectedFeature)
         if (directLineLayer) {
           layers.push(directLineLayer)
         }
+          this.deckOverlay.setProps({
+            layers:  layers
 
-        this.deckOverlay.setProps({
-          layers: layers
-        })
+          })
       }
 
       await updateLayer()
@@ -153,7 +154,7 @@ class MapGl {
     }
   }
 
-  generateDirectLineLayer(pathData, selectedTid, selectedFeature) {
+  generateDirectLineLayer(pathData, selectedFeature) {
     if(selectedFeature) {
       const path = []
       path.push([pathData[0].polygon[0][0], pathData[0].polygon[0][1]])
@@ -219,8 +220,12 @@ class MapGl {
         data: data,
         getPath: d => d.path,
         getColor: [0, 0, 139, 255],
-        getWidth: 200,
-        pickable: false
+        getWidth: 100,
+        pickable: false,
+        widthMinPixels: 4,
+        parameters: {
+          depthMask: false
+        }
       })
     }
     
@@ -280,12 +285,12 @@ class MapGl {
       filled: true,
       extruded: true,
       wireframe: true,
-      getPolygon: d => d.polygon.map(point => [point[0], point[1], point[2] + zOffset]),
+      getPolygon: d => this.views.value === '2D'? d.polygon.map(point => [0, 0, 0 ]): d.polygon.map(point => [point[0], point[1], point[2] + zOffset]),
       parameters: {
         depthTest: true,
         depthMask: true
       },
-      getElevation: category.elevation,
+      getElevation: this.views.value === '2D'? 0:category.elevation,
       material: {
         ambient: 0.6,
         diffuse: 0.4,
@@ -293,7 +298,6 @@ class MapGl {
         specularColor: [220, 220, 220]
       }
     }
-  
     if (selectedFeature) {
       layerConfig.getFillColor = d => {
         if(selectedFeature?.includes(type)) {
