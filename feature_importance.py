@@ -69,15 +69,23 @@ def getDataTwoZonesComparison(zoneA, zoneB, combination_path, features_path, x_a
                     df_features.loc[df_features['ID'] == row_ID, 'zone'] = 1
                 else:
                     df_features.loc[df_features['ID'] == row_ID, 'zone'] = 0
+
+        df_features = df_features.dropna()
+
         y = df_features["zone"].astype(int)
         X = df_features.drop(columns=["zone", "ID", "label"] if "label" in df_features.columns else ["zone", "ID"])
-    
+
         if X.empty or len(X.columns) == 0:
             raise ValueError("No features available for training")
         
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
         
-        rf_model = RandomForestClassifier(random_state=42)
+        rf_model = RandomForestClassifier(
+            n_estimators=200,
+            max_depth=10,
+            class_weight='balanced',
+            random_state=42
+        )
         rf_model.fit(X_train, y_train)
         
         y_pred_test = rf_model.predict(X_test)
