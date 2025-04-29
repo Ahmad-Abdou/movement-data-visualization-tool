@@ -14,7 +14,7 @@ let selector2 = document.getElementById("zone-select-2")
 let zoneA = null;
 let zoneB = null;
 window.numOfZones = 0
-
+let allValues = []
 let outlier_dataset_name = 'data_combination_foxes';
 let trajectory_dataset_name = 'fox_trajectories.csv';
 let df_with_id = 'fox-df.csv';
