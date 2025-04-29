@@ -109,24 +109,24 @@ class MapGl {
             maxLat: -Infinity
           }
   
-          pathData.forEach(poly => {
-            poly.polygon.forEach(point => {
-              bounds.minLon = Math.min(bounds.minLon, point[0])
-              bounds.maxLon = Math.max(bounds.maxLon, point[0])
-              bounds.minLat = Math.min(bounds.minLat, point[1])
-              bounds.maxLat = Math.max(bounds.maxLat, point[1])
+          pathData.forEach(poly =>
+            poly.polygon.forEach(([lon, lat]) => {
+              bounds.minLon = Math.min(bounds.minLon, lon);
+              bounds.maxLon = Math.max(bounds.maxLon, lon);
+              bounds.minLat = Math.min(bounds.minLat, lat);
+              bounds.maxLat = Math.max(bounds.maxLat, lat);
             })
-          })
-  
-          const newCenter = [
-            (bounds.minLon + bounds.maxLon) / 2,
-            (bounds.minLat + bounds.maxLat) / 2
-          ]
-  
-          this.map.easeTo({
-            center: newCenter,
-            duration: 1000
-          })
+          )
+
+          const sw = [bounds.minLon, bounds.minLat];
+          const ne = [bounds.maxLon, bounds.maxLat];
+        
+          this.map.fitBounds([ sw, ne ], {
+            padding: 50,      
+            duration: 1000,
+            maxZoom: 10
+          });
+
         }
   
         let layers = []
@@ -272,7 +272,6 @@ class MapGl {
 
   polygonGenerator(type, initialPathData, category, selectedFeature, selectedTrajectory) {
     d3.select('#trajectory-parent-group').selectAll("*").remove()
-    const position = 0
     this.heatmapPositions[selectedTrajectory] = 0;
     const colorScale = this.colorizing(type, initialPathData)
     const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
@@ -303,7 +302,7 @@ class MapGl {
         if(selectedFeature?.includes(type)) {
           const value = d[type]
           const color = colorScale ? colorScale(value) : [255, 255, 255]
-          this.create_2d_heatmap(selectedTrajectory,  color, position, value, selectedFeature)
+          this.create_2d_heatmap(selectedTrajectory , value, selectedFeature)
           return [...color, 255]
         } else {
           return [211,211,211, 100]
@@ -399,88 +398,99 @@ class MapGl {
     }
   }
 
-  create_2d_heatmap(selectedTrajectory, color, position, value, selectedFeature) {
-    if (!this.heatmapPositions[selectedTrajectory]) {
-      this.heatmapPositions[selectedTrajectory] = 0;
-    }
-    
-    position = this.heatmapPositions[selectedTrajectory];
-    this.heatmapPositions[selectedTrajectory] += 73;
-    let yPosition = 0;
-    if (selectedTrajectory1) {
-      yPosition = (selectedTrajectory === selectedTrajectory1) ? '30%' : '50%';
-    }
-    const rgbColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+  create_2d_heatmap(selectedTrajectory , value, selectedFeature) {
+
+    allValues.push(value)
+
+    if(allValues.length === 20) {
+      const colorScale = d3.scaleLinear().domain([d3.min(allValues), d3.max(allValues)]).range(["#ffffcc", "#e31a1c"])
+
+      let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
   
-    let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
-    const centerX = (window.innerWidth / 3) + position -50
-
-    const labelY = selectedTrajectory === selectedTrajectory1 ? '40%' : '60%'
-    trajectory_parent_group.selectAll('#selectedFeature').remove()
-    trajectory_parent_group.append('text')
-    .attr('id', 'selectedFeature')
-    .attr('x', '45%')
-    .attr('y', '20%')
-    .text(`${selectedFeature.toUpperCase()}`)
-    .attr('font-size', 23)
-
-    traj_group.append('rect')
-      .attr('id', `rect-${selectedTrajectory}-${position}`)
-      .attr('width', 71)
-      .attr('height', 90)
-      .attr('x', centerX)
-      .attr('y', yPosition)
-      .attr('fill', rgbColor)
-      .attr('stroke', 'white')
-      .attr('stroke-width', '2px')
-      .on('mouseover', (event) => {
-        const [x, y] = d3.pointer(event)
-        trajectory_parent_group.select(`#rect-${selectedTrajectory}-${position}`)
-        .attr('stroke',  kinematicColor)
-        .attr('stroke-width', '3px')
+      trajectory_parent_group.selectAll('#selectedFeature').remove()
+      trajectory_parent_group.append('text')
+      .attr('id', 'selectedFeature')
+      .attr('x', '45%')
+      .attr('y', '20%')
+      .text(`${selectedFeature.toUpperCase()}`)
+      .attr('font-size', 23)
+          
+      
+      traj_group.selectAll('rect')
+        .data(allValues)
+        .join('rect')
+        .attr('id', (d,i) => `rect-${selectedTrajectory}-${i}`)
+        .attr('width', 71)
+        .attr('height', 90)
+        .attr('x', (d,i) =>  i < 10 ? (70 * i) + 600 : (70 * i) - 100 )
+        .attr('y', (d,i) => i < 10 ? 100 : 200)
+        .attr('fill', d => colorScale(d))
+        .attr('stroke', 'black')
+        .attr('stroke-width', '1px')
+        .on('mouseover', (event, d, i) => {
+          const [x, y] = d3.pointer(event)
 
         trajectory_parent_group.append('rect')
-        .attr('id', 'tooltips-rect')
-        .attr('width' , 200)
-        .attr('height' , 40)
+        .attr('class', 'tooltip-bg')
+        .attr('width', 200)
+        .attr('height', 40)
         .attr('x', x - 120)
-        .attr('y', y- 60)
+        .attr('y', y - 60)
         .attr('opacity', 0.5)
+  
+          trajectory_parent_group.append('text')
+          .attr('class', 'tooltip-text')
+          .attr('x', x - 110)
+          .attr('y', y - 40)
+          .text(d)
+          .attr('fill', 'white')
 
-        trajectory_parent_group.append('text')
-        .attr('id', 'tooltips')
-        .attr('x', x - 110)
-        .attr('y', y- 40)
-        .text(`${value}`)
-        .attr('fill', 'white')
+          trajectory_parent_group
+          .select(`#rect-${selectedTrajectory}-${i}`)
+          .attr('stroke', kinematicColor)
+          .attr('stroke-width', '3px')
+          .raise()
+          
+      }).on('mousemove', (event, d, i) => {
+          const [x, y] = d3.pointer(event)
+          trajectory_parent_group.select(`#rect-${selectedTrajectory}-${i}`)
+          .attr('stroke',  kinematicColor)
+          .attr('stroke-width', '3px')
+  
+          trajectory_parent_group.select('.tooltip-bg')
+          .attr('x', x - 120)
+          .attr('y', y - 60);
+  
+          trajectory_parent_group.select('.tooltip-text')
+          .attr('x', x - 110)
+          .attr('y', y - 40);
+        }).on('mouseout', (e,d,i) => {
+          trajectory_parent_group
+          .select(`#rect-${selectedTrajectory}-${i}`)
+          .attr('stroke', 'white')
+          .attr('stroke-width', '2px');
+    
+        trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
+        })
+  
 
-      }).on('mousemove', (event) => {
-        const [x, y] = d3.pointer(event)
-        trajectory_parent_group.select(`#rect-${selectedTrajectory}-${position}`)
-        .attr('stroke',  kinematicColor)
-        .attr('stroke-width', '3px')
+        traj_group.append('text')
+        .attr('x', (window.innerWidth / 3) - 125)
+        .attr('y', '35%')
+        .attr('fill', 'black')
+        .style('font-size', '14px')
+        .text(`Trajectory 1`)
 
-        trajectory_parent_group.select('#tooltips-rect')
-        .attr('x', x - 120)
-        .attr('y', y- 60)
+        traj_group.append('text')
+        .attr('x', (window.innerWidth / 3) - 125)
+        .attr('y', '55%')
+        .attr('fill', 'black')
+        .style('font-size', '14px')
+        .text(`Trajectory 2`)
+    }
 
-        trajectory_parent_group.select('#tooltips')
-        .attr('x', x - 110)
-        .attr('y', y- 40)
-
-      }).on('mouseout', () => {
-        trajectory_parent_group.select(`#rect-${selectedTrajectory}-${position}`).attr('stroke', 'white').attr('stroke-width', '2px')
-
-        trajectory_parent_group.select('#tooltips').remove()
-        trajectory_parent_group.select('#tooltips-rect').remove()
-
-      })
-
-      traj_group.append('text')
-      .attr('x', (window.innerWidth / 3) - 125)
-      .attr('y', labelY)
-      .attr('fill', 'black')
-      .style('font-size', '14px')
-      .text(`Trajectory ${selectedTrajectory === selectedTrajectory1 ? '1' : '2'}`)
+    if (allValues.length === 20) {
+      allValues = []
+    }
   }
 }
