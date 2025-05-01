@@ -80,7 +80,6 @@ def data_quantile():
     except Exception as e:
         print(f'Error: {str(e)}')
         return jsonify({"error": "Server error"}), 500
-
 @app.route('/api/data', methods=['POST'])
 def process_data():
     try:

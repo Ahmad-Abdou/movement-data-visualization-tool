@@ -17,6 +17,9 @@ class FeatureDetail {
     this.data_without_filtering2 = null
     this.operation2 = null
     this.sub_trajectory2 = []
+    this.entierTrajectory1 = null
+    this.entierTrajectory2 = null
+
   }
   drawAxisLabels(y_title) {
     this.svg.selectAll('.axis-label').remove();
@@ -67,6 +70,7 @@ class FeatureDetail {
     if(selectedTrajectory1) {
       this.operation = responseData.results[0].operation
       this.data_without_filtering1 = responseData.results[0].rows
+      this.entierTrajectory1 = responseData.results[0].entier_trajectory
       this.sub_trajectory = responseData.results[0].rows
       .map(row => ({
         feature: row[splitted]
@@ -74,6 +78,7 @@ class FeatureDetail {
     } if (selectedTrajectory2) {
       this.operation2 = responseData.results[1].operation
       this.data_without_filtering2 = responseData.results[1].rows
+      this.entierTrajectory2 = responseData.results[1].entier_trajectory
       this.sub_trajectory2 = responseData.results[1].rows
       .map(row => ({
         feature: row[splitted]
@@ -83,7 +88,6 @@ class FeatureDetail {
 
 async showPercentile(y_lablel) {
   try {
-
     // this.svg.selectAll(".chart-content").remove();
 
     // const headerGroup = this.svg.append('g').attr("class","chart-content").attr('id', 'header-group-feature-details')
@@ -220,8 +224,8 @@ async showPercentile(y_lablel) {
     //     .attr("class", "y-axis")
     //     .call(yAxis);
         const selectedFeature = y_lablel
-          await mapGl.traject(this.data_without_filtering1, selectedTrajectory1, selectedFeature);
-          await mapGl2.traject(this.data_without_filtering2, selectedTrajectory2, selectedFeature);
+          await mapGl.traject(this.data_without_filtering1, selectedTrajectory1, selectedFeature, this.entierTrajectory1 );
+          await mapGl2.traject(this.data_without_filtering2, selectedTrajectory2, selectedFeature, this.entierTrajectory2 );
     // }    
   } catch (error) {
     console.error("Error drawing line chart:", error);
