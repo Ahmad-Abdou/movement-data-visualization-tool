@@ -19,6 +19,7 @@ class MapGl {
     }]
     this.counter = 0
     this.views = document.getElementById('views')
+    this.type = null
   }
   
   async fetchData(id) {
@@ -146,9 +147,14 @@ class MapGl {
 
           })
       }
-
+      console.log()
       await updateLayer()
-      
+      if(selectedFeature){
+        const type = selectedFeature.split('_')[0]
+        this.create_2d_heatmap(id , trajectories, selectedFeature, type)
+
+      }
+
     } catch (error) {
       console.error('Error updating trajectory:', error)
     }
@@ -302,7 +308,7 @@ class MapGl {
         if(selectedFeature?.includes(type)) {
           const value = d[type]
           const color = colorScale ? colorScale(value) : [255, 255, 255]
-          this.create_2d_heatmap(selectedTrajectory , value, selectedFeature)
+          // this.create_2d_heatmap(selectedTrajectory , value, selectedFeature)
           return [...color, 255]
         } else {
           return [211,211,211, 100]
@@ -398,99 +404,99 @@ class MapGl {
     }
   }
 
-  create_2d_heatmap(selectedTrajectory , value, selectedFeature) {
+  create_2d_heatmap(selectedTrajectory , trajectories, selectedFeature, type) {
+    const filtered = trajectories.map((row) => row[type])
 
-    allValues.push(value)
+    if(!selectedFeature.includes('distance')) {
+      allValues.push(...filtered)
 
-    if(allValues.length === 20) {
-      const colorScale = d3.scaleLinear().domain([d3.min(allValues), d3.max(allValues)]).range(["#ffffcc", "#e31a1c"])
-
-      let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
-  
-      trajectory_parent_group.selectAll('#selectedFeature').remove()
-      trajectory_parent_group.append('text')
-      .attr('id', 'selectedFeature')
-      .attr('x', '45%')
-      .attr('y', '20%')
-      .text(`${selectedFeature.toUpperCase()}`)
-      .attr('font-size', 23)
-          
-      
-      traj_group.selectAll('rect')
-        .data(allValues)
-        .join('rect')
-        .attr('id', (d,i) => `rect-${selectedTrajectory}-${i}`)
-        .attr('width', 71)
-        .attr('height', 90)
-        .attr('x', (d,i) =>  i < 10 ? (70 * i) + 600 : (70 * i) - 100 )
-        .attr('y', (d,i) => i < 10 ? 100 : 200)
-        .attr('fill', d => colorScale(d))
-        .attr('stroke', 'black')
-        .attr('stroke-width', '1px')
-        .on('mouseover', (event, d, i) => {
-          const [x, y] = d3.pointer(event)
-
-        trajectory_parent_group.append('rect')
-        .attr('class', 'tooltip-bg')
-        .attr('width', 200)
-        .attr('height', 40)
-        .attr('x', x - 120)
-        .attr('y', y - 60)
-        .attr('opacity', 0.5)
-  
-          trajectory_parent_group.append('text')
-          .attr('class', 'tooltip-text')
-          .attr('x', x - 110)
-          .attr('y', y - 40)
-          .text(d)
-          .attr('fill', 'white')
-
-          trajectory_parent_group
-          .select(`#rect-${selectedTrajectory}-${i}`)
-          .attr('stroke', kinematicColor)
-          .attr('stroke-width', '3px')
-          .raise()
-          
-      }).on('mousemove', (event, d, i) => {
-          const [x, y] = d3.pointer(event)
-          trajectory_parent_group.select(`#rect-${selectedTrajectory}-${i}`)
-          .attr('stroke',  kinematicColor)
-          .attr('stroke-width', '3px')
-  
-          trajectory_parent_group.select('.tooltip-bg')
-          .attr('x', x - 120)
-          .attr('y', y - 60);
-  
-          trajectory_parent_group.select('.tooltip-text')
-          .attr('x', x - 110)
-          .attr('y', y - 40);
-        }).on('mouseout', (e,d,i) => {
-          trajectory_parent_group
-          .select(`#rect-${selectedTrajectory}-${i}`)
-          .attr('stroke', 'white')
-          .attr('stroke-width', '2px');
+      if(allValues.length === 20) {
+        const colorScale = d3.scaleLinear().domain([d3.min(allValues), d3.max(allValues)]).range(["#ffffcc", "#e31a1c"])
+        let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
     
-        trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
-        })
+        trajectory_parent_group.selectAll('#selectedFeature').remove()
+        trajectory_parent_group.append('text')
+        .attr('id', 'selectedFeature')
+        .attr('x', '45%')
+        .attr('y', '20%')
+        .text(`${selectedFeature.toUpperCase()}`)
+        .attr('font-size', 23)  
+        
+        traj_group.selectAll('rect')
+          .data(allValues)
+          .join('rect')
+          .attr('id', (d,i) => `rect-${selectedTrajectory}-${i}`)
+          .attr('width', 71)
+          .attr('height', 90)
+          .attr('x', (d,i) =>  i < 10 ? (70 * i) + 600 : (70 * i) - 100 )
+          .attr('y', (d,i) => i < 10 ? 100 : 200)
+          .attr('fill', d => colorScale(d))
+          .attr('stroke', 'black')
+          .attr('stroke-width', '1px')
+          .on('mouseover', (event, d, i) => {
+            const [x, y] = d3.pointer(event)
   
+          trajectory_parent_group.append('rect')
+          .attr('class', 'tooltip-bg')
+          .attr('width', 200)
+          .attr('height', 40)
+          .attr('x', x - 120)
+          .attr('y', y - 60)
+          .attr('opacity', 0.5)
+    
+            trajectory_parent_group.append('text')
+            .attr('class', 'tooltip-text')
+            .attr('x', x - 110)
+            .attr('y', y - 40)
+            .text(d)
+            .attr('fill', 'white')
+  
+            trajectory_parent_group
+            .select(`#rect-${selectedTrajectory}-${i}`)
+            .attr('stroke', kinematicColor)
+            .attr('stroke-width', '3px')
+            .raise()
+            
+        }).on('mousemove', (event, d, i) => {
+            const [x, y] = d3.pointer(event)
+            trajectory_parent_group.select(`#rect-${selectedTrajectory}-${i}`)
+            .attr('stroke',  kinematicColor)
+            .attr('stroke-width', '3px')
+    
+            trajectory_parent_group.select('.tooltip-bg')
+            .attr('x', x - 120)
+            .attr('y', y - 60);
+    
+            trajectory_parent_group.select('.tooltip-text')
+            .attr('x', x - 110)
+            .attr('y', y - 40);
+          }).on('mouseout', (e,d,i) => {
+            trajectory_parent_group
+            .select(`#rect-${selectedTrajectory}-${i}`)
+            .attr('stroke', 'white')
+            .attr('stroke-width', '2px');
+      
+          trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
+          })
+          traj_group.append('text')
+          .attr('x', (window.innerWidth / 3) - 125)
+          .attr('y', '35%')
+          .attr('fill', 'black')
+          .style('font-size', '14px')
+          .text(`Trajectory 1`)
+  
+          traj_group.append('text')
+          .attr('x', (window.innerWidth / 3) - 125)
+          .attr('y', '55%')
+          .attr('fill', 'black')
+          .style('font-size', '14px')
+          .text(`Trajectory 2`)
+        
+          allValues = []
+      } 
+    } else {
 
-        traj_group.append('text')
-        .attr('x', (window.innerWidth / 3) - 125)
-        .attr('y', '35%')
-        .attr('fill', 'black')
-        .style('font-size', '14px')
-        .text(`Trajectory 1`)
-
-        traj_group.append('text')
-        .attr('x', (window.innerWidth / 3) - 125)
-        .attr('y', '55%')
-        .attr('fill', 'black')
-        .style('font-size', '14px')
-        .text(`Trajectory 2`)
     }
-
-    if (allValues.length === 20) {
-      allValues = []
-    }
+    
   }
 }
