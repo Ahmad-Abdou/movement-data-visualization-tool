@@ -234,10 +234,10 @@ class AxesPlot {
         tooltipContainer.append('rect')
             .attr('class', 'tooltip-bg')
             .attr('width', 120)
-            .attr('height', 90)
+            .attr('height', 70)
             .attr('fill', 'rgba(85, 85, 85, 0.79)')
             .attr('rx', 10)
-            .attr('ry', 10);
+            .attr('ry', 10)
             
         tooltipContainer.append('text')
             .attr('class', 'tooltip-text')
@@ -277,7 +277,7 @@ class AxesPlot {
                 .attr('r', 8);
             previouslySelectedBlue = selected_circle;
             const trajectories1 = await mapGl.generateMapGl(selectedTrajectory1);
-            await mapGl.traject(trajectories1, selectedTrajectory1, null);
+            await mapGl.traject(trajectories1, selectedTrajectory1, null, null);
         }
         else if(self.trajectoriesList.length === 2) {
             if(previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
@@ -288,7 +288,7 @@ class AxesPlot {
                 .attr('r', 8)
             previouslySelectedGreen = selected_circle
             const trajectories2 = await mapGl2.generateMapGl(selectedTrajectory2);
-            await mapGl2.traject(trajectories2, selectedTrajectory2, null);
+            await mapGl2.traject(trajectories2, selectedTrajectory2, null, null);
         }
     } else {
         if(previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
@@ -304,7 +304,7 @@ class AxesPlot {
             previouslySelectedBlue = selected_circle;
         }
         const trajectories = await mapGl.generateMapGl(selectedTrajectory1);
-        await mapGl.traject(trajectories, selectedTrajectory1, null);
+        await mapGl.traject(trajectories, selectedTrajectory1, null, null);
     } 
 }).on('mouseover', function() {
             const selected_circle = d3.select(this);
@@ -316,7 +316,7 @@ class AxesPlot {
         .on('mousemove', function(event, d) {
             const [x, y] = d3.pointer(event);
             tooltipContainer
-                .attr('transform', `translate(${x - 20},${y - 100})`);
+                .attr('transform', `translate(${x - 60},${y - 75})`).raise()
                 
             tooltipContainer.select('.tooltip-text')
                 .selectAll('tspan')
@@ -345,7 +345,7 @@ class AxesPlot {
             this.svg.append('text')
               .attr('id', 'tooltip3')
               .attr('x', x)
-              .attr('y', y - 15)
+              .attr('y', y - 55)
               .attr('fill', 'black')
               .text(d.Identifier);
           })

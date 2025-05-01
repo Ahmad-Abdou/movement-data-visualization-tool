@@ -59,9 +59,10 @@ class MapGl {
   }
   
 
-  async traject(trajectories, id, selectedFeature) {
+  async traject(trajectories, id, selectedFeature, entierTrajectory) {
     try {
       let pathData = null
+      let pathEntierTrajectory = null
       if (!this.map) {
         this.map = new maplibregl.Map({
           container: this.containerId.replace('#', ''),
@@ -102,56 +103,91 @@ class MapGl {
   
       const updateLayer = async () => {
         pathData = await this.pathConverter(trajectories, id)
-        if (pathData && pathData.length > 0) {
-          const bounds = {
-            minLon: Infinity,
-            maxLon: -Infinity,
-            minLat: Infinity,
-            maxLat: -Infinity
+        pathEntierTrajectory = await this.entierTrajectoryConverter(entierTrajectory, id)
+        if(selectedFeature && !selectedFeature.includes('distance')) {
+          if (pathData && pathData.length > 0) {
+            const bounds = {
+              minLon: Infinity,
+              maxLon: -Infinity,
+              minLat: Infinity,
+              maxLat: -Infinity
+            }
+    
+            pathData.forEach(poly =>
+              poly.polygon.forEach(([lon, lat]) => {
+                bounds.minLon = Math.min(bounds.minLon, lon);
+                bounds.maxLon = Math.max(bounds.maxLon, lon);
+                bounds.minLat = Math.min(bounds.minLat, lat);
+                bounds.maxLat = Math.max(bounds.maxLat, lat);
+              })
+            )
+  
+            const sw = [bounds.minLon, bounds.minLat];
+            const ne = [bounds.maxLon, bounds.maxLat];
+          
+            this.map.fitBounds([ sw, ne ], {
+              padding: 50,      
+              duration: 1500,
+              maxZoom: 10
+            });
+  
           }
+        } else  {
+          if (selectedFeature && pathEntierTrajectory && pathEntierTrajectory.length > 0) {
+            const bounds = {
+              minLon: Infinity,
+              maxLon: -Infinity,
+              minLat: Infinity,
+              maxLat: -Infinity
+            }
+    
+            pathEntierTrajectory.forEach(poly =>
+              poly.polygon.forEach(([lon, lat]) => {
+                bounds.minLon = Math.min(bounds.minLon, lon);
+                bounds.maxLon = Math.max(bounds.maxLon, lon);
+                bounds.minLat = Math.min(bounds.minLat, lat);
+                bounds.maxLat = Math.max(bounds.maxLat, lat);
+              })
+            )
   
-          pathData.forEach(poly =>
-            poly.polygon.forEach(([lon, lat]) => {
-              bounds.minLon = Math.min(bounds.minLon, lon);
-              bounds.maxLon = Math.max(bounds.maxLon, lon);
-              bounds.minLat = Math.min(bounds.minLat, lat);
-              bounds.maxLat = Math.max(bounds.maxLat, lat);
-            })
-          )
-
-          const sw = [bounds.minLon, bounds.minLat];
-          const ne = [bounds.maxLon, bounds.maxLat];
-        
-          this.map.fitBounds([ sw, ne ], {
-            padding: 50,      
-            duration: 1000,
-            maxZoom: 10
-          });
-
+            const sw = [bounds.minLon, bounds.minLat];
+            const ne = [bounds.maxLon, bounds.maxLat];
+          
+            this.map.fitBounds([ sw, ne ], {
+              padding: 50,      
+              duration: 1500,
+              maxZoom: 10
+            });
+  
+          }
         }
-  
+
         let layers = []
         Object.keys(this.polygonLayerType[0]).forEach((type) => {
           const category = this.polygonLayerType[0][type]
-          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature, id)
+          const mainLayer = this.polygonGenerator(type, pathData, category, selectedFeature, id, pathEntierTrajectory)
           layers.push(mainLayer)
           
         })
+        const fullPathLayer = this.fullPathLayer(selectedFeature, pathEntierTrajectory)
+        if (fullPathLayer) {
+          layers.push(fullPathLayer)
+        }
 
-        const directLineLayer = this.generateDirectLineLayer(pathData, selectedFeature)
+        const directLineLayer = this.generateDirectLineLayer(pathData, selectedFeature, pathEntierTrajectory)
         if (directLineLayer) {
           layers.push(directLineLayer)
         }
+
           this.deckOverlay.setProps({
             layers:  layers
 
           })
       }
-      console.log()
       await updateLayer()
       if(selectedFeature){
         const type = selectedFeature.split('_')[0]
-        this.create_2d_heatmap(id , trajectories, selectedFeature, type)
+        this.create_2d_heatmap(id , trajectories, selectedFeature, type, entierTrajectory)
 
       }
 
@@ -160,16 +196,22 @@ class MapGl {
     }
   }
 
-  generateDirectLineLayer(pathData, selectedFeature) {
+  generateDirectLineLayer(pathData, selectedFeature, pathEntierTrajectory) {
     if(selectedFeature) {
       const path = []
-      path.push([pathData[0].polygon[0][0], pathData[0].polygon[0][1]])
-      pathData.forEach(segment => {
-        path.push([segment.polygon[1][0], segment.polygon[1][1]])
-      })
+      if(selectedFeature && selectedFeature.includes('distance')){
+        path.push([pathEntierTrajectory[0].polygon[0][0], pathEntierTrajectory[0].polygon[0][1]])
+        pathEntierTrajectory.forEach(segment => {
+          path.push([segment.polygon[1][0], segment.polygon[1][1]])
+        })
+      } else {
+        path.push([pathData[0].polygon[0][0], pathData[0].polygon[0][1]])
+        pathData.forEach(segment => {
+          path.push([segment.polygon[1][0], segment.polygon[1][1]])
+        })
+      }
+
       let displayPath = path
-  
-  
       switch(selectedFeature) {
         case 'distance_geometry_1_1':
           displayPath = [ path[0],path[path.length - 1]]
@@ -225,10 +267,10 @@ class MapGl {
         id: 'PathLayer',
         data: data,
         getPath: d => d.path,
-        getColor: [0, 0, 139, 255],
+        getColor: selectedFeature && selectedFeature.includes('distance')?[212, 175, 55, 200] : [0, 0, 139, 255],
         getWidth: 100,
         pickable: false,
-        widthMinPixels: 4,
+        widthMinPixels: 2,
         parameters: {
           depthMask: false
         }
@@ -236,6 +278,38 @@ class MapGl {
     }
     
   }
+
+  fullPathLayer(selectedFeature, pathEntierTrajectory) {
+    if(selectedFeature) {
+      const path = []
+      if(selectedFeature && selectedFeature.includes('distance')){
+        path.push([pathEntierTrajectory[0].polygon[0][0], pathEntierTrajectory[0].polygon[0][1]])
+        pathEntierTrajectory.forEach(segment => {
+          path.push([segment.polygon[1][0], segment.polygon[1][1]])
+        })
+      }
+
+      let displayPath = path
+
+      const data = [{ path: displayPath }];
+  
+      return new deck.PathLayer({
+        id: 'full_PathLayer',
+        data: data,
+        getPath: d => d.path,
+        getColor: [0, 0, 139, 255],
+        getWidth: 100,
+        pickable: false,
+        widthMinPixels: 2,
+        parameters: {
+          depthMask: false
+        }
+      })
+      }
+
+    }
+    
+  
 
   colorizing (type, initialPathData) {
     if(initialPathData) {
@@ -276,15 +350,15 @@ class MapGl {
 
   }
 
-  polygonGenerator(type, initialPathData, category, selectedFeature, selectedTrajectory) {
+  polygonGenerator(type, initialPathData, category, selectedFeature, selectedTrajectory, entierTrajectory) {
     d3.select('#trajectory-parent-group').selectAll("*").remove()
     this.heatmapPositions[selectedTrajectory] = 0;
-    const colorScale = this.colorizing(type, initialPathData)
+    const colorScale = this.colorizing(type, selectedFeature && selectedFeature.includes('distance')? entierTrajectory: initialPathData)
     const zOffset = this.layerOrder.indexOf(type) * this.zOffsetStep
   
     const layerConfig = {
       id: `PolygonLayer${type}`,
-      data: initialPathData,
+      data: selectedFeature && entierTrajectory && selectedFeature.includes('distance')? entierTrajectory: initialPathData,
       pickable: true,
       stroked: false,
       filled: true,
@@ -308,7 +382,6 @@ class MapGl {
         if(selectedFeature?.includes(type)) {
           const value = d[type]
           const color = colorScale ? colorScale(value) : [255, 255, 255]
-          // this.create_2d_heatmap(selectedTrajectory , value, selectedFeature)
           return [...color, 255]
         } else {
           return [211,211,211, 100]
@@ -358,6 +431,39 @@ class MapGl {
     }
 
   }
+
+  async entierTrajectoryConverter (trajectories, id) {
+
+    const data = await trajectories
+    if(data) {
+      const filtered = data.filter((row) => String(row.tid) === String(id))
+      if (filtered.length > 0) {
+        const groupedByTraj = {}
+        filtered.forEach(row => {
+          if (!groupedByTraj[row.tid]) {
+            groupedByTraj[row.tid] = []
+          }
+          const point = [parseFloat(row.lon), parseFloat(row.lat)]
+          if (!isNaN(point[0]) && !isNaN(point[1])) {
+            groupedByTraj[row.tid].push({
+              coordinates: point,
+              speed: parseFloat(row.speed),
+              acceleration: parseFloat(row.acceleration),
+              distance: parseFloat(row.distance),
+              angle: parseFloat(row.angle),
+              bearing: parseFloat(row.bearing),
+            })
+          }
+        })
+
+        const theWall = await this.generateWall(groupedByTraj)
+        return theWall
+      }
+      return []
+    }
+
+  }
+
   async generateWall(groupedByTraj) {
     const wall = Object.keys(groupedByTraj).map(tid => {
       const path = groupedByTraj[tid]
@@ -405,98 +511,95 @@ class MapGl {
   }
 
   create_2d_heatmap(selectedTrajectory , trajectories, selectedFeature, type) {
-    const filtered = trajectories.map((row) => row[type])
-
-    if(!selectedFeature.includes('distance')) {
-      allValues.push(...filtered)
-
-      if(allValues.length === 20) {
-        const colorScale = d3.scaleLinear().domain([d3.min(allValues), d3.max(allValues)]).range(["#ffffcc", "#e31a1c"])
-        let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
-    
-        trajectory_parent_group.selectAll('#selectedFeature').remove()
-        trajectory_parent_group.append('text')
-        .attr('id', 'selectedFeature')
-        .attr('x', '45%')
-        .attr('y', '20%')
-        .text(`${selectedFeature.toUpperCase()}`)
-        .attr('font-size', 23)  
-        
-        traj_group.selectAll('rect')
-          .data(allValues)
-          .join('rect')
-          .attr('id', (d,i) => `rect-${selectedTrajectory}-${i}`)
-          .attr('width', 71)
-          .attr('height', 90)
-          .attr('x', (d,i) =>  i < 10 ? (70 * i) + 600 : (70 * i) - 100 )
-          .attr('y', (d,i) => i < 10 ? 100 : 200)
-          .attr('fill', d => colorScale(d))
-          .attr('stroke', 'black')
-          .attr('stroke-width', '1px')
-          .on('mouseover', (event, d, i) => {
-            const [x, y] = d3.pointer(event)
-  
-          trajectory_parent_group.append('rect')
-          .attr('class', 'tooltip-bg')
-          .attr('width', 200)
-          .attr('height', 40)
-          .attr('x', x - 120)
-          .attr('y', y - 60)
-          .attr('opacity', 0.5)
-    
-            trajectory_parent_group.append('text')
-            .attr('class', 'tooltip-text')
-            .attr('x', x - 110)
-            .attr('y', y - 40)
-            .text(d)
-            .attr('fill', 'white')
-  
-            trajectory_parent_group
-            .select(`#rect-${selectedTrajectory}-${i}`)
-            .attr('stroke', kinematicColor)
-            .attr('stroke-width', '3px')
-            .raise()
-            
-        }).on('mousemove', (event, d, i) => {
-            const [x, y] = d3.pointer(event)
-            trajectory_parent_group.select(`#rect-${selectedTrajectory}-${i}`)
-            .attr('stroke',  kinematicColor)
-            .attr('stroke-width', '3px')
-    
-            trajectory_parent_group.select('.tooltip-bg')
-            .attr('x', x - 120)
-            .attr('y', y - 60);
-    
-            trajectory_parent_group.select('.tooltip-text')
-            .attr('x', x - 110)
-            .attr('y', y - 40);
-          }).on('mouseout', (e,d,i) => {
-            trajectory_parent_group
-            .select(`#rect-${selectedTrajectory}-${i}`)
-            .attr('stroke', 'white')
-            .attr('stroke-width', '2px');
-      
-          trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
-          })
-          traj_group.append('text')
-          .attr('x', (window.innerWidth / 3) - 125)
-          .attr('y', '35%')
-          .attr('fill', 'black')
-          .style('font-size', '14px')
-          .text(`Trajectory 1`)
-  
-          traj_group.append('text')
-          .attr('x', (window.innerWidth / 3) - 125)
-          .attr('y', '55%')
-          .attr('fill', 'black')
-          .style('font-size', '14px')
-          .text(`Trajectory 2`)
-        
-          allValues = []
-      } 
-    } else {
-
+    if (type === 'angles'){
+      type = 'angle'
     }
+    const filtered = trajectories.map((row) => row[type])
+    allValues.push(...filtered)
+
+    if(allValues.length >= 20) {
+      const colorScale = d3.scaleLinear().domain([d3.min(allValues), d3.max(allValues)]).range(["#ffffcc", "#e31a1c"])
+      let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
+  
+      trajectory_parent_group.selectAll('#selectedFeature').remove()
+      trajectory_parent_group.append('text')
+      .attr('id', 'selectedFeature')
+      .attr('x', '45%')
+      .attr('y', '20%')
+      .text(`${selectedFeature.toUpperCase()}`)
+      .attr('font-size', 23)  
+      
+      traj_group.selectAll('rect')
+        .data(allValues)
+        .join('rect')
+        .attr('id', (d,i) => `rect-${selectedTrajectory}-${i}`)
+        .attr('width', 71)
+        .attr('height', 90)
+        .attr('x', (d,i) =>  i < 10 ? (70 * i) + 600 : (70 * i) - 100 )
+        .attr('y', (d,i) => i < 10 ? 100 : 200)
+        .attr('fill', d => colorScale(d))
+        .attr('stroke', 'black')
+        .attr('stroke-width', '1px')
+        .on('mouseover', (event, d, i) => {
+          const [x, y] = d3.pointer(event)
+
+        trajectory_parent_group.append('rect')
+        .attr('class', 'tooltip-bg')
+        .attr('width', 200)
+        .attr('height', 40)
+        .attr('x', x - 120)
+        .attr('y', y - 60)
+        .attr('opacity', 0.5)
+  
+          trajectory_parent_group.append('text')
+          .attr('class', 'tooltip-text')
+          .attr('x', x - 110)
+          .attr('y', y - 40)
+          .text(d)
+          .attr('fill', 'white')
+
+          trajectory_parent_group
+          .select(`#rect-${selectedTrajectory}-${i}`)
+          .attr('stroke', kinematicColor)
+          .attr('stroke-width', '3px')
+          .raise()
+          
+      }).on('mousemove', (event, d, i) => {
+          const [x, y] = d3.pointer(event)
+          trajectory_parent_group.select(`#rect-${selectedTrajectory}-${i}`)
+          .attr('stroke',  kinematicColor)
+          .attr('stroke-width', '3px')
+  
+          trajectory_parent_group.select('.tooltip-bg')
+          .attr('x', x - 120)
+          .attr('y', y - 60);
+  
+          trajectory_parent_group.select('.tooltip-text')
+          .attr('x', x - 110)
+          .attr('y', y - 40);
+        }).on('mouseout', (e,d,i) => {
+          trajectory_parent_group
+          .select(`#rect-${selectedTrajectory}-${i}`)
+          .attr('stroke', 'white')
+          .attr('stroke-width', '2px');
     
+        trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
+        })
+        traj_group.append('text')
+        .attr('x', (window.innerWidth / 3) - 125)
+        .attr('y', '35%')
+        .attr('fill', 'black')
+        .style('font-size', '14px')
+        .text(`Trajectory 1`)
+
+        traj_group.append('text')
+        .attr('x', (window.innerWidth / 3) - 125)
+        .attr('y', '55%')
+        .attr('fill', 'black')
+        .style('font-size', '14px')
+        .text(`Trajectory 2`)
+      
+        allValues = []
+      } 
   }
 }

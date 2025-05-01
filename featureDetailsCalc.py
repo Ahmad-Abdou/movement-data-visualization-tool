@@ -4,7 +4,6 @@ import pandas as pd
 from geopy.distance import geodesic
 
 def stats_calc(stats, data):
-
     feature_name = stats.split('_')[0]
     if feature_name == "angles":
         feature_name = "angle"
@@ -13,6 +12,7 @@ def stats_calc(stats, data):
 
     df = pd.DataFrame(data)
     grouped_by_feature = df.groupby('tid', sort=False)[feature_name].apply(list).reset_index()
+
     results = []
     for _, row in grouped_by_feature.iterrows():
         tid = row['tid']
@@ -86,18 +86,11 @@ def stats_calc(stats, data):
                         p1 = (trajectory_data[i]['lat'], trajectory_data[i]['lon'])
                         p2 = (trajectory_data[i+1]['lat'], trajectory_data[i+1]['lon'])
                         segment_distances.append(geodesic(p1, p2).meters)
-                
-                # Calculate geometry feature (ratio of direct distance to sum of segment distances)
-                total_segment_distance = sum(segment_distances) if segment_distances else 1
-                res = direct_distance / total_segment_distance if total_segment_distance > 0 else 0
-                
-            case _:
-                raise ValueError("Unknown stats parameter")           
+                res = direct_distance
         trajectory_data = [item for item in data if item['tid'] == tid]
-        if 'distance' not in stats:
-            nearest_index = find_nearest(numeric_data, res)
-            closest_rows = find_40_closest(nearest_index, trajectory_data)
-            results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': trajectory_data[nearest_index]})
+        nearest_index = find_nearest(numeric_data, res)
+        closest_rows = find_40_closest(nearest_index, trajectory_data)
+        results.append({'tid': tid, 'rows': closest_rows, 'operation': res, 'selected_row': trajectory_data[nearest_index], 'entier_trajectory': data})
     return results
 
 def find_nearest(array, value):
@@ -108,4 +101,7 @@ def find_nearest(array, value):
 def find_40_closest(index, data):
     min_index = max(index - 5, 0)
     max_index = min(index + 5, len(data))
+    if len(data[min_index:max_index]) is 5:
+        min_index = max(index - 5, 0)
+        max_index = min(index + 10, len(data))
     return data[min_index:max_index]
