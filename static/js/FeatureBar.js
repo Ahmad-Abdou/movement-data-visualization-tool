@@ -36,9 +36,9 @@ class FeatureBar {
         converterX = 'Kinematic'
       }
       if(globalYAxis.toLowerCase() === 'curvature'){
-        converterY = 'angles'
-      } else if (globalYAxis.toLowerCase() === 'indentation'){
         converterY = 'distance'
+      } else if (globalYAxis.toLowerCase() === 'indentation'){
+        converterY = 'angles'
       } 
       mapper.filter((obj) => {
         if (obj.name.toLowerCase().includes(converterY.toLowerCase())) {
@@ -51,9 +51,9 @@ class FeatureBar {
       })
   
       if(globalXAxis.toLowerCase() === 'curvature'){
-        converterX = 'angles'
-      } else if (globalXAxis.toLowerCase() === 'indentation'){
         converterX = 'distance'
+      } else if (globalXAxis.toLowerCase() === 'indentation'){
+        converterX = 'angles '
       }
       mapper.filter((obj) => {
         if (obj.name.toLowerCase().includes(converterX.toLowerCase())) {
