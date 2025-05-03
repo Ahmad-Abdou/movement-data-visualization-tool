@@ -20,6 +20,7 @@ class MapGl {
     this.counter = 0
     this.views = document.getElementById('views')
     this.type = null
+    this.fullPath = null
   }
   
   async fetchData(id) {
@@ -104,62 +105,35 @@ class MapGl {
       const updateLayer = async () => {
         pathData = await this.pathConverter(trajectories, id)
         pathEntierTrajectory = await this.entierTrajectoryConverter(entierTrajectory, id)
-        if(selectedFeature && !selectedFeature.includes('distance')) {
-          if (pathData && pathData.length > 0) {
-            const bounds = {
-              minLon: Infinity,
-              maxLon: -Infinity,
-              minLat: Infinity,
-              maxLat: -Infinity
-            }
-    
-            pathData.forEach(poly =>
-              poly.polygon.forEach(([lon, lat]) => {
-                bounds.minLon = Math.min(bounds.minLon, lon);
-                bounds.maxLon = Math.max(bounds.maxLon, lon);
-                bounds.minLat = Math.min(bounds.minLat, lat);
-                bounds.maxLat = Math.max(bounds.maxLat, lat);
-              })
-            )
-  
-            const sw = [bounds.minLon, bounds.minLat];
-            const ne = [bounds.maxLon, bounds.maxLat];
-          
-            this.map.fitBounds([ sw, ne ], {
-              padding: 50,      
-              duration: 1500,
-              maxZoom: 10
-            });
-  
-          }
-        } else  {
-          if (selectedFeature && pathEntierTrajectory && pathEntierTrajectory.length > 0) {
-            const bounds = {
-              minLon: Infinity,
-              maxLon: -Infinity,
-              minLat: Infinity,
-              maxLat: -Infinity
-            }
-    
-            pathEntierTrajectory.forEach(poly =>
-              poly.polygon.forEach(([lon, lat]) => {
-                bounds.minLon = Math.min(bounds.minLon, lon);
-                bounds.maxLon = Math.max(bounds.maxLon, lon);
-                bounds.minLat = Math.min(bounds.minLat, lat);
-                bounds.maxLat = Math.max(bounds.maxLat, lat);
-              })
-            )
-  
-            const sw = [bounds.minLon, bounds.minLat];
-            const ne = [bounds.maxLon, bounds.maxLat];
-          
-            this.map.fitBounds([ sw, ne ], {
-              padding: 50,      
-              duration: 1500,
-              maxZoom: 10
-            });
-  
-          }
+
+        let fitPath = null;
+        if (selectedFeature && selectedFeature.includes('distance')) {
+          fitPath = pathEntierTrajectory;
+        } else {
+          fitPath = pathData;
+        }
+        if (fitPath && fitPath.length > 0) {
+          const bounds = {
+            minLon: Infinity,
+            maxLon: -Infinity,
+            minLat: Infinity,
+            maxLat: -Infinity
+          };
+          fitPath.forEach(poly =>
+            poly.polygon.forEach(([lon, lat]) => {
+              bounds.minLon = Math.min(bounds.minLon, lon);
+              bounds.maxLon = Math.max(bounds.maxLon, lon);
+              bounds.minLat = Math.min(bounds.minLat, lat);
+              bounds.maxLat = Math.max(bounds.maxLat, lat);
+            })
+          );
+          const sw = [bounds.minLon, bounds.minLat];
+          const ne = [bounds.maxLon, bounds.maxLat];
+          this.map.fitBounds([sw, ne], {
+            padding: 50,
+            duration: 1500,
+            maxZoom: 10
+          });
         }
 
         let layers = []
@@ -169,14 +143,15 @@ class MapGl {
           layers.push(mainLayer)
           
         })
-        const fullPathLayer = this.fullPathLayer(selectedFeature, pathEntierTrajectory)
-        if (fullPathLayer) {
-          layers.push(fullPathLayer)
-        }
 
         const directLineLayer = this.generateDirectLineLayer(pathData, selectedFeature, pathEntierTrajectory)
         if (directLineLayer) {
           layers.push(directLineLayer)
+        }
+
+        const iconPathLayer = this.iconLayer(selectedFeature)
+        if (iconPathLayer) {
+          layers.push(iconPathLayer)
         }
 
           this.deckOverlay.setProps({
@@ -187,7 +162,7 @@ class MapGl {
       await updateLayer()
       if(selectedFeature){
         const type = selectedFeature.split('_')[0]
-        this.create_2d_heatmap(id , trajectories, selectedFeature, type, entierTrajectory)
+        this.create_2d_heatmap(id , trajectories, selectedFeature, type)
 
       }
 
@@ -198,76 +173,94 @@ class MapGl {
 
   generateDirectLineLayer(pathData, selectedFeature, pathEntierTrajectory) {
     if(selectedFeature) {
-      const path = []
-      if(selectedFeature && selectedFeature.includes('distance')){
-        path.push([pathEntierTrajectory[0].polygon[0][0], pathEntierTrajectory[0].polygon[0][1]])
-        pathEntierTrajectory.forEach(segment => {
-          path.push([segment.polygon[1][0], segment.polygon[1][1]])
-        })
-      } else {
-        path.push([pathData[0].polygon[0][0], pathData[0].polygon[0][1]])
-        pathData.forEach(segment => {
-          path.push([segment.polygon[1][0], segment.polygon[1][1]])
-        })
+      const type = selectedFeature.split('_')[0]
+      const colorScale = this.colorizing(type, selectedFeature && selectedFeature.includes('distance')? pathEntierTrajectory: pathData)
+
+      // Build path segments with feature value for coloring
+      let segments = []
+      let source = (selectedFeature && selectedFeature.includes('distance')) ? pathEntierTrajectory : pathData
+      if (source && source.length > 0) {
+        for (let i = 0; i < source.length; i++) {
+          const seg = source[i]
+          // Use the first two points of the polygon for the path segment
+          segments.push({
+            path: [
+              [seg.polygon[0][0], seg.polygon[0][1]],
+              [seg.polygon[1][0], seg.polygon[1][1]]
+            ],
+            value: seg[type] // Store the value for coloring
+          })
+        }
       }
 
-      let displayPath = path
+      // Handle geometry slicing as before
+      let displaySegments = segments
       switch(selectedFeature) {
         case 'distance_geometry_1_1':
-          displayPath = [ path[0],path[path.length - 1]]
+          displaySegments = segments.length > 0 ? [segments[0], segments[segments.length - 1]] : []
           break
         case 'distance_geometry_2_1':
-          displayPath = path.slice(0, Math.floor(path.length / 2))
+          displaySegments = segments.slice(0, Math.floor(segments.length / 2))
           break
         case 'distance_geometry_2_2':
-          displayPath = path.slice(Math.floor(path.length / 2), path.length)
+          displaySegments = segments.slice(Math.floor(segments.length / 2), segments.length)
           break
         case 'distance_geometry_3_1':
-          displayPath = path.slice(0, Math.floor(path.length / 3))
+          displaySegments = segments.slice(0, Math.floor(segments.length / 3))
           break
         case 'distance_geometry_3_2':
-          displayPath = path.slice(Math.floor(path.length / 3), Math.floor(2 * path.length / 3))
+          displaySegments = segments.slice(Math.floor(segments.length / 3), Math.floor(2 * segments.length / 3))
           break
         case 'distance_geometry_3_3':
-          displayPath = path.slice(Math.floor(2 * path.length / 3), path.length)
+          displaySegments = segments.slice(Math.floor(2 * segments.length / 3), segments.length)
           break
         case 'distance_geometry_4_1':
-          displayPath = path.slice(0, Math.floor(path.length / 4))
+          displaySegments = segments.slice(0, Math.floor(segments.length / 4))
           break
         case 'distance_geometry_4_2':
-          displayPath = path.slice(Math.floor(path.length / 4), Math.floor(2 * path.length / 4))
+          displaySegments = segments.slice(Math.floor(segments.length / 4), Math.floor(2 * segments.length / 4))
           break
         case 'distance_geometry_4_3':
-          displayPath = path.slice(Math.floor(2 * path.length / 4), Math.floor(3 * path.length / 4));
+          displaySegments = segments.slice(Math.floor(2 * segments.length / 4), Math.floor(3 * segments.length / 4));
           break;
         case 'distance_geometry_4_4':
-          displayPath = path.slice(Math.floor(3 * path.length / 4), path.length);
+          displaySegments = segments.slice(Math.floor(3 * segments.length / 4), segments.length);
           break;
         case 'distance_geometry_5_1':
-          displayPath = path.slice(0, Math.floor(path.length / 5));
+          displaySegments = segments.slice(0, Math.floor(segments.length / 5));
           break;
         case 'distance_geometry_5_2':
-          displayPath = path.slice(Math.floor(path.length / 5), Math.floor(2 * path.length / 5));
+          displaySegments = segments.slice(Math.floor(segments.length / 5), Math.floor(2 * segments.length / 5));
           break;
         case 'distance_geometry_5_3':
-          displayPath = path.slice(Math.floor(2 * path.length / 5), Math.floor(3 * path.length / 5));
+          displaySegments = segments.slice(Math.floor(2 * segments.length / 5), Math.floor(3 * segments.length / 5));
           break;
         case 'distance_geometry_5_4':
-          displayPath = path.slice(Math.floor(3 * path.length / 5), Math.floor(4 * path.length / 5));
+          displaySegments = segments.slice(Math.floor(3 * segments.length / 5), Math.floor(4 * segments.length / 5));
           break;
         case 'distance_geometry_5_5':
-          displayPath = path.slice(Math.floor(4 * path.length / 5), path.length);
+          displaySegments = segments.slice(Math.floor(4 * segments.length / 5), segments.length);
           break;
         default:
-          displayPath = path
+          displaySegments = segments
       }
-      const data = [{ path: displayPath }];
-  
+      this.fullPath = displaySegments.map(seg => ({ path: seg.path }))
+
       return new deck.PathLayer({
         id: 'PathLayer',
-        data: data,
+        data: displaySegments,
         getPath: d => d.path,
-        getColor: selectedFeature && selectedFeature.includes('distance')?[212, 175, 55, 200] : [0, 0, 139, 255],
+        getColor: d => {
+          if (selectedFeature?.includes(type)) {
+            const value = d.value
+            let color = colorScale && typeof value !== 'undefined' && !isNaN(value) ? colorScale(value) : undefined
+            if (!Array.isArray(color) || color.length !== 3) {
+              color = [255, 255, 255]
+            }
+            return [...color, 255]
+          }
+          return [255, 255, 255, 255]
+        },
         getWidth: 100,
         pickable: false,
         widthMinPixels: 2,
@@ -276,40 +269,47 @@ class MapGl {
         }
       })
     }
-    
   }
 
-  fullPathLayer(selectedFeature, pathEntierTrajectory) {
-    if(selectedFeature) {
-      const path = []
-      if(selectedFeature && selectedFeature.includes('distance')){
-        path.push([pathEntierTrajectory[0].polygon[0][0], pathEntierTrajectory[0].polygon[0][1]])
-        pathEntierTrajectory.forEach(segment => {
-          path.push([segment.polygon[1][0], segment.polygon[1][1]])
-        })
-      }
-
-      let displayPath = path
-
-      const data = [{ path: displayPath }];
-  
-      return new deck.PathLayer({
-        id: 'full_PathLayer',
-        data: data,
-        getPath: d => d.path,
-        getColor: [0, 0, 139, 255],
-        getWidth: 100,
-        pickable: false,
-        widthMinPixels: 2,
-        parameters: {
-          depthMask: false
+  iconLayer(selectedFeature) {
+    if (selectedFeature && this.fullPath && this.fullPath.length > 0) {
+      const iconData = [];
+      this.fullPath.forEach(pathObj => {
+        const coords = pathObj.path;
+        for (let i = 0; i < coords.length - 1; i++) {
+          const start = coords[i];
+          const end = coords[i + 1];
+          const mid = [
+            (start[0] + end[0]) / 2,
+            (start[1] + end[1]) / 2
+          ];
+          const angle = Math.atan2(end[0] - start[0], end[1] - start[1]) * 180 / Math.PI;
+          iconData.push({
+            position: mid,
+            angle: angle
+          });
         }
-      })
-      }
-
+      });
+      return new deck.IconLayer({
+        id: 'ArrowIconLayer',
+        data: iconData,
+        getIcon: d => ({
+          url: '/static/img/arrow.png',
+          width: 64,
+          height: 64,
+          anchorY: 32,
+          anchorX: 32
+        }),
+        getPosition: d => d.position,
+        getAngle: d => d.angle,
+        sizeScale: 2,
+        getSize: 10,
+        getColor: [0, 0, 139, 255],
+        pickable: false,
+        billboard: false
+      });
     }
-    
-  
+  }
 
   colorizing (type, initialPathData) {
     if(initialPathData) {
@@ -398,7 +398,6 @@ class MapGl {
     const layer = new deck.PolygonLayer(layerConfig)
     return layer
   }
-
 
   async pathConverter (trajectories, id) {
 
@@ -510,7 +509,7 @@ class MapGl {
     }
   }
 
-  create_2d_heatmap(selectedTrajectory , trajectories, selectedFeature, type) {
+  create_2d_heatmap(id , trajectories, selectedFeature, type) {
     if (type === 'angles'){
       type = 'angle'
     }
@@ -519,7 +518,7 @@ class MapGl {
 
     if(allValues.length >= 20) {
       const colorScale = d3.scaleLinear().domain([d3.min(allValues), d3.max(allValues)]).range(["#ffffcc", "#e31a1c"])
-      let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${selectedTrajectory}`);
+      let traj_group = trajectory_parent_group.append('g').attr('id', `rect-group-${id}`);
   
       trajectory_parent_group.selectAll('#selectedFeature').remove()
       trajectory_parent_group.append('text')
@@ -532,7 +531,7 @@ class MapGl {
       traj_group.selectAll('rect')
         .data(allValues)
         .join('rect')
-        .attr('id', (d,i) => `rect-${selectedTrajectory}-${i}`)
+        .attr('id', (d,i) => `rect-${id}-${i}`)
         .attr('width', 71)
         .attr('height', 90)
         .attr('x', (d,i) =>  i < 10 ? (70 * i) + 600 : (70 * i) - 100 )
@@ -559,14 +558,14 @@ class MapGl {
           .attr('fill', 'white')
 
           trajectory_parent_group
-          .select(`#rect-${selectedTrajectory}-${i}`)
+          .select(`#rect-${id}-${i}`)
           .attr('stroke', kinematicColor)
           .attr('stroke-width', '3px')
           .raise()
           
       }).on('mousemove', (event, d, i) => {
           const [x, y] = d3.pointer(event)
-          trajectory_parent_group.select(`#rect-${selectedTrajectory}-${i}`)
+          trajectory_parent_group.select(`#rect-${id}-${i}`)
           .attr('stroke',  kinematicColor)
           .attr('stroke-width', '3px')
   
@@ -579,7 +578,7 @@ class MapGl {
           .attr('y', y - 40);
         }).on('mouseout', (e,d,i) => {
           trajectory_parent_group
-          .select(`#rect-${selectedTrajectory}-${i}`)
+          .select(`#rect-${id}-${i}`)
           .attr('stroke', 'white')
           .attr('stroke-width', '2px');
     

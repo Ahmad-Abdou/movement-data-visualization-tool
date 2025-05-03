@@ -231,8 +231,7 @@ class FeatureBar {
           .attr('height', 10)
           .attr('x', 80)
           .attr('y', yPosition);
-        
-        featureDetail.drawAxisLabels(id);
+        // featureDetail.drawAxisLabels(id);
         await featureDetail.drawQuantile(id);
         await featureDetail.showPercentile(id);
       };
