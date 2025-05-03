@@ -283,7 +283,9 @@ class MapGl {
             (start[0] + end[0]) / 2,
             (start[1] + end[1]) / 2
           ];
-          const angle = Math.atan2(end[0] - start[0], end[1] - start[1]) * 180 / Math.PI;
+          const dx = end[0] - start[0];
+          const dy = end[1] - start[1];
+          const angle = (Math.atan2(dy, dx) * 180 / Math.PI) - 90;
           iconData.push({
             position: mid,
             angle: angle
@@ -539,50 +541,50 @@ class MapGl {
         .attr('fill', d => colorScale(d))
         .attr('stroke', 'black')
         .attr('stroke-width', '1px')
-        .on('mouseover', (event, d, i) => {
-          const [x, y] = d3.pointer(event)
+        .on('mouseover', function(event, d) {
+          const [x, y] = d3.pointer(event);
 
-        trajectory_parent_group.append('rect')
-        .attr('class', 'tooltip-bg')
-        .attr('width', 200)
-        .attr('height', 40)
-        .attr('x', x - 120)
-        .attr('y', y - 60)
-        .attr('opacity', 0.5)
-  
+          d3.select(this)
+            .attr('stroke', kinematicColor)
+            .attr('stroke-width', '3px')
+            .raise();
+
+          trajectory_parent_group.append('rect')
+            .attr('class', 'tooltip-bg')
+            .attr('width', 200)
+            .attr('height', 40)
+            .attr('x', x - 120)
+            .attr('y', y - 60)
+            .attr('opacity', 0.5);
+
           trajectory_parent_group.append('text')
-          .attr('class', 'tooltip-text')
-          .attr('x', x - 110)
-          .attr('y', y - 40)
-          .text(d)
-          .attr('fill', 'white')
+            .attr('class', 'tooltip-text')
+            .attr('x', x - 110)
+            .attr('y', y - 40)
+            .text(d)
+            .attr('fill', 'white');
+        })
+        .on('mousemove', function(event, d) {
+          const [x, y] = d3.pointer(event);
 
-          trajectory_parent_group
-          .select(`#rect-${id}-${i}`)
-          .attr('stroke', kinematicColor)
-          .attr('stroke-width', '3px')
-          .raise()
-          
-      }).on('mousemove', (event, d, i) => {
-          const [x, y] = d3.pointer(event)
-          trajectory_parent_group.select(`#rect-${id}-${i}`)
-          .attr('stroke',  kinematicColor)
-          .attr('stroke-width', '3px')
-  
+          d3.select(this)
+            .attr('stroke', kinematicColor)
+            .attr('stroke-width', '3px');
+
           trajectory_parent_group.select('.tooltip-bg')
-          .attr('x', x - 120)
-          .attr('y', y - 60);
-  
+            .attr('x', x - 120)
+            .attr('y', y - 60);
+
           trajectory_parent_group.select('.tooltip-text')
-          .attr('x', x - 110)
-          .attr('y', y - 40);
-        }).on('mouseout', (e,d,i) => {
-          trajectory_parent_group
-          .select(`#rect-${id}-${i}`)
-          .attr('stroke', 'white')
-          .attr('stroke-width', '2px');
-    
-        trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
+            .attr('x', x - 110)
+            .attr('y', y - 40);
+        })
+        .on('mouseout', function(event, d) {
+          d3.select(this)
+            .attr('stroke', 'black')
+            .attr('stroke-width', '1px');
+
+          trajectory_parent_group.selectAll('.tooltip-bg, .tooltip-text').remove();
         })
         traj_group.append('text')
         .attr('x', (window.innerWidth / 3) - 125)
