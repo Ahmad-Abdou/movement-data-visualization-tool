@@ -305,6 +305,8 @@ class AxesPlot {
         }
         const trajectories = await mapGl.generateMapGl(selectedTrajectory1);
         await mapGl.traject(trajectories, selectedTrajectory1, null, null);
+        // await mapGl.create_2d_heatmap(id , trajectories, '', type);
+
     } 
 }).on('mouseover', function() {
             const selected_circle = d3.select(this);
