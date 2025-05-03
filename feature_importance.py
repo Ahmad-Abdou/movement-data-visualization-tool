@@ -35,14 +35,14 @@ def getDataTwoZonesComparison(zoneA, zoneB, combination_path, features_path, x_a
         df_features = pd.read_csv(features_path)
         
         if y_axis.lower() == 'curvature':
-            y_axis = 'angles'
-        elif y_axis.lower() == 'indentation':
             y_axis = 'distance'
+        elif y_axis.lower() == 'indentation':
+            y_axis = 'angles'
         
         if x_axis.lower() == 'curvature':
-            x_axis = 'angles'
-        elif x_axis.lower() == 'indentation':
             x_axis = 'distance'
+        elif x_axis.lower() == 'indentation':
+            x_axis = 'angles'
             
         if x_axis.lower() == 'kinematic' and y_axis.lower() == 'geometric' or y_axis.lower() == 'kinematic' and x_axis.lower() == 'geometric':
             feature_cols = df_features.columns.tolist()

@@ -180,7 +180,6 @@ async function sendDataToPython(path_combination, zoneA, zoneB ,df_path_with_id)
             })
         });
         const result = await response.json();
-
         return result;
     } catch (error) {
         console.error('Error sending data to Python:', error);
