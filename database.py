@@ -29,7 +29,7 @@ class Database:
     def get_hurricane_data(self):
         try:
             self.cursor.execute("""
-                SELECT * FROM trajectories where category_id = 2 
+                SELECT * FROM trajectories where category_id = 2  and time < '2004-01-01 00:00:00'
             """)
             columns = [desc[0] for desc in self.cursor.description]
             results = []

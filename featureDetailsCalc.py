@@ -99,9 +99,14 @@ def find_nearest(array, value):
     return idx
 
 def find_40_closest(index, data):
-    min_index = max(index - 5, 0)
-    max_index = min(index + 5, len(data))
-    if len(data[min_index:max_index]) is 5:
-        min_index = max(index - 5, 0)
-        max_index = min(index + 10, len(data))
+    total = len(data)
+    window = 10
+    if total <= window:
+        return data
+
+    min_index = max(index - window // 2, 0)
+    max_index = min(min_index + window, total)
+
+    if max_index - min_index < window:
+        min_index = max(max_index - window, 0)
     return data[min_index:max_index]
