@@ -176,24 +176,27 @@ class MapGl {
       const type = selectedFeature.split('_')[0]
       const colorScale = this.colorizing(type, selectedFeature && selectedFeature.includes('distance')? pathEntierTrajectory: pathData)
 
-      // Build path segments with feature value for coloring
       let segments = []
       let source = (selectedFeature && selectedFeature.includes('distance')) ? pathEntierTrajectory : pathData
       if (source && source.length > 0) {
         for (let i = 0; i < source.length; i++) {
           const seg = source[i]
-          // Use the first two points of the polygon for the path segment
           segments.push({
             path: [
               [seg.polygon[0][0], seg.polygon[0][1]],
               [seg.polygon[1][0], seg.polygon[1][1]]
             ],
-            value: seg[type] // Store the value for coloring
+            value: seg[type],
+            tid: seg.tid,
+            speed: seg.speed,
+            acceleration: seg.acceleration,
+            distance: seg.distance,
+            angle: seg.angle,
+            bearing: seg.bearing
           })
         }
       }
 
-      // Handle geometry slicing as before
       let displaySegments = segments
       switch(selectedFeature) {
         case 'distance_geometry_1_1':
@@ -262,11 +265,19 @@ class MapGl {
           return [255, 255, 255, 255]
         },
         getWidth: 100,
-        pickable: false,
+        pickable: true,
         widthMinPixels: 2,
         parameters: {
           depthMask: false
-        }
+        },
+        getTooltip: ({object}) => object && 
+          `Trajectory: ${object.tid ?? 'N/A'}
+Speed: ${object.speed ?? 'N/A'}
+Acceleration: ${object.acceleration ?? 'N/A'}
+Angle: ${object.angle ?? 'N/A'}
+Distance: ${object.distance ?? 'N/A'}
+Bearing: ${object.bearing ?? 'N/A'}
+Value: ${object.value ?? 'N/A'}`
       })
     }
   }
@@ -545,8 +556,8 @@ class MapGl {
           const [x, y] = d3.pointer(event);
 
           d3.select(this)
-            .attr('stroke', kinematicColor)
-            .attr('stroke-width', '3px')
+            .attr('stroke','#0080FF')
+            .attr('stroke-width', '4px')
             .raise();
 
           trajectory_parent_group.append('rect')
@@ -568,8 +579,8 @@ class MapGl {
           const [x, y] = d3.pointer(event);
 
           d3.select(this)
-            .attr('stroke', kinematicColor)
-            .attr('stroke-width', '3px');
+            .attr('stroke', '#0080FF')
+            .attr('stroke-width', '4px');
 
           trajectory_parent_group.select('.tooltip-bg')
             .attr('x', x - 120)
