@@ -58,6 +58,7 @@ class AxesPlot {
         
         this.init(containerId);
         this.plotGroup = this.svg.append('g').attr('class', 'plot-group');
+        this.selectedIdsGroup = this.svg.append('g').attr('class', 'selected-ids-group');
         const compare_btn = document.querySelector('.compare-btn')
 
         compare_btn.addEventListener('click',() => {
@@ -127,12 +128,6 @@ class AxesPlot {
             .attr('d', this.axesLineGenerator(zoneShape.points))
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
             .attr('fill', kinematicColor)
-
-        // this.plotGroup.lower();
-        // this.firstZoneGroup.selectAll('.zone-1-group').raise();
-        // this.firstZoneGroup.select('.axis-group').raise();
-        // this.gx.raise();
-        // this.gy.raise();
     }
     colorZone2(zone_number, all_data) {
       this.zones.selectAll('.zone-2-group').remove();
@@ -152,12 +147,6 @@ class AxesPlot {
             .attr('d', this.axesLineGenerator(zoneShape.points))
             .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
             .attr('fill', geometricColor)
-
-        // this.plotGroup.lower();
-        // this.secondZoneGroup.selectAll('.zone-2-group').raise();
-        // this.secondZoneGroup.select('.axis-group').raise();
-        // this.gx.raise();
-        // this.gy.raise();
     }
 
     setAxisTitles(x_title, y_title) {
@@ -183,6 +172,36 @@ class AxesPlot {
             globalXAxis = x_title
             globalYAxis = y_title
     }
+
+    updateSelectedIdsDisplay() {
+        this.selectedIdsGroup.selectAll('*').remove()
+            this.selectedIdsGroup.append('text')
+                .attr('x', 180)
+                .attr('y', this.margin.top - 55)
+                .attr('font-size', 14)
+                .attr('fill', 'black')
+                .attr('font-weight', '600')
+                .text(`Trajectory 1 : ${selectedTrajectory1}`);
+                this.selectedIdsGroup.append('circle')
+                .attr('cx', 165)
+                .attr('cy', this.margin.top - 58)
+                .attr('r', 6)
+                .attr('fill', kinematicColor)
+
+            this.selectedIdsGroup.append('text')
+                .attr('x', 180)
+                .attr('y', this.margin.top - 36)
+                .attr('font-size', 14)
+                .attr('fill', 'black')
+                .attr('font-weight', '600')
+                .text(`${selectedTrajectory2?'Trajectory 2 :' : ''}  ${selectedTrajectory2 ? selectedTrajectory2 : ''}`);
+                this.selectedIdsGroup.append('circle')
+                .attr('cx', 165)
+                .attr('cy', this.margin.top - 39)
+                .attr('r', selectedTrajectory2? 6 : 0 )
+                .attr('fill', geometricColor)
+
+    } 
 
     showPlots(data) {
         this.plotGroup.selectAll("*").remove();
@@ -259,6 +278,7 @@ class AxesPlot {
     }
     self.trajectoriesList.push(id);
 
+    self.updateSelectedIdsDisplay();
     if(self.trajectoryToCompare && self.trajectoriesList.length === 1) {
         if(previouslySelectedBlue) {
             previouslySelectedBlue.attr('fill', 'grey').attr('r', 4);
@@ -274,7 +294,8 @@ class AxesPlot {
         if(self.trajectoriesList.length === 1) {
             selected_circle
                 .attr('fill', kinematicColor)
-                .attr('r', 8);
+                .attr('r', 8)
+                .raise();
             previouslySelectedBlue = selected_circle;
             const trajectories1 = await mapGl.generateMapGl(selectedTrajectory1);
             await mapGl.traject(trajectories1, selectedTrajectory1, null, null);
@@ -286,6 +307,7 @@ class AxesPlot {
             selected_circle
                 .attr('fill', geometricColor)
                 .attr('r', 8)
+                .raise();
             previouslySelectedGreen = selected_circle
             const trajectories2 = await mapGl2.generateMapGl(selectedTrajectory2);
             await mapGl2.traject(trajectories2, selectedTrajectory2, null, null);
@@ -300,7 +322,8 @@ class AxesPlot {
         } else {
             selected_circle
                 .attr('fill', kinematicColor)
-                .attr('r', 8);
+                .attr('r', 8)
+                .raise();
             previouslySelectedBlue = selected_circle;
         }
         const trajectories = await mapGl.generateMapGl(selectedTrajectory1);

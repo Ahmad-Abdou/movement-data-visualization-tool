@@ -256,12 +256,22 @@ async function applyZoneSelection() {
 
                 displayFeatureImportance(result.data);
                 axesPlot.svg.selectAll('circle')
-                .attr('fill', function(d) {
-                    const x = d.normalizedX;
-                    const y = d.normalizedY;
-                    const pointZone = getZoneForPoint(x, y);
-                    return pointZone === zoneB ? geometricColor : 'grey';
-                });
+                .attr('fill','grey')
+
+                if (selectedTrajectory1 !== null) {
+                    axesPlot.svg.selectAll('circle')
+                        .filter(d => d.entity_id === selectedTrajectory1)
+                        .attr('fill', kinematicColor)
+                        .attr('r', 8)
+                        .raise();
+                }
+                if (selectedTrajectory2 !== null) {
+                    axesPlot.svg.selectAll('circle')
+                        .filter(d => d.entity_id === selectedTrajectory2)
+                        .attr('fill', geometricColor)
+                        .attr('r', 8)
+                        .raise();
+                }
             }
         } catch (error) {
             console.error('Failed to process data:', error);
