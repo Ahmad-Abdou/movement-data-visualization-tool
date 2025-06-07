@@ -254,22 +254,33 @@ async function applyZoneSelection() {
                 const right_container = document.getElementById('right-container')
                 right_container.style.transform = 'translate(0px, 0)'
 
-                displayFeatureImportance(result.data);
+                displayFeatureImportance(result.data)
                 axesPlot.svg.selectAll('circle')
-                .attr('fill','grey')
+                    .attr('fill', function(d) {
+                        if (d.entity_id === selectedTrajectory1) {
+                            return kinematicColor
+                        } else if (d.entity_id === selectedTrajectory2) {
+                            return geometricColor
+                        } else {
+                            return 'grey'
+                        }
+                    })
+                    .attr('r', function(d) {
+                        if (d.entity_id === selectedTrajectory1 || d.entity_id === selectedTrajectory2) {
+                            return 8
+                        } else {
+                            return 4
+                        }
+                    })
 
                 if (selectedTrajectory1 !== null) {
                     axesPlot.svg.selectAll('circle')
                         .filter(d => d.entity_id === selectedTrajectory1)
-                        .attr('fill', kinematicColor)
-                        .attr('r', 8)
                         .raise();
                 }
                 if (selectedTrajectory2 !== null) {
                     axesPlot.svg.selectAll('circle')
                         .filter(d => d.entity_id === selectedTrajectory2)
-                        .attr('fill', geometricColor)
-                        .attr('r', 8)
                         .raise();
                 }
             }
