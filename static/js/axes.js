@@ -1,346 +1,391 @@
-let AxesSvg = d3.select('.axes')
-.append('svg')
-.attr('width', SVGWIDTH )
-.attr('height', SVGHEIGHT)
+class AxesPlot {
 
-let axes_width = SVGWIDTH - margin.left - margin.right 
-let axes_height = SVGHEIGHT - margin.top - margin.bottom
+    constructor(containerId, width, height, margin) {
 
-let xScale = d3.scaleLinear()
-.domain([0,1])
-.range([0, axes_width])
+        this.width = width;
+        this.height = height;
+        this.margin = margin;
+        this.colorsList = [];
+        this.allPlots = null
+        this.availableWidth = width;
+        this.availableHeight = height;
+        this.svgWidth = 0.7 * this.availableWidth -20;
+        this.svgHeight = 0.7 * this.availableHeight -20;
+        this.offsetX = (this.availableWidth - this.svgWidth) / 2  - margin.right;
+        this.offsetY = (this.availableHeight - this.svgHeight) / 2 - margin.top;
+        this.svg = d3.select(containerId).append('svg').attr('width', this.availableWidth).attr('height', this.availableHeight).attr('display', "flex").attr('justify-content', "center").append("g").attr("transform", `translate(${this.offsetX},${this.offsetY + 10})`);
+        this.xScale = d3.scaleLinear().domain([0, 1]).range([0, this.svgWidth]);
+        this.yScale = d3.scaleLinear().domain([0, 1]).range([this.svgHeight, 0]);
+        this.xAxis = d3.axisBottom(this.xScale);
+        this.gx = this.svg.append('g').attr('transform', `translate(${this.margin.left},${this.svgHeight + this.margin.top})`);
+        this.yAxis = d3.axisLeft(this.yScale);
+        this.gy = this.svg.append('g').attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
+        this.axesLineGenerator = d3.line().x(d=>this.xScale(d[0] )).y(d=>this.yScale(d[1]))
+        this.colorScale = d3.scaleOrdinal().domain([0, 1]).range(['#1f77b4', '#ff7f0e']);
+        this.colorsList = []
+        this.zones = this.svg.append('g').attr('class', 'zones')
+        this.trajectoryToCompare = false
+        this.trajectoriesList = []
+        this.axesLines = [
+          {points: [[0,0.5], [0.5, 1]]},
+          {points: [[0,0.5], [0.5,0.5], [0.5,0]]},
+          {points: [[0.5,0] , [1,0.5]]},
+          {points:[[0,0], [1,1]]}
+        ]
+        
+        this.axes_zone_0  = [
+          {points: [[0,0.5], [0.5,0.5], [0.5,0],[0,0], [0,0.5]]},
+        ]
+        
+        this.axes_zone_1  = [
+          {points: [[0,0.5], [0.5, 1], [0, 1], [0,0.5]]},
+        ]
+        
+        this.axes_zone_2  = [
+          {points: [[0.5,0] , [1,0.5], [1,0], [0.5,0]]},
+        ]
+        
+        this.axes_zone_3  = [
+          {points:[[0,0.5], [0.5, 1],[1,1],[1,0.5], [0.5,0],[0.5,0.5], [0,0.5]]}
+        ]
+        
+        this.axesLabels = [
+          {text:'0', position:[0.22, 0.22]},
+          {text:'1', position:[0.15, 0.85]},
+          {text:"2", position:[0.85, 0.15 ]},
+          {text:"3" , position:[0.7, 0.7]}
+        ]
+        
+        this.init(containerId);
+        this.plotGroup = this.svg.append('g').attr('class', 'plot-group');
+        this.selectedIdsGroup = this.svg.append('g').attr('class', 'selected-ids-group');
+        const compare_btn = document.querySelector('.compare-btn')
 
-let yScale = d3.scaleLinear().domain([0,1]).range([axes_height, 0])
+        compare_btn.addEventListener('click',() => {
+          this.trajectoryToCompare = !this.trajectoryToCompare
+          notifyMessageAlwaysdisplayed("Selecting the second trajectory", this.trajectoryToCompare)
+          compare_btn.style.backgroundColor = this.trajectoryToCompare ? geometricColor : kinematicColor
+          if(selectingTrajectoryTwo) {
+            selectingTrajectoryOne = true
+            selectingTrajectoryTwo = false
+          } else {
+            selectingTrajectoryOne = false
+            selectingTrajectoryTwo = true
+          }
+        })
+    }
 
+    init() {
+        this.drawAxes(this.gx,this.gy);
+        this.drawZoneLines(this.axesLines, this.axesLabels);
+    }
 
-let xAxis = d3.axisBottom(xScale)
-let gx = AxesSvg.append('g').attr('transform', `translate(${margin.left},${axes_height + margin.top})`)
-xAxis(gx)
+    drawAxes(gx, gy) {
 
-let yAxis = d3.axisLeft(yScale)
-const gy = AxesSvg.append('g').attr('transform', `translate(${margin.left}, ${margin.top})`)
-yAxis(gy)
+      this.xAxis(gx);
+      this.yAxis(gy);
+    }
 
-// let all_data = ""
+    drawZoneLines(axesLines, axesLabels) {
+        const axisGroup = this.svg.append('g').attr('class', 'axis-group');
+        
+        axesLines.forEach((shape, index)=>{
+            axisGroup.append('path')
+                .attr('d', this.axesLineGenerator(shape.points))
+                .attr('transform', `translate(${this.margin.left}, ${this.margin.bottom + this.margin.top})`)
+                .attr('fill', 'none')
+                .attr('stroke', index === axesLines.length -1 ? 'grey': 'black')
+                .attr('stroke-width', 2)
+                .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none');
+        });
+        
+        axesLabels.forEach((label)=>{
+            axisGroup.append('text')
+                .attr('x', this.xScale(label.position[0]))
+                .attr('y', this.yScale(label.position[1]))
+                .attr('transform', `translate(${this.margin.left} , ${this.margin.top})`)
+                .attr('font-size', 40)
+                .text(label.text);
+        });
+        
+        axisGroup.raise();
+    }
 
-const axesLines = [
-  {points: [[0,0.5], [0.5, 1]]},
-  {points: [[0,0.5], [0.5,0.5], [0.5,0]]},
-  {points: [[0.5,0] , [1,0.5]]},
-  {points:[[0,0], [1,1]]}
-]
+    colorZone1(zone_number, all_data) {
+        this.zones.selectAll('.zone-1-group').remove();
+        let zoneShape;
+        switch(zone_number) {
+            case 0: zoneShape = this.axes_zone_0[0]; break;
+            case 1: zoneShape = this.axes_zone_1[0]; break;
+            case 2: zoneShape = this.axes_zone_2[0]; break;
+            case 3: zoneShape = this.axes_zone_3[0]; break;
+            default: return;
+        }
+        this.firstZoneGroup = this.zones.append('g').attr('class', 'zone-1-group')
+        this.firstZoneGroup.append('path')
+            .data([all_data])
+            .attr('class', 'axes-zone')
+            .attr('d', this.axesLineGenerator(zoneShape.points))
+            .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
+            .attr('fill', kinematicColor)
+    }
+    colorZone2(zone_number, all_data) {
+      this.zones.selectAll('.zone-2-group').remove();
+        let zoneShape;
+        switch(zone_number) {
+            case 0: zoneShape = this.axes_zone_0[0]; break;
+            case 1: zoneShape = this.axes_zone_1[0]; break;
+            case 2: zoneShape = this.axes_zone_2[0]; break;
+            case 3: zoneShape = this.axes_zone_3[0]; break;
+            default: return;
+        }
+        this.secondZoneGroup = this.zones.append('g').attr('class', 'zone-2-group')
 
+        this.secondZoneGroup.append('path')
+            .data([all_data])
+            .attr('class', 'axes-zone')
+            .attr('d', this.axesLineGenerator(zoneShape.points))
+            .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
+            .attr('fill', geometricColor)
+    }
 
-const axes_zone_0  = [
-  {points: [[0,0.5], [0.5,0.5], [0.5,0],[0,0], [0,0.5]]},  //0
-]
+    setAxisTitles(x_title, y_title) {
+          this.svg.selectAll('text.axis-title').remove();
+          this.svg.append('text')
+            .attr('class', 'axis-title')
+            .text(x_title)
+            .attr('x', (this.svgWidth / 2) + 50)
+            .attr('y', this.svgHeight)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', 20)
+            .attr('fill', 'black');
+        
+          this.svg.append('text')
+            .attr('class', 'axis-title')
+            .text(y_title)
+            .attr('x', 40)
+            .attr('y', (this.svgHeight / 2) )
+            .attr('text-anchor', 'middle')
+            .attr('font-size', 20)
+            .attr('transform', `rotate(-90, 13, ${this.svgHeight / 2})`)
+            .attr('fill', 'black');
+            globalXAxis = x_title
+            globalYAxis = y_title
+    }
 
-const axes_zone_1  = [
-  {points: [[0,0.5], [0.5, 1], [0, 1], [0,0.5]]},  //1
-]
+    updateSelectedIdsDisplay() {
+        this.selectedIdsGroup.selectAll('*').remove()
+            this.selectedIdsGroup.append('text')
+                .attr('x', 180)
+                .attr('y', this.margin.top - 55)
+                .attr('font-size', 14)
+                .attr('fill', 'black')
+                .attr('font-weight', '600')
+                .text(`Trajectory 1 : ${selectedTrajectory1}`);
+                this.selectedIdsGroup.append('circle')
+                .attr('cx', 165)
+                .attr('cy', this.margin.top - 58)
+                .attr('r', 6)
+                .attr('fill', kinematicColor)
 
-const axes_zone_2  = [
-  {points: [[0.5,0] , [1,0.5], [1,0], [0.5,0]]}, //2
-]
+            this.selectedIdsGroup.append('text')
+                .attr('x', 180)
+                .attr('y', this.margin.top - 36)
+                .attr('font-size', 14)
+                .attr('fill', 'black')
+                .attr('font-weight', '600')
+                .text(`${selectedTrajectory2?'Trajectory 2 :' : ''}  ${selectedTrajectory2 ? selectedTrajectory2 : ''}`);
+                this.selectedIdsGroup.append('circle')
+                .attr('cx', 165)
+                .attr('cy', this.margin.top - 39)
+                .attr('r', selectedTrajectory2? 6 : 0 )
+                .attr('fill', geometricColor)
 
-const axes_zone_3  = [
-  {points:[[0,0.5], [0.5, 1],[1,1],[1,0.5], [0.5,0],[0.5,0.5], [0,0.5]]} //3
-]
+    } 
 
-let axesLineGenerator = d3.line().x(d=>xScale(d[0] )).y(d=>yScale(d[1]))
+    showPlots(data) {
+        this.plotGroup.selectAll("*").remove();
+        this.svg.selectAll("#rectangles").remove();
+        const self = this
 
-const axes_coloring_zone = function(zone_number, all_data){
-  if(zone_number == 0 ) {
-    axes_zone_0.forEach(( shape)=>{
-      AxesSvg.append('path')
-      .data(all_data)
-      .attr('class', 'axes-zone')
-      .attr('d', axesLineGenerator(shape.points))
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      .attr('fill', '#B9E7F5')
-      .attr('opacity', 0.4)
-      .lower();
-    })
-    
-  } else if (zone_number == 1) {
-    axes_zone_1.forEach(( shape)=>{
-      AxesSvg.append('path')
-      .data(all_data)
-      .attr('class', 'axes-zone')
-      .attr('d', axesLineGenerator(shape.points))
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      .attr('fill', '#B9E7F5')
-      .lower();
-    })
-  } else if (zone_number == 2) {
-    axes_zone_2.forEach(( shape)=>{
-      AxesSvg.append('path')
-      .data(all_data)
-      .attr('class', 'axes-zone')
-      .attr('d', axesLineGenerator(shape.points))
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      .attr('fill', '#B9E7F5')
-      .lower();
-    })
-  } else if (zone_number == 3) {
-    axes_zone_3.forEach(( shape)=>{
-      AxesSvg.append('path')
-      .data(all_data)
-      .attr('class', 'axes-zone')
-      .attr('d', axesLineGenerator(shape.points))
-      .attr('transform', `translate(${margin.left}, ${margin.top})`)
-      .attr('fill', '#B9E7F5')
-      .lower();
-    })
-  }
-}
-
-
-
-
-
-const axesLabels = [
-  {text:'0', position:[0.22, 0.22]},
-  {text:'1', position:[0.15, 0.85]},
-  {text:"2", position:[0.85, 0.15 ]},
-  {text:"3" , position:[0.7, 0.7]}
-]
-
-
-
-axesLines.forEach((shape, index)=>{
-    AxesSvg.append('path')
-    .attr('d', axesLineGenerator(shape.points))
-    .attr('transform', `translate(${margin.left}, ${margin.top})`)
-    .attr('fill', 'none')
-    .attr('stroke', index === axesLines.length -1 ? 'grey': 'black')
-    .attr('stroke-width', 2)
-    .attr('stroke-dasharray', index === axesLines.length-1 ? '8': 'none')
-})
-
-
-axesLabels.forEach((label)=>{
-  AxesSvg.append('text')
-  .attr('x', xScale(label.position[0]))
-  .attr('y', yScale(label.position[1]))
-  .attr('transform', `translate(${margin.left} , ${margin.top})`)
-  .attr('font-size', 40)
-  .text(label.text)
-})
-
-const get_title_axis_lables = function(x_title, y_title) {
-
-  AxesSvg.selectAll('text.axis-title').remove();
-
-  AxesSvg.append('text')
-    .attr('class', 'axis-title')
-    .text(x_title)
-    .attr('x', (SVGWIDTH / 2))
-    .attr('y', SVGHEIGHT - 5)
-    .attr('text-anchor', 'middle')
-    .attr('font-size', 20)
-    .attr('fill', 'black');
-
-  AxesSvg.append('text')
-    .attr('class', 'axis-title')
-    .text(y_title)
-    .attr('y', (SVGHEIGHT / 2) + 5 )
-    .attr('text-anchor', 'middle')
-    .attr('font-size', 20)
-    .attr('transform', `rotate(-90, 13, ${SVGHEIGHT / 2})`)
-    .attr('fill', 'black');
-};
-
-
-const colorScale = d3.scaleOrdinal()
-.domain([0, 1])
-.range(['#1f77b4', '#ff7f0e']);
-let colorsList = []
-
-function showAxes(data) {
-
-  AxesSvg.selectAll("#plots").remove();
-  AxesSvg.selectAll("#rectangles").remove();
-
-  data.forEach((d)=>{
-    d.x = +d.x;
-    d.y = +d.y
-  });
-
-  const xExtent = d3.extent(data, d=>d.x)
-  const yExtent = d3.extent(data, d=>d.y)
-
-  data.forEach((d)=>{
-    d.normalizedX = (d.x - xExtent[0]) / (xExtent[1] - xExtent[0]);
-    d.normalizedY = (d.y - yExtent[0]) / (yExtent[1] - yExtent[0]);
-  })
-
-  const allPlots = AxesSvg.append('g')
-  .attr('id', 'plots')
-  .selectAll('circle')
-  .data(data)
-  .join('circle')
-  .attr('r', 4)
-  .attr('cx', (d,i)=> xScale(d.normalizedX) + margin.left )
-  .attr('cy', (d,i)=> yScale(d.normalizedY) + margin.top )
-  .attr('fill' , 'grey')
-
-  allPlots.each((d,i,n)=>{
-    d3.select(n[i])
-    .transition()
-    .ease(d3.easeBounce)
-    .duration(2000)
-    .attr('cy', (d,i) => yScale(d.normalizedY) + margin.top )
-    colorsList.push(d3.select(n[i]).attr('fill'))
-  })
-
-  const rectGroup = AxesSvg.append('g')
-    .attr('id', 'rectangles');
-
-  let previouslySelectedBlue = null;
-  let previouslySelectedGreen = null;
-  
-  allPlots
-  .on('click', function(event) {
-    const selected_circle = d3.select(this);
-    
-    if (!isChecked) {
-      // Handle blue selection
-      if (previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
-        previouslySelectedBlue
-          .attr('fill', 'grey')
-          .attr('r', 4);
-      }
+        data.forEach((d)=>{
+          d.x = +d.x;
+          d.y = +d.y
+        });
       
-      if (previouslySelectedBlue === selected_circle) {
-        // Deselect if clicking the same circle
-        selected_circle
-          .attr('fill', 'grey')
-          .attr('r', 4);
-        previouslySelectedBlue = null;
-      } else {
-        // Select new circle
-        selected_circle
-          .attr('fill', '#69b3a2')
-          .attr('r', 8);
-        previouslySelectedBlue = selected_circle;
-      }
-    } else {
-      // Handle green selection
-      if (previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
-        previouslySelectedGreen
-          .attr('fill', 'grey')
-          .attr('r', 4);
-      }
+        const xExtent = d3.extent(data, d=>d.x)
+        const yExtent = d3.extent(data, d=>d.y)
       
-      if (previouslySelectedGreen === selected_circle) {
-        // Deselect if clicking the same circle
-        selected_circle
-          .attr('fill', 'grey')
-          .attr('r', 4);
-        previouslySelectedGreen = null;
+        data.forEach((d)=>{
+          d.normalizedX = (d.x - xExtent[0]) / (xExtent[1] - xExtent[0]);
+          d.normalizedY = (d.y - yExtent[0]) / (yExtent[1] - yExtent[0]);
+        })
+      
+        this.allPlots = this.plotGroup.append('g')
+            .attr('id', 'plots')
+            .selectAll('circle')
+            .data(data)
+            .join('circle')
+            .attr('r', 4)
+            .attr('cx', (d,i)=> this.xScale(d.normalizedX) + this.margin.left )
+            .attr('cy', (d,i)=> this.yScale(d.normalizedY) + this.margin.top )
+            .attr('fill' , 'grey');
+      
+          this.allPlots.each((d,i,n)=>{
+          d3.select(n[i])
+          .transition()
+          .ease(d3.easeBounce)
+          .duration(2000)
+          .attr('cy', (d,i) => this.yScale(d.normalizedY) + this.margin.top )
+          this.colorsList.push(d3.select(n[i]).attr('fill'))
+        })
+      
+        const rectGroup = this.svg.append('g')
+          .attr('id', 'rectangles');
+      
+        let previouslySelectedBlue = null;
+        let previouslySelectedGreen = null;
+        
+        const tooltipContainer = this.svg.append('g')
+            .attr('class', 'tooltip-container')
+            .style('display', 'none');
+            
+        tooltipContainer.append('rect')
+            .attr('class', 'tooltip-bg')
+            .attr('width', 120)
+            .attr('height', 70)
+            .attr('fill', 'rgba(85, 85, 85, 0.79)')
+            .attr('rx', 10)
+            .attr('ry', 10)
+            
+        tooltipContainer.append('text')
+            .attr('class', 'tooltip-text')
+            .attr('fill', 'white')
+            .attr('font-size', '12px');
+
+        this.allPlots
+.on('click', async function(event) {
+    const selected_circle = d3.select(this);
+    const id = event.target.__data__.entity_id;
+    if(selectingTrajectoryTwo) {
+        selectedTrajectory2 = id
       } else {
-        // Select new circle
-        selected_circle
-          .attr('fill', '#ff8282')
-          .attr('r', 8);
-        previouslySelectedGreen = selected_circle;
+        selectedTrajectory1 = id
       }
+
+    if(self.trajectoriesList.length === 2) {
+        self.trajectoriesList.pop();
+    }
+    self.trajectoriesList.push(id);
+
+    self.updateSelectedIdsDisplay();
+    if(self.trajectoryToCompare && self.trajectoriesList.length === 1) {
+        if(previouslySelectedBlue) {
+            previouslySelectedBlue.attr('fill', 'grey').attr('r', 4);
+            previouslySelectedBlue = null;
+        }
+        if(previouslySelectedGreen) {
+            previouslySelectedGreen.attr('fill', 'grey').attr('r', 4);
+            previouslySelectedGreen = null;
+        }
     }
 
-    const id = event.target.__data__.ID;
-    if (!isChecked) {
-      get_id(id);
+    if(self.trajectoryToCompare) {
+        if(self.trajectoriesList.length === 1) {
+            selected_circle
+                .attr('fill', kinematicColor)
+                .attr('r', 8)
+                .raise();
+            previouslySelectedBlue = selected_circle;
+            const trajectories1 = await mapGl.generateMapGl(selectedTrajectory1);
+            await mapGl.traject(trajectories1, selectedTrajectory1, null, null);
+        }
+        else if(self.trajectoriesList.length === 2) {
+            if(previouslySelectedGreen && previouslySelectedGreen !== selected_circle) {
+                previouslySelectedGreen.attr('fill', 'grey').attr('r', 4);
+            }
+            selected_circle
+                .attr('fill', geometricColor)
+                .attr('r', 8)
+                .raise();
+            previouslySelectedGreen = selected_circle
+            const trajectories2 = await mapGl2.generateMapGl(selectedTrajectory2);
+            await mapGl2.traject(trajectories2, selectedTrajectory2, null, null);
+        }
     } else {
-      get_id2(id);
-    }
-    generate_bars();
-  })
-  .on('mouseover', function() {
-    const selected_circle = d3.select(this);
-    const isSelected = (isChecked && selected_circle.node() === previouslySelectedGreen?.node()) || 
-                      (!isChecked && selected_circle.node() === previouslySelectedBlue?.node());
-    
-    // Only increase size if not already selected
-    if (!isSelected) {
-      selected_circle.attr('r', 8);
-    }
-    
-    // Add tooltips
-    AxesSvg.append('rect')
-      .attr('id', 'tooltip2')
-      .style('pointer-events', 'none');
-    
-    AxesSvg.append('text')
-      .attr('id', 'tooltip1')
-      .style('pointer-events', 'none');
-  })
-  .on('mousemove', function(event, d) {
-    const [x, y] = d3.pointer(event);
-    
-    // Update tooltip rectangle
-    AxesSvg.select('#tooltip2')
-      .attr('width', 120)
-      .attr('height', 90)
-      .attr('x', x - 20)
-      .attr('y', y - 100)
-      .attr('fill', 'rgba(230, 224, 124, 0.7)')
-      .attr('rx', 10)
-      .attr('ry', 10);
-    
-    // Update tooltip text
-    AxesSvg.select('#tooltip1')
-      .attr('x', x)
-      .attr('y', y - 65)
-      .attr('text-anchor', 'middle')
-      .attr('fill', 'black')
-      .attr('font-size', '12px')
-      .selectAll('tspan')
-      .data([
-        `Fox ID: ${d.ID.toString()}`,
-        `X: ${d.x.toString()}`,
-        `Y: ${d.y.toString()}`,
-      ])
-      .join('tspan')
-      .attr('x', x + 5)
-      .attr('text-anchor', 'start')
-      .attr('dy', (d, i) => i === 0 ? 0 : '1.2em')
-      .text(d => d)
-      .style("display", "block");
-  })
-  .on('mouseout', function() {
-    const selected_circle = d3.select(this);
-    const isSelected = (isChecked && selected_circle.node() === previouslySelectedGreen?.node()) || 
-                      (!isChecked && selected_circle.node() === previouslySelectedBlue?.node());
-    
-    // Return to original size (4) only if not selected
-    selected_circle.attr('r', isSelected ? 8 : 4);
-    
-    // Remove tooltips
-    AxesSvg.select('#tooltip1').remove();
-    AxesSvg.select('#tooltip2').remove();
-  });
+        if(previouslySelectedBlue && previouslySelectedBlue !== selected_circle) {
+            previouslySelectedBlue.attr('fill', 'grey').attr('r', 4);
+        }
+        if(previouslySelectedBlue === selected_circle) {
+            selected_circle.attr('fill', 'grey').attr('r', 4);
+            previouslySelectedBlue = null;
+        } else {
+            selected_circle
+                .attr('fill', kinematicColor)
+                .attr('r', 8)
+                .raise();
+            previouslySelectedBlue = selected_circle;
+        }
+        const trajectories = await mapGl.generateMapGl(selectedTrajectory1);
+        await mapGl.traject(trajectories, selectedTrajectory1, null, null);
+        // await mapGl.create_2d_heatmap(id , trajectories, '', type);
 
-// Rectangle group event handlers
-rectGroup.selectAll('rect')
-  .data(data)
-  .on('mouseover', (event, d) => {
-    const [x, y] = d3.pointer(event);
-    AxesSvg.append('text')
-      .attr('id', 'tooltip3')
-      .attr('x', x)
-      .attr('y', y - 15)
-      .attr('fill', 'black')
-      .text(d.Identifier);
-  })
-  .on('mousemove', (event) => {
-    const [x, y] = d3.pointer(event);
-    AxesSvg.select('#tooltip3')
-      .attr('x', x)
-      .attr('y', y - 15);
-  })
-  .on('mouseout', () => {
-    AxesSvg.select('#tooltip3').remove();
-  });
+    } 
+}).on('mouseover', function() {
+            const selected_circle = d3.select(this);
+            if (!selected_circle.classed('selected')) {
+                selected_circle.attr('r', 8);
+            }
+            tooltipContainer.style('display', null);
+        })
+        .on('mousemove', function(event, d) {
+            const [x, y] = d3.pointer(event);
+            tooltipContainer
+                .attr('transform', `translate(${x - 60},${y - 75})`).raise()
+                
+            tooltipContainer.select('.tooltip-text')
+                .selectAll('tspan')
+                .data([
+                    `ID: ${d.entity_id}`,
+                    `X: ${d.x.toFixed(4)}`,
+                    `Y: ${d.y.toFixed(4)}`
+                ])
+                .join('tspan')
+                .attr('x', 10)
+                .attr('y', (d, i) => 20 + i * 20)
+                .text(d => d);
+        })
+        .on('mouseout', function() {
+            const selected_circle = d3.select(this);
+            if (!selected_circle.classed('selected')) {
+                selected_circle.attr('r', 4);
+            }
+            tooltipContainer.style('display', 'none');
+        });
+      
+        rectGroup.selectAll('rect')
+          .data(data)
+          .on('mouseover', (event, d) => {
+            const [x, y] = d3.pointer(event);
+            this.svg.append('text')
+              .attr('id', 'tooltip3')
+              .attr('x', x)
+              .attr('y', y - 55)
+              .attr('fill', 'black')
+              .text(d.Identifier);
+          })
+          .on('mousemove', (event) => {
+            const [x, y] = d3.pointer(event);
+            this.svg.select('#tooltip3')
+              .attr('x', x)
+              .attr('y', y - 15);
+          })
+          .on('mouseout', () => {
+            this.svg.select('#tooltip3').remove();
+          });
+      
+        this.svg.select('.axis-group').raise();
+        this.gx.raise();
+        this.gy.raise();
+    }
 }
-

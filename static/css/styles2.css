@@ -1,0 +1,329 @@
+html, body {
+   height: 100%;
+   margin: 0;
+   padding: 0;
+   overflow: hidden;
+}
+
+#views{
+   position: absolute;
+   left: 47%;
+   top: 5px;
+   padding: 5px;
+   background-color: #0080FF;
+   border-radius: 5px;
+   color: white;
+   cursor: pointer;
+   box-shadow: 1px 1px 5px 1px black;
+   outline: none;
+   z-index: 10000;
+   width: 100px;
+}
+
+.view-3d{
+   width: 100%;
+   height: 50%;
+}
+.view-2d{
+   display: flex;
+   flex-wrap: wrap;
+   width: 100%;
+   height: 100%;
+}
+
+#heatmap-2d{
+   width: 100%;
+   height: 50%;
+   border-bottom: 5px solid grey;
+}
+
+#container {
+   display: flex;
+   flex-direction: row;
+   justify-content: center;
+   align-items: center;
+   margin: 0;
+   padding: 0;
+   width: 100%;
+   height: 100%;
+}
+#taxonomy-container, #heatmap-container, 
+#scatter-plot-container, #map-container,
+#feature-importance-container, #trajectory-features-detailed-container {
+   /* border: 1px solid black; */
+   display: flexbox;   
+}
+#left-container {
+   display: flex;
+   flex-direction: column;
+}
+
+
+.container-fluid {
+   height: 100%;
+}
+
+#left-container {
+   position: absolute;
+   left: 0;
+   height: 100%;
+   width: 25%;
+   transition: all 0.3s;
+   overflow: hidden;
+   cursor: pointer;
+   /* transform : translate(-99%, 0); */
+   z-index: 1000;
+   box-shadow: 1px 10px 10px 2px black;
+}
+
+.map {
+   display: flex;
+   flex-direction: column;
+   height: 100%;
+   width: 100%;
+}
+
+.map-container {
+   width: 100%;
+   height: 100%;
+   position: relative;
+   border: 3px solid rgb(151, 151, 151);
+}
+
+#map, #map-2 {
+   width: 100%;
+   height: 100%;
+}
+
+#right-container{
+   position: absolute;
+   right: 0;
+   height: 100%;
+   width: 25%;
+   z-index: 1000;
+   transition: all 0.3s;
+   overflow: hidden;
+   cursor: pointer;
+   /* transform : translate(99%, 0); */
+   box-shadow: 1px 10px 10px 2px black;
+}
+
+#notification{
+   position: absolute;
+   left: 38%;
+   top: 0;
+   height: 80px;
+   width: 500px;
+   border-bottom: 4px solid black;
+   background-color:indianred;
+   color: white;
+   box-shadow: 1px 1px 5px 1px black;
+   transition: all 0.5s;
+   transform: translate(0, -290px);
+   z-index: 10000;
+   text-align: center;
+   font-size: 25px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+}
+#feature-importance-container, #trajectory-features-detailed-container{
+   width: 100%;
+} 
+#feature-importance-container{
+   overflow-y: auto;
+   overflow-x: hidden;
+}
+
+#top-taxonomy-header{
+   display: flex;
+   flex-direction: row;
+}
+#dataset-btn{
+   width: 150px;
+   font-size: 12px;
+   height: 25px;
+   background-color: #0080FF;
+   opacity: 0.5;
+   border: none;
+   padding: 0;
+}
+
+#taxonomy-element {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-body {
+   padding: 10px !important;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   
+}
+
+
+#scatter-plot-container .card-body {
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#taxonomy-element .card-body {
+    padding: 0;
+}
+
+#taxonomy-container .card .card-body {
+    padding: 0 !important;
+    margin-top: 10px;
+
+}
+
+#scatter-plot{
+   margin-right: 50px;
+   padding: 0 !important;
+}
+
+.accuracy-info {
+.feature-table {
+   width: 100%;
+   margin-top: 10px;
+   font-size: 0.9em;
+}
+
+.feature-table th,
+.feature-table td {
+   padding: 8px;
+   border-bottom: 1px solid #dee2e6;
+}
+}
+
+.feature-table th {
+   background-color: #f8f9fa;
+   font-weight: bold;
+}
+
+.feature-table th {
+   background-color: #f8f9fa;
+   font-weight: bold;
+}
+
+p {
+    text-align: center;
+    width: 100%;
+    margin: 0;
+    font-weight: 700;
+    font-size: 14px;
+}
+.taxonomy-p{
+   margin-right: 150px;
+   display: block;
+   position: relative;
+   top: 5px;
+}
+
+.zone-selector {
+    position: absolute;
+    left: 10px;
+    top: 8px;
+}
+.zone-selector-2{
+   position: absolute;
+   left: 100px;
+   top: 8px;
+}
+
+.zone-selector select, .zone-selector-2 select{
+    padding: 2px 5px;
+    font-size: 14px;
+    border-radius: 4px;
+    background-color: #0080FF;
+    color: white;
+    border: none;
+    opacity: 0.5;
+}
+
+/* #pin-left{
+   width: 20px;
+   position: absolute;
+   top: 45%;
+   left: 5px;
+   height: 160px;
+   z-index: 1000;
+   background: #0080FF;
+   border-radius: 5px;
+   box-shadow: 1px 10px 10px 2px black;
+   transition: all 0.3s;
+} */
+
+/* #pin-right{
+   width: 20px;
+   position: absolute;
+   top: 45%;
+   right: 5px;
+   height: 160px;
+   z-index: 1000;
+   background: #0080FF;
+   border-radius: 5px;
+   box-shadow: 1px 10px 10px 2px black;
+   transition: all 0.3s;
+
+}
+
+.pinned_left{
+   transform : translate(475px, 0);
+
+}
+.pinned_right{
+   transform : translate(-475px, 0);
+} */
+
+@keyframes horizontal-shaking {
+   0% { transform: translateX(0) }
+   25% { transform: translateX(5px) }
+   50% { transform: translateX(-5px) }
+   75% { transform: translateX(5px) }
+   100% { transform: translateX(0) }
+  }
+  .compare-btn{
+   position: absolute;
+   right: 50px;
+   top: 5px;
+   font-size: 12px;
+   width: 80px;
+   outline: none;
+   border: none;
+   background-color: #0080FF80;
+   padding: 5px;
+   color: white;
+   font-weight: 500;
+   border-radius: 5px;
+  }
+
+  .compare-btn:hover{
+   color: #0080FF80;
+   background-color: white;
+   transform: scale(1.01);
+   border: 1px solid #0080FF80;
+  }
+
+.trajectory-title-1{
+   z-index: 100;
+   opacity: 1;
+   position: absolute;
+   font-weight: 700;
+   font-size: 20px;
+   right:19%;
+}
+.trajectory-title-2{
+   z-index: 100;
+   opacity: 1;
+   position: absolute;
+   font-weight: 700;
+   font-size: 20px;
+   left: 19%;
+}

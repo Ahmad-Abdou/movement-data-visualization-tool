@@ -1,76 +1,125 @@
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import pandas as pd
 import numpy as np 
-
-import json
-
+import os
+import traceback
+import feature_importance
+from database import Database
+from featureDetailsCalc import stats_calc
 app = Flask(__name__)
-
-#Reading data
-# data_df = pd.read_csv("static/data/churn_data.csv")
-# churn_df = data_df[(data_df['Churn']=="Yes").notnull()]
+db = Database()
+def get_absolute_path(relative_path):
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(base_dir, relative_path)
 
 @app.route('/')
 def index():
-   return render_template('index2.html')
+   return render_template('index3.html')
 
-# def calculate_percentage(val, total):
-#    """Calculates the percentage of a value over a total"""
-#    percent = np.round((np.divide(val, total) * 100), 2)
-#    return percent
+@app.route('/api/trajectories', methods=['GET'])
+def fetch_trajectories():
+    try:
+        category_id = request.args.get('category_id', default=1, type=int)
+        data = db.get_trajectories_by_category(category_id)
+        if data is not None:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
 
-# def data_creation(data, percent, class_labels, group=None):
-#    for index, item in enumerate(percent):
-#        data_instance = {}
-#        data_instance['category'] = class_labels[index]
-#        data_instance['value'] = item
-#        data_instance['group'] = group
-#        data.append(data_instance)
-
-# @app.route('/get_piechart_data')
-# def get_piechart_data():
-#    contract_labels = ['Month-to-month', 'One year', 'Two year']
-#    _ = churn_df.groupby('Contract').size().values
-#    class_percent = calculate_percentage(_, np.sum(_)) #Getting the value counts and total
-
-#    piechart_data= []
-#    data_creation(piechart_data, class_percent, contract_labels)
-#    return jsonify(piechart_data)
-
-# @app.route('/get_barchart_data')
-# def get_barchart_data():
-#    tenure_labels = ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79']
-#    churn_df['tenure_group'] = pd.cut(churn_df.tenure, range(0, 81, 10), labels=tenure_labels)
-#    select_df = churn_df[['tenure_group','Contract']]
-#    contract_month = select_df[select_df['Contract']=='Month-to-month']
-#    contract_one = select_df[select_df['Contract']=='One year']
-#    contract_two =  select_df[select_df['Contract']=='Two year']
-#    _ = contract_month.groupby('tenure_group').size().values
-#    mon_percent = calculate_percentage(_, np.sum(_))
-#    _ = contract_one.groupby('tenure_group').size().values
-#    one_percent = calculate_percentage(_, np.sum(_))
-#    _ = contract_two.groupby('tenure_group').size().values
-#    two_percent = calculate_percentage(_, np.sum(_))
-#    _ = select_df.groupby('tenure_group').size().values
-#    all_percent = calculate_percentage(_, np.sum(_))
-
-#    barchart_data = []
-#    data_creation(barchart_data,all_percent, tenure_labels, "All")
-#    data_creation(barchart_data,mon_percent, tenure_labels, "Month-to-month")
-#    data_creation(barchart_data,one_percent, tenure_labels, "One year")
-#    data_creation(barchart_data,two_percent, tenure_labels, "Two year")
-#    return jsonify(barchart_data)
-
-# @app.route('/get_tree_data')
-# def get_tree_data():
-#    with open('static/data/treedata.json', 'r') as file:
-#       data = json.load(file)
-#    return jsonify(data)
+@app.route('/api/scatter', methods=['GET'])
+def decision_scores():
+    combination = request.args.get('combination')
+    category_id = request.args.get('category_id', default=1, type=int)
+    try:
+        data = db.get_scatter_plot_data(combination, category_id)
+        if data is not None:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
 
 
-# @app.route('/get_tidy_tree')
-# def get_tidy_tree():
-#     return 
+@app.route('/api/feats/map', methods=['GET'])
+def data_map():
+    tid = request.args.get('tid') 
+    category_id = request.args.get('category_id', default=1, type=int)
+    try:
+        if not tid:
+            return jsonify({"error": "No trajectory ID provided"}), 400
+            
+        data = db.get_data_for_map(tid, category_id)
+        if data and len(data) > 0:
+            return jsonify(data)
+        else:
+            return jsonify({"error": "No data found"}), 404
+            
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
 
+@app.route('/api/feats/quantile', methods=['GET'])
+def data_quantile():
+    tid = request.args.get('tid') 
+    stats = request.args.get('stats')
+    category_id = request.args.get('category_id', default=1, type=int)
+    try:
+        data = db.get_data_for_quantile(tid, category_id)
+        results = stats_calc(stats, data)
+        if data and len(data) > 0:
+            return jsonify({
+                'data': data,
+                'results': results
+            })
+        else:
+            return jsonify({"error": "No data found"}), 404
+    except Exception as e:
+        print(f'Error: {str(e)}')
+        return jsonify({"error": "Server error"}), 500
+@app.route('/api/data', methods=['POST'])
+def process_data():
+    try:
+        data = request.get_json()
+        if not data:
+            return jsonify({'status': 'error', 'message': 'No data received'}), 400
+            
+        combination_path = data.get('path_combination')
+        zoneA = data.get('zoneA')
+        zoneB = data.get('zoneB')
+        features_path = data.get('df_path_with_id')
+        x_axis = data.get('x_axis')
+        y_axis=  data.get('y_axis')
 
-app.run(debug=True)
+        abs_combination_path = get_absolute_path(f'static/{combination_path}')
+        abs_features_path = get_absolute_path(f'static/{features_path}')
+        
+        if not os.path.exists(abs_combination_path) or not os.path.exists(abs_features_path):
+            return jsonify({'status': 'error', 'message': 'Data files not found'}), 404
+            
+        feature_importance_df, accuracy, f1_score = feature_importance.getDataTwoZonesComparison(zoneA, zoneB, abs_combination_path, abs_features_path, x_axis, y_axis)
+
+        
+        feature_importance_data = feature_importance_df.to_dict('records')
+        
+        return jsonify({
+            'status': 'success',
+            'data': {
+                'feature_importance': feature_importance_data,
+                'accuracy': float(accuracy),
+                'f1_score': float(f1_score)
+            }
+        })
+        
+    except Exception as e:
+        app.logger.error(f'Error processing request: {str(e)}\n{traceback.format_exc()}')
+        return jsonify({
+            'status': 'error',
+            'message': f'Server error: {str(e)}'
+        }), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
